@@ -6,6 +6,10 @@ import org.apfloat.ApfloatMath;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
@@ -169,11 +173,18 @@ public class CalculatorTest {
 
     @Test
     public void calculateAllStaticMethods() throws CalculatorException {
-        System.out.println(calculator.getAvailableFunctions());
         assertEquals(new Apfloat(4.49980967), calculator.calculate("90 log"));
+
+        CalculatorArithmeticException calculatorArithmeticException1
+                = assertThrows(CalculatorArithmeticException.class, () -> calculator.calculate("0 log"));
+        assertEquals("Logarithm of zero", calculatorArithmeticException1.getMessage());
+
         assertEquals(new Apfloat(0), calculator.calculate("0 atanh"));
-        CalculatorArithmeticException calculatorArithmeticException = assertThrows(CalculatorArithmeticException.class, () -> calculator.calculate("10 atanh"));
+
+        CalculatorArithmeticException calculatorArithmeticException
+                = assertThrows(CalculatorArithmeticException.class, () -> calculator.calculate("10 atanh"));
         assertEquals("Logarithm of negative number; result would be complex", calculatorArithmeticException.getMessage());
+
         assertEquals(new Apfloat(1), calculator.calculate("0 cos"));
         assertEquals(new Apfloat(0), calculator.calculate("0 atan"));
         assertEquals(new Apfloat(0), calculator.calculate("0 cbrt"));
@@ -195,5 +206,18 @@ public class CalculatorTest {
         assertEquals(new Apfloat(0), calculator.calculate("0 asin"));
         assertEquals(new Apfloat(0), calculator.calculate("0 asinh"));
         assertEquals(new Apfloat(2.4e1), calculator.calculate("5 gamma"));
+    }
+
+    @Test
+    public void calculateCompareAvailableFunctions() {
+        List<String> functions = Arrays.asList("**", "log", "atanh", "cos", "atan", "cbrt", "tanh", "−", "sqrt", "×", "sin", "exp", "frac", "^", "tan", "fun2", "sinh", "acosh", "*", "toDegrees", "+", "acos", "toRadians", "-", "/", "cosh", "abs", "negate", "w", "÷", "asin", "asinh", "gamma", "fun");
+        assertEquals(functions, calculator.getAvailableFunctions().stream().collect(Collectors.toList()));
+    }
+
+    @Test
+    public void calculateCompareOthers() {
+        assertEquals(calculator.getFunctions().keySet(), calculator.getAvailableFunctions());
+        calculator.setPrecision(10);
+        assertEquals(10, calculator.getPrecision());
     }
 }

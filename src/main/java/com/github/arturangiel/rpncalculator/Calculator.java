@@ -77,12 +77,12 @@ public class Calculator {
         } catch (NoSuchElementException e) {
             throw new LackOfArgumentsException(operator, position);
         } catch (IllegalAccessException e) {
-            throw new BadEquationException(stack);
+            throw new UnexpectedException(e.getMessage());
         } catch (InvocationTargetException e) {
             if (e.getTargetException() instanceof ArithmeticException)
                 throw new CalculatorArithmeticException(e.getTargetException().getMessage());
             else
-                throw new BadEquationException(stack);
+                throw new UnexpectedException(e.getTargetException().getMessage());
         }
     }
 
