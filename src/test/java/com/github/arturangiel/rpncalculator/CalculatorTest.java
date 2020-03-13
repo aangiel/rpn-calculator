@@ -1,9 +1,6 @@
 package com.github.arturangiel.rpncalculator;
 
-import com.github.arturangiel.rpncalculator.exception.BadEquationException;
-import com.github.arturangiel.rpncalculator.exception.BadItemException;
-import com.github.arturangiel.rpncalculator.exception.CalculatorException;
-import com.github.arturangiel.rpncalculator.exception.LackOfArgumentsException;
+import com.github.arturangiel.rpncalculator.exception.*;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 import org.junit.Before;
@@ -168,5 +165,35 @@ public class CalculatorTest {
         assertEquals(new Apfloat(1), calculator.calculate(radians + " sin"));
         assertEquals(new Apfloat(1.570796326), calculator.calculate("90 toRadians"));
         assertEquals(new Apfloat(1), calculator.calculate("90 toRadians sin"));
+    }
+
+    @Test
+    public void calculateAllStaticMethods() throws CalculatorException {
+        System.out.println(calculator.getAvailableFunctions());
+        assertEquals(new Apfloat(4.49980967), calculator.calculate("90 log"));
+        assertEquals(new Apfloat(0), calculator.calculate("0 atanh"));
+        CalculatorArithmeticException calculatorArithmeticException = assertThrows(CalculatorArithmeticException.class, () -> calculator.calculate("10 atanh"));
+        assertEquals("Logarithm of negative number; result would be complex", calculatorArithmeticException.getMessage());
+        assertEquals(new Apfloat(1), calculator.calculate("0 cos"));
+        assertEquals(new Apfloat(0), calculator.calculate("0 atan"));
+        assertEquals(new Apfloat(0), calculator.calculate("0 cbrt"));
+        assertEquals(new Apfloat(0), calculator.calculate("0 tanh"));
+        assertEquals(new Apfloat(0), calculator.calculate("0 sqrt"));
+        assertEquals(new Apfloat(0), calculator.calculate("0 sin"));
+        assertEquals(new Apfloat(1), calculator.calculate("0 exp"));
+        assertEquals(new Apfloat(0), calculator.calculate("0 frac"));
+        assertEquals(new Apfloat(0), calculator.calculate("0 tan"));
+        assertEquals(new Apfloat(3.626860407, 10), calculator.calculate("2 sinh"));
+        assertEquals(new Apfloat(1.762747174, 10), calculator.calculate("3 acosh"));
+        assertEquals(new Apfloat(2.864788975e2), calculator.calculate("5 toDegrees"));
+        assertEquals(new Apfloat(1.047197551), calculator.calculate("0.5 acos"));
+        assertEquals(new Apfloat(8.726646259e-2), calculator.calculate("5 toRadians"));
+        assertEquals(new Apfloat(1), calculator.calculate("0 cosh"));
+        assertEquals(new Apfloat(10), calculator.calculate("-10 abs"));
+        assertEquals(new Apfloat(-5), calculator.calculate("5 negate"));
+        assertEquals(new Apfloat(0), calculator.calculate("0 w"));
+        assertEquals(new Apfloat(0), calculator.calculate("0 asin"));
+        assertEquals(new Apfloat(0), calculator.calculate("0 asinh"));
+        assertEquals(new Apfloat(2.4e1), calculator.calculate("5 gamma"));
     }
 }

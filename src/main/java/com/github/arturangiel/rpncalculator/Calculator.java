@@ -1,9 +1,6 @@
 package com.github.arturangiel.rpncalculator;
 
-import com.github.arturangiel.rpncalculator.exception.BadEquationException;
-import com.github.arturangiel.rpncalculator.exception.BadItemException;
-import com.github.arturangiel.rpncalculator.exception.CalculatorException;
-import com.github.arturangiel.rpncalculator.exception.LackOfArgumentsException;
+import com.github.arturangiel.rpncalculator.exception.*;
 import com.github.arturangiel.rpncalculator.math.FunctionValue;
 import com.github.arturangiel.rpncalculator.math.IMathFunction;
 import org.apfloat.Apfloat;
@@ -79,14 +76,27 @@ public class Calculator {
             throw new BadItemException(operator, position);
         } catch (NoSuchElementException e) {
             throw new LackOfArgumentsException(operator, position);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (IllegalAccessException e) {
             throw new BadEquationException(stack);
+        } catch (InvocationTargetException e) {
+            if (e.getTargetException() instanceof ArithmeticException)
+                throw new CalculatorArithmeticException(e.getTargetException().getMessage());
+            else
+                throw new BadEquationException(stack);
         }
     }
 
     public Calculator addCustomFunction(String name, int parametersCount, IMathFunction<Apfloat> function) {
         functions.put(name, FunctionValue.forFunction(parametersCount, function));
         return this;
+    }
+
+    public Set<String> getAvailableFunctions() {
+        return functions.keySet();
+    }
+
+    public Map<String, FunctionValue> getFunctions() {
+        return functions;
     }
 
     public long getPrecision() {
