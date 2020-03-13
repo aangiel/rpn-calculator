@@ -1,4 +1,4 @@
-package exception;
+package com.github.arturangiel.rpncalculator.exception;
 
 public class LackOfArgumentsException extends CalculatorException {
 

@@ -1,8 +1,11 @@
-import exception.BadEquationException;
-import exception.BadItemException;
-import exception.CalculatorException;
-import exception.LackOfArgumentsException;
-import iface.IMathFunction;
+package com.github.arturangiel.rpncalculator;
+
+import com.github.arturangiel.rpncalculator.exception.BadEquationException;
+import com.github.arturangiel.rpncalculator.exception.BadItemException;
+import com.github.arturangiel.rpncalculator.exception.CalculatorException;
+import com.github.arturangiel.rpncalculator.exception.LackOfArgumentsException;
+import com.github.arturangiel.rpncalculator.math.FunctionValue;
+import com.github.arturangiel.rpncalculator.math.IMathFunction;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 

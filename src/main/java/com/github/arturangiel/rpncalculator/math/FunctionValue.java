@@ -1,4 +1,5 @@
-import iface.IMathFunction;
+package com.github.arturangiel.rpncalculator.math;
+
 import org.apfloat.Apfloat;
 
 public class FunctionValue {

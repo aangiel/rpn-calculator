@@ -1,4 +1,4 @@
-package exception;
+package com.github.arturangiel.rpncalculator.exception;
 
 public abstract class CalculatorException extends Exception {
     public CalculatorException(String message) {

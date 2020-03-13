@@ -1,7 +1,9 @@
-import exception.BadEquationException;
-import exception.BadItemException;
-import exception.CalculatorException;
-import exception.LackOfArgumentsException;
+package com.github.arturangiel.rpncalculator;
+
+import com.github.arturangiel.rpncalculator.exception.BadEquationException;
+import com.github.arturangiel.rpncalculator.exception.BadItemException;
+import com.github.arturangiel.rpncalculator.exception.CalculatorException;
+import com.github.arturangiel.rpncalculator.exception.LackOfArgumentsException;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 import org.junit.Before;

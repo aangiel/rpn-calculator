@@ -1,4 +1,4 @@
-package iface;
+package com.github.arturangiel.rpncalculator.math;
 
 import java.lang.reflect.InvocationTargetException;
 
