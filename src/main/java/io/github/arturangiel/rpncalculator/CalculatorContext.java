@@ -31,6 +31,7 @@ public class CalculatorContext {
     public static CalculatorContext getMathFunctionsContext() {
         CalculatorContext context = getDefaultContext();
         context.populateDefaultOneParameterMathFunctions();
+        context.populateConstants();
         return context;
     }
 
@@ -53,6 +54,11 @@ public class CalculatorContext {
         functions.put("-", FunctionValue.forFunction(2, a -> a[0].subtract(a[1])));
         functions.put("*", FunctionValue.forFunction(2, a -> a[0].multiply(a[1])));
         functions.put("/", FunctionValue.forFunction(2, a -> a[0].divide(a[1])));
+    }
+
+    private void populateConstants() {
+        functions.put("pi", FunctionValue.forFunction(0, (a) -> ApfloatMath.pi(precision)));
+        functions.put("e", FunctionValue.forFunction(0, (a) -> new Apfloat(2.718281828)));
     }
 
     public Map<String, FunctionValue> getFunctions() {

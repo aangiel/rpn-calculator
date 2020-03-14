@@ -211,7 +211,7 @@ public class CalculatorTest {
 
     @Test
     public void calculateCompareAvailableFunctions() {
-        List<String> functions = Arrays.asList("**", "log", "atanh", "cos", "atan", "cbrt", "tanh", "−", "sqrt", "×", "sin", "exp", "frac", "^", "tan", "fun2", "sinh", "acosh", "*", "toDegrees", "+", "acos", "toRadians", "-", "/", "cosh", "abs", "negate", "w", "÷", "asin", "asinh", "gamma", "fun");
+        List<String> functions = Arrays.asList("**", "log", "atanh", "cos", "atan", "cbrt", "tanh", "−", "sqrt", "×", "sin", "exp", "frac", "^", "tan", "fun2", "sinh", "e", "acosh", "*", "toDegrees", "+", "acos", "toRadians", "-", "/", "cosh", "abs", "negate", "w", "÷", "pi", "asin", "asinh", "gamma", "fun");
         assertEquals(functions, new ArrayList<>(calculator.getContext().getAvailableFunctions()));
     }
 
@@ -220,5 +220,13 @@ public class CalculatorTest {
         assertEquals(calculator.getContext().getFunctions().keySet(), calculator.getContext().getAvailableFunctions());
         calculator.getContext().setPrecision(10);
         assertEquals(10, calculator.getContext().getPrecision());
+    }
+
+    @Test
+    public void calculateConstants() throws CalculatorException {
+        assertEquals(new Apfloat(6.283185307), calculator.calculate("pi 2 *"));
+        assertEquals(new Apfloat(3.141592653), calculator.calculate("pi"));
+        assertEquals(new Apfloat(2.718281828), calculator.calculate("e"));
+        assertEquals(new Apfloat(1.359140913), calculator.calculate("e 2 /"));
     }
 }
