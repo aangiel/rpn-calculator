@@ -19,7 +19,7 @@ public class CalculatorTest {
 
     @Before
     public void setUp() {
-        CalculatorContext context = CalculatorContext.getMathFunctionsContext();
+        CalculatorContext context = CalculatorContext.getMathFunctionsAndConstantsContext();
 
         context
                 .addCustomFunction("**", 2, (a) -> a[0].multiply(a[1].multiply(a[0])))

@@ -31,6 +31,11 @@ public class CalculatorContext {
     public static CalculatorContext getMathFunctionsContext() {
         CalculatorContext context = getDefaultContext();
         context.populateDefaultOneParameterMathFunctions();
+        return context;
+    }
+
+    public static CalculatorContext getMathFunctionsAndConstantsContext() {
+        CalculatorContext context = getMathFunctionsContext();
         context.populateConstants();
         return context;
     }

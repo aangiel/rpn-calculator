@@ -3,6 +3,7 @@ package io.github.arturangiel.rpncalculator;
 public class CalculatorProvider {
     private static Calculator defaultCalculator;
     private static Calculator mathFunctionsCalculator;
+    private static Calculator mathFunctionsAndConstantsCalculator;
     private static Calculator emptyCalculator;
     private static Calculator customCalculator;
 
@@ -17,6 +18,12 @@ public class CalculatorProvider {
         if (mathFunctionsCalculator == null)
             mathFunctionsCalculator = new CalculatorImpl(CalculatorContext.getMathFunctionsContext());
         return mathFunctionsCalculator;
+    }
+
+    public static Calculator getMathFunctionsAndConstantsCalculator() {
+        if (mathFunctionsAndConstantsCalculator == null)
+            mathFunctionsAndConstantsCalculator = new CalculatorImpl(CalculatorContext.getMathFunctionsAndConstantsContext());
+        return mathFunctionsAndConstantsCalculator;
     }
 
     public static Calculator getEmptyCalculator() {
