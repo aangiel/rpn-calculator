@@ -5,7 +5,6 @@ public class CalculatorProvider {
     private static Calculator mathFunctionsCalculator;
     private static Calculator mathFunctionsAndConstantsCalculator;
     private static Calculator emptyCalculator;
-    private static Calculator customCalculator;
 
 
     public static Calculator getDefaultCalculator() {
@@ -33,12 +32,6 @@ public class CalculatorProvider {
     }
 
     public static Calculator getCalculatorWithCustomContext(CalculatorContext context) {
-        if (customCalculator == null)
-            customCalculator = new CalculatorImpl(context);
-        return customCalculator;
-    }
-
-    public static Calculator getNewCalculatorWithCustomContext(CalculatorContext context) {
         return new CalculatorImpl(context);
     }
 }
