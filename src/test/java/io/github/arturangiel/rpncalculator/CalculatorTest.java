@@ -19,9 +19,9 @@ public class CalculatorTest {
 
     @Before
     public void setUp() {
-        calculator = new Calculator();
+        CalculatorContext context = CalculatorContext.getMathFunctionsContext();
 
-        calculator
+        context
                 .addCustomFunction("**", 2, (a) -> a[0].multiply(a[1].multiply(a[0])))
                 .addCustomFunction("^", 2, (a) -> a[0].divide(a[1].multiply(a[0])))
                 .addCustomFunction("fun", 3, (array) -> array[0].multiply(array[1]).multiply(array[2]))
@@ -35,6 +35,7 @@ public class CalculatorTest {
                 .addCustomFunction("+", 2, a -> a[0].add(a[1]))
                 .addCustomFunction("×", 2, a -> a[0].multiply(a[1]));
 
+        calculator = new Calculator(context);
     }
 
     @Test
@@ -211,13 +212,13 @@ public class CalculatorTest {
     @Test
     public void calculateCompareAvailableFunctions() {
         List<String> functions = Arrays.asList("**", "log", "atanh", "cos", "atan", "cbrt", "tanh", "−", "sqrt", "×", "sin", "exp", "frac", "^", "tan", "fun2", "sinh", "acosh", "*", "toDegrees", "+", "acos", "toRadians", "-", "/", "cosh", "abs", "negate", "w", "÷", "asin", "asinh", "gamma", "fun");
-        assertEquals(functions, new ArrayList<>(calculator.getAvailableFunctions()));
+        assertEquals(functions, new ArrayList<>(calculator.getContext().getAvailableFunctions()));
     }
 
     @Test
     public void calculateCompareOthers() {
-        assertEquals(calculator.getFunctions().keySet(), calculator.getAvailableFunctions());
-        calculator.setPrecision(10);
-        assertEquals(10, calculator.getPrecision());
+        assertEquals(calculator.getContext().getFunctions().keySet(), calculator.getContext().getAvailableFunctions());
+        calculator.getContext().setPrecision(10);
+        assertEquals(10, calculator.getContext().getPrecision());
     }
 }

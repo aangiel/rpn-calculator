@@ -2,44 +2,25 @@ package io.github.arturangiel.rpncalculator;
 
 import io.github.arturangiel.rpncalculator.exception.*;
 import io.github.arturangiel.rpncalculator.math.FunctionValue;
-import io.github.arturangiel.rpncalculator.math.IMathFunction;
 import org.apfloat.Apfloat;
-import org.apfloat.ApfloatMath;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.ArrayDeque;
+import java.util.NoSuchElementException;
 
 /**
  * Class for Reverse Polish Notation calculations
  */
 public class Calculator {
 
-    private Map<String, FunctionValue> functions;
-    private long precision = 10;
+    private CalculatorContext context;
+
+    public Calculator(CalculatorContext context) {
+        this.context = context;
+    }
 
     public Calculator() {
-        functions = new HashMap<>();
-
-        populateOperations();
-        populateFunctions();
-    }
-
-    private void populateFunctions() {
-        Stream.of(ApfloatMath.class.getMethods())
-                .filter(m -> Apfloat.class.equals(m.getReturnType()))
-                .filter(m -> m.getParameterCount() == 1)
-                .filter(m -> Arrays.equals(m.getParameterTypes(), new Class[]{Apfloat.class}))
-                .filter(m -> Modifier.isStatic(m.getModifiers()))
-                .forEach(m -> functions.put(m.getName(), FunctionValue.forFunction(1, a -> (Apfloat) m.invoke(null, a))));
-    }
-
-    private void populateOperations() {
-        functions.put("+", FunctionValue.forFunction(2, a -> a[0].add(a[1])));
-        functions.put("-", FunctionValue.forFunction(2, a -> a[0].subtract(a[1])));
-        functions.put("*", FunctionValue.forFunction(2, a -> a[0].multiply(a[1])));
-        functions.put("/", FunctionValue.forFunction(2, a -> a[0].divide(a[1])));
+        this.context = CalculatorContext.getDefaultContext();
     }
 
     /**
@@ -59,7 +40,7 @@ public class Calculator {
 
             String item = equationSplit[i];
             try {
-                stack.push(new Apfloat(item, precision));
+                stack.push(new Apfloat(item, context.getPrecision()));
             } catch (NumberFormatException e) {
                 calculateOnStack(item, stack, i);
             }
@@ -75,7 +56,7 @@ public class Calculator {
             throws CalculatorException {
 
         try {
-            FunctionValue functionValue = functions.get(operator);
+            FunctionValue functionValue = context.getFunctions().get(operator);
             Apfloat[] arguments = new Apfloat[functionValue.getParametersCount()];
             for (int i = arguments.length; i > 0; i--) {
                 arguments[i - 1] = stack.pop();
@@ -96,25 +77,7 @@ public class Calculator {
         }
     }
 
-    public Calculator addCustomFunction(String name, int parametersCount, IMathFunction<Apfloat> function) {
-        functions.put(name, FunctionValue.forFunction(parametersCount, function));
-        return this;
+    public CalculatorContext getContext() {
+        return context;
     }
-
-    public Set<String> getAvailableFunctions() {
-        return functions.keySet();
-    }
-
-    public Map<String, FunctionValue> getFunctions() {
-        return functions;
-    }
-
-    public long getPrecision() {
-        return precision;
-    }
-
-    public void setPrecision(long precision) {
-        this.precision = precision;
-    }
-
 }
