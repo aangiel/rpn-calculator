@@ -1,4 +1,4 @@
-package com.github.arturangiel.rpncalculator.exception;
+package io.github.arturangiel.rpncalculator.exception;
 
 public class CalculatorArithmeticException extends CalculatorException {
     public CalculatorArithmeticException(String message) {

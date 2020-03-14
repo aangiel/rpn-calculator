@@ -1,8 +1,8 @@
-package com.github.arturangiel.rpncalculator;
+package io.github.arturangiel.rpncalculator;
 
-import com.github.arturangiel.rpncalculator.exception.*;
-import com.github.arturangiel.rpncalculator.math.FunctionValue;
-import com.github.arturangiel.rpncalculator.math.IMathFunction;
+import io.github.arturangiel.rpncalculator.exception.*;
+import io.github.arturangiel.rpncalculator.math.FunctionValue;
+import io.github.arturangiel.rpncalculator.math.IMathFunction;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 
@@ -11,6 +11,9 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.stream.Stream;
 
+/**
+ * Class for Reverse Polish Notation calculations
+ */
 public class Calculator {
 
     private Map<String, FunctionValue> functions;
@@ -39,6 +42,13 @@ public class Calculator {
         functions.put("/", FunctionValue.forFunction(2, a -> a[0].divide(a[1])));
     }
 
+    /**
+     * Main method for Reverse Polish Notation Calculator
+     *
+     * @param equation String with equation to calculate
+     * @return calculated #Apfloat
+     * @throws CalculatorException abstract Exception (@link #BadEquationException), #BadItemException, #CalculatorArithmeticException, #LackOfArgumentsException, #UnexpectedException
+     */
     public Apfloat calculate(String equation) throws CalculatorException {
 
         String[] equationSplit = equation.trim().split("\\s+");

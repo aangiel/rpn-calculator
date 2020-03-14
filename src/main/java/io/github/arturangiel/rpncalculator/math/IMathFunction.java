@@ -1,4 +1,4 @@
-package com.github.arturangiel.rpncalculator.math;
+package io.github.arturangiel.rpncalculator.math;
 
 import java.lang.reflect.InvocationTargetException;
 

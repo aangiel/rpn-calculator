@@ -1,4 +1,4 @@
-package com.github.arturangiel.rpncalculator.exception;
+package io.github.arturangiel.rpncalculator.exception;
 
 import org.apfloat.Apfloat;
 

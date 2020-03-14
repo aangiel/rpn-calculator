@@ -1,14 +1,14 @@
-package com.github.arturangiel.rpncalculator;
+package io.github.arturangiel.rpncalculator;
 
-import com.github.arturangiel.rpncalculator.exception.*;
+import io.github.arturangiel.rpncalculator.exception.*;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -211,7 +211,7 @@ public class CalculatorTest {
     @Test
     public void calculateCompareAvailableFunctions() {
         List<String> functions = Arrays.asList("**", "log", "atanh", "cos", "atan", "cbrt", "tanh", "−", "sqrt", "×", "sin", "exp", "frac", "^", "tan", "fun2", "sinh", "acosh", "*", "toDegrees", "+", "acos", "toRadians", "-", "/", "cosh", "abs", "negate", "w", "÷", "asin", "asinh", "gamma", "fun");
-        assertEquals(functions, calculator.getAvailableFunctions().stream().collect(Collectors.toList()));
+        assertEquals(functions, new ArrayList<>(calculator.getAvailableFunctions()));
     }
 
     @Test
