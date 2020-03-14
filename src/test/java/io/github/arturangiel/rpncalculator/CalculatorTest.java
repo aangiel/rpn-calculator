@@ -35,7 +35,7 @@ public class CalculatorTest {
                 .addCustomFunction("+", 2, a -> a[0].add(a[1]))
                 .addCustomFunction("×", 2, a -> a[0].multiply(a[1]));
 
-        calculator = new Calculator(context);
+        calculator = CalculatorProvider.getCalculatorWithCustomContext(context);
     }
 
     @Test
