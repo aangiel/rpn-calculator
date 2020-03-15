@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class SupplierStrategy<T extends Number> {
 
-    private Map<Class, DefaultOperationsSupplier> strategies;
+    private Map<Class, DefaultOperationsSupplier<T>> strategies;
 
     public SupplierStrategy() {
         strategies = new HashMap<>();
@@ -18,7 +18,7 @@ public class SupplierStrategy<T extends Number> {
         strategies.put(Apfloat.class, new ApfloatDefaultOperationsSupplier());
     }
 
-    public DefaultOperationsSupplier getSupplier(Class clazz) {
+    public DefaultOperationsSupplier<T> getSupplier(Class<T> clazz) {
         return strategies.get(clazz);
     }
 }

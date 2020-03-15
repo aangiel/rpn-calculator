@@ -3,7 +3,7 @@ package io.github.arturangiel.rpncalculator.supplier;
 import io.github.arturangiel.rpncalculator.math.IMathFunction;
 import org.apfloat.Apfloat;
 
-public class ApfloatDefaultOperationsSupplier implements DefaultOperationsSupplier<Apfloat> {
+public class ApfloatDefaultOperationsSupplier<T extends Number> implements DefaultOperationsSupplier<Apfloat> {
     @Override
     public IMathFunction<Apfloat> getAddFunction() {
         return a -> a[0].add(a[1]);
