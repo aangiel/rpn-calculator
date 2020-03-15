@@ -3,6 +3,6 @@ package io.github.arturangiel.rpncalculator.exception;
 public class LackOfArgumentsException extends CalculatorException {
 
     public LackOfArgumentsException(String item, int position) {
-        super("Lack of arguments for: " + item + " at position: " + (position + 1));
+        super(String.format("Lack of arguments for: %s at position: %d", item, ++position));
     }
 }
