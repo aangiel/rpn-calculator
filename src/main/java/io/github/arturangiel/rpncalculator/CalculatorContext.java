@@ -47,14 +47,7 @@ public class CalculatorContext {
     }
 
     private void populateDefaultOneParameterMathFunctions() {
-        List<Method> methods = Stream.of(ApfloatMath.class.getMethods())
-                .filter(m -> Apfloat.class.equals(m.getReturnType()))
-                .filter(m -> m.getParameterCount() == 1)
-                .filter(m -> Arrays.equals(m.getParameterTypes(), new Class[]{Apfloat.class}))
-                .filter(m -> Modifier.isStatic(m.getModifiers()))
-                .collect(Collectors.toList());
-
-        for (Method m : methods) {
+        for (Method m : getStaticOneParameterMethodsFromApfloatMath()) {
             IMathFunction<Apfloat> function = a -> {
                 try {
                     return (Apfloat) m.invoke(null, a);
@@ -70,6 +63,15 @@ public class CalculatorContext {
 
             functions.put(m.getName(), FunctionValue.forFunction(1, function));
         }
+    }
+
+    private List<Method> getStaticOneParameterMethodsFromApfloatMath() {
+        return Stream.of(ApfloatMath.class.getMethods())
+                .filter(m -> Apfloat.class.equals(m.getReturnType()))
+                .filter(m -> m.getParameterCount() == 1)
+                .filter(m -> Arrays.equals(m.getParameterTypes(), new Class[]{Apfloat.class}))
+                .filter(m -> Modifier.isStatic(m.getModifiers()))
+                .collect(Collectors.toList());
     }
 
     private void populateDefaultOperations() {
