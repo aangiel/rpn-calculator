@@ -1,15 +1,17 @@
 package io.github.arturangiel.rpncalculator;
 
+import io.github.arturangiel.rpncalculator.exception.CalculatorArithmeticException;
+import io.github.arturangiel.rpncalculator.exception.UnexpectedException;
 import io.github.arturangiel.rpncalculator.math.FunctionValue;
 import io.github.arturangiel.rpncalculator.math.IMathFunction;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CalculatorContext {
@@ -41,17 +43,33 @@ public class CalculatorContext {
     }
 
     public static CalculatorContext getEmptyContext() {
-        CalculatorContext context = new CalculatorContext();
-        return context;
+        return new CalculatorContext();
     }
 
     private void populateDefaultOneParameterMathFunctions() {
-        Stream.of(ApfloatMath.class.getMethods())
+        List<Method> methods = Stream.of(ApfloatMath.class.getMethods())
                 .filter(m -> Apfloat.class.equals(m.getReturnType()))
                 .filter(m -> m.getParameterCount() == 1)
                 .filter(m -> Arrays.equals(m.getParameterTypes(), new Class[]{Apfloat.class}))
                 .filter(m -> Modifier.isStatic(m.getModifiers()))
-                .forEach(m -> functions.put(m.getName(), FunctionValue.forFunction(1, a -> (Apfloat) m.invoke(null, a))));
+                .collect(Collectors.toList());
+
+        for (Method m : methods) {
+            IMathFunction<Apfloat> function = a -> {
+                try {
+                    return (Apfloat) m.invoke(null, a);
+                } catch (IllegalAccessException e) {
+                    throw new UnexpectedException(e.getMessage());
+                } catch (InvocationTargetException e) {
+                    if (e.getTargetException() instanceof ArithmeticException)
+                        throw new CalculatorArithmeticException(e.getTargetException().getMessage());
+                    else
+                        throw new UnexpectedException(e.getTargetException().getMessage());
+                }
+            };
+
+            functions.put(m.getName(), FunctionValue.forFunction(1, function));
+        }
     }
 
     private void populateDefaultOperations() {

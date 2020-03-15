@@ -1,10 +1,12 @@
 package io.github.arturangiel.rpncalculator;
 
-import io.github.arturangiel.rpncalculator.exception.*;
+import io.github.arturangiel.rpncalculator.exception.BadEquationException;
+import io.github.arturangiel.rpncalculator.exception.BadItemException;
+import io.github.arturangiel.rpncalculator.exception.CalculatorException;
+import io.github.arturangiel.rpncalculator.exception.LackOfArgumentsException;
 import io.github.arturangiel.rpncalculator.math.FunctionValue;
 import org.apfloat.Apfloat;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayDeque;
 import java.util.NoSuchElementException;
 
@@ -68,13 +70,6 @@ public class CalculatorImpl implements Calculator {
             throw new BadItemException(operator, position);
         } catch (NoSuchElementException e) {
             throw new LackOfArgumentsException(operator, position);
-        } catch (IllegalAccessException e) {
-            throw new UnexpectedException(e.getMessage());
-        } catch (InvocationTargetException e) {
-            if (e.getTargetException() instanceof ArithmeticException)
-                throw new CalculatorArithmeticException(e.getTargetException().getMessage());
-            else
-                throw new UnexpectedException(e.getTargetException().getMessage());
         }
     }
 
