@@ -5,6 +5,8 @@ import io.github.arturangiel.rpncalculator.exception.CalculatorException;
 import io.github.arturangiel.rpncalculator.exception.UnexpectedException;
 import io.github.arturangiel.rpncalculator.math.FunctionValue;
 import io.github.arturangiel.rpncalculator.math.IMathFunction;
+import io.github.arturangiel.rpncalculator.supplier.DefaultOperationsSupplier;
+import io.github.arturangiel.rpncalculator.supplier.SupplierStrategy;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 
@@ -20,36 +22,42 @@ public class CalculatorContext<T extends Number> {
     private Map<String, FunctionValue<T>> functions;
     private long precision;
     private CalculatorContext<T> context;
+    private Class<T> clazz;
 
-    public CalculatorContext() {
+    public CalculatorContext(Class<T> clazz) {
         functions = new HashMap<>();
+        this.clazz = clazz;
+    }
+
+    public Class<T> getClazz() {
+        return clazz;
     }
 
     public CalculatorContext<T> getContext() {
         return context;
     }
 
-    public CalculatorContext<T> getDefaultContext() {
-        context = new CalculatorContext<>();
+    public CalculatorContext<T> getDefaultContext(Class<T> clazz) {
+        context = new CalculatorContext<>(clazz);
         context.populateDefaultOperations();
         context.setPrecision(10);
         return context;
     }
 
-    public CalculatorContext<T> getMathFunctionsContext() {
-        context = getDefaultContext();
+    public CalculatorContext<T> getMathFunctionsContext(Class<T> clazz) {
+        context = getDefaultContext(clazz);
         context.populateDefaultOneParameterMathFunctions();
         return context;
     }
 
-    public CalculatorContext<T> getMathFunctionsAndConstantsContext() {
-        context = getMathFunctionsContext();
+    public CalculatorContext<T> getMathFunctionsAndConstantsContext(Class<T> clazz) {
+        context = getMathFunctionsContext(clazz);
         context.populateConstants();
         return context;
     }
 
-    public CalculatorContext<T> getEmptyContext() {
-        return new CalculatorContext<>();
+    public CalculatorContext<T> getEmptyContext(Class<T> clazz) {
+        return new CalculatorContext<>(clazz);
     }
 
     public CalculatorContext<T> addCustomFunction(String name, int parametersCount, IMathFunction<T> function) {
@@ -58,10 +66,12 @@ public class CalculatorContext<T extends Number> {
     }
 
     private void populateDefaultOperations() {
-        functions.put("+", new FunctionValue<T>(2, a -> (T) ((Apfloat) a[0]).add((Apfloat) a[1])));
-        functions.put("-", new FunctionValue<T>(2, a -> (T) ((Apfloat) a[0]).subtract((Apfloat) a[1])));
-        functions.put("*", new FunctionValue<T>(2, a -> (T) ((Apfloat) a[0]).multiply((Apfloat) a[1])));
-        functions.put("/", new FunctionValue<T>(2, a -> (T) ((Apfloat) a[0]).divide((Apfloat) a[1])));
+        SupplierStrategy<T> supplierStrategy = new SupplierStrategy<>();
+        DefaultOperationsSupplier supplier = supplierStrategy.getSupplier(clazz);
+        functions.put("+", new FunctionValue<T>(2, supplier.getAddFunction()));
+        functions.put("-", new FunctionValue<T>(2, supplier.getSubtractFunction()));
+        functions.put("*", new FunctionValue<T>(2, supplier.getMultiplyFunction()));
+        functions.put("/", new FunctionValue<T>(2, supplier.getDivideFunction()));
     }
 
     private void populateConstants() {

@@ -29,8 +29,8 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
     }
 
     public CalculatorImpl() {
-        context = new CalculatorContext<>();
-        this.context = context.getDefaultContext();
+//        context = new CalculatorContext<>();
+//        this.context = context.getDefaultContext();
     }
 
     /**

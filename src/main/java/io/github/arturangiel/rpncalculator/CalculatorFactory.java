@@ -10,8 +10,8 @@ public class CalculatorFactory<T extends Number> {
 
     private CalculatorContext<T> context;
 
-    public CalculatorFactory() {
-        context = new CalculatorContext<>();
+    public CalculatorFactory(CalculatorContext<T> context) {
+        this.context = context;
     }
 
     public Calculator<T> getDefaultCalculator() {
@@ -22,19 +22,19 @@ public class CalculatorFactory<T extends Number> {
 
     public Calculator<T> getMathFunctionsCalculator() {
         if (mathFunctionsCalculator == null)
-            mathFunctionsCalculator = new CalculatorImpl<>(context.getMathFunctionsContext());
+            mathFunctionsCalculator = new CalculatorImpl<>(context.getMathFunctionsContext(context.getClazz()));
         return mathFunctionsCalculator;
     }
 
     public Calculator<T> getMathFunctionsAndConstantsCalculator() {
         if (mathFunctionsAndConstantsCalculator == null)
-            mathFunctionsAndConstantsCalculator = new CalculatorImpl<>(context.getMathFunctionsAndConstantsContext());
+            mathFunctionsAndConstantsCalculator = new CalculatorImpl<>(context.getMathFunctionsAndConstantsContext(context.getClazz()));
         return mathFunctionsAndConstantsCalculator;
     }
 
     public Calculator<T> getEmptyCalculator() {
         if (emptyCalculator == null)
-            emptyCalculator = new CalculatorImpl<>(context.getEmptyContext());
+            emptyCalculator = new CalculatorImpl<>(context.getEmptyContext(context.getClazz()));
         return emptyCalculator;
     }
 

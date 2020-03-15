@@ -19,9 +19,9 @@ public class CalculatorTest {
 
     @Before
     public void setUp() {
-        CalculatorContext<Apfloat> context = new CalculatorContext<>();
+        CalculatorContext<Apfloat> context = new CalculatorContext<>(Apfloat.class);
 
-        context.getMathFunctionsAndConstantsContext()
+        context.getMathFunctionsAndConstantsContext(Apfloat.class)
                 .addCustomFunction("**", 2, (a) -> a[0].multiply(a[1].multiply(a[0])))
                 .addCustomFunction("^", 2, (a) -> a[0].divide(a[1].multiply(a[0])))
                 .addCustomFunction("fun", 3, (array) -> array[0].multiply(array[1]).multiply(array[2]))
@@ -32,10 +32,10 @@ public class CalculatorTest {
                  */
                 .addCustomFunction("−", 2, a -> a[0].subtract(a[1]))
                 .addCustomFunction("÷", 2, a -> a[0].divide(a[1]))
-                .addCustomFunction("+", 2, a -> a[0].add(a[1]))
+//                .addCustomFunction("+", 2, a -> a[0].add(a[1]))
                 .addCustomFunction("×", 2, a -> a[0].multiply(a[1]));
 
-        CalculatorFactory<Apfloat> factory = new CalculatorFactory<>();
+        CalculatorFactory<Apfloat> factory = new CalculatorFactory<>(context.getContext());
         calculator = factory.getCalculatorWithCustomContext(context.getContext());
     }
 
