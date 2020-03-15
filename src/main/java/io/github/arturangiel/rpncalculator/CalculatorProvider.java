@@ -1,5 +1,7 @@
 package io.github.arturangiel.rpncalculator;
 
+import io.github.arturangiel.rpncalculator.impl.CalculatorImpl;
+
 public class CalculatorProvider {
     private static Calculator defaultCalculator;
     private static Calculator mathFunctionsCalculator;

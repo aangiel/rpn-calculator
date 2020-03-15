@@ -15,7 +15,7 @@ import static org.junit.Assert.assertThrows;
 
 public class CalculatorTest {
 
-    Calculator calculator;
+    Calculator<Apfloat> calculator;
 
     @Before
     public void setUp() {

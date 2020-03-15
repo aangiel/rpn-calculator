@@ -1,5 +1,7 @@
-package io.github.arturangiel.rpncalculator;
+package io.github.arturangiel.rpncalculator.impl;
 
+import io.github.arturangiel.rpncalculator.Calculator;
+import io.github.arturangiel.rpncalculator.CalculatorContext;
 import io.github.arturangiel.rpncalculator.exception.BadEquationException;
 import io.github.arturangiel.rpncalculator.exception.BadItemException;
 import io.github.arturangiel.rpncalculator.exception.CalculatorException;
@@ -15,7 +17,7 @@ import java.util.NoSuchElementException;
 /**
  * Class for Reverse Polish Notation calculations
  */
-public class CalculatorImpl implements Calculator {
+public class CalculatorImpl implements Calculator<Apfloat> {
 
     Logger logger = Logger.getLogger(Calculator.class);
 

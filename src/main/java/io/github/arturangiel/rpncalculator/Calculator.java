@@ -1,11 +1,10 @@
 package io.github.arturangiel.rpncalculator;
 
 import io.github.arturangiel.rpncalculator.exception.CalculatorException;
-import org.apfloat.Apfloat;
 
-public interface Calculator {
+public interface Calculator<T extends Number> {
 
-    Apfloat calculate(String equation) throws CalculatorException;
+    T calculate(String equation) throws CalculatorException;
 
     CalculatorContext getContext();
 }
