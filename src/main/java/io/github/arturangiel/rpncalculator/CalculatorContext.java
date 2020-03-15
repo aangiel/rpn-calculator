@@ -15,48 +15,53 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CalculatorContext {
+public class CalculatorContext<T extends Number> {
 
-    private Map<String, FunctionValue> functions;
+    private Map<String, FunctionValue<T>> functions;
     private long precision;
+    private CalculatorContext<T> context;
 
-    private CalculatorContext() {
+    public CalculatorContext() {
         functions = new HashMap<>();
     }
 
-    public static CalculatorContext getDefaultContext() {
-        CalculatorContext context = new CalculatorContext();
+    public CalculatorContext<T> getContext() {
+        return context;
+    }
+
+    public CalculatorContext<T> getDefaultContext() {
+        context = new CalculatorContext();
         context.populateDefaultOperations();
         context.setPrecision(10);
         return context;
     }
 
-    public static CalculatorContext getMathFunctionsContext() {
-        CalculatorContext context = getDefaultContext();
+    public CalculatorContext<T> getMathFunctionsContext() {
+        context = getDefaultContext();
         context.populateDefaultOneParameterMathFunctions();
         return context;
     }
 
-    public static CalculatorContext getMathFunctionsAndConstantsContext() {
-        CalculatorContext context = getMathFunctionsContext();
+    public CalculatorContext<T> getMathFunctionsAndConstantsContext() {
+        context = getMathFunctionsContext();
         context.populateConstants();
         return context;
     }
 
-    public static CalculatorContext getEmptyContext() {
-        return new CalculatorContext();
+    public CalculatorContext<T> getEmptyContext() {
+        return new CalculatorContext<T>();
     }
 
-    public CalculatorContext addCustomFunction(String name, int parametersCount, IMathFunction<Apfloat> function) {
+    public CalculatorContext<T> addCustomFunction(String name, int parametersCount, IMathFunction<T> function) {
         functions.put(name, FunctionValue.forFunction(parametersCount, function));
         return this;
     }
 
     private void populateDefaultOperations() {
-        functions.put("+", FunctionValue.forFunction(2, a -> a[0].add(a[1])));
-        functions.put("-", FunctionValue.forFunction(2, a -> a[0].subtract(a[1])));
-        functions.put("*", FunctionValue.forFunction(2, a -> a[0].multiply(a[1])));
-        functions.put("/", FunctionValue.forFunction(2, a -> a[0].divide(a[1])));
+        functions.put("+", FunctionValue.forFunction(2, a -> ((Apfloat) a[0]).add((Apfloat) a[1])));
+        functions.put("-", FunctionValue.forFunction(2, a -> ((Apfloat) a[0]).subtract((Apfloat) a[1])));
+        functions.put("*", FunctionValue.forFunction(2, a -> ((Apfloat) a[0]).multiply((Apfloat) a[1])));
+        functions.put("/", FunctionValue.forFunction(2, a -> ((Apfloat) a[0]).divide((Apfloat) a[1])));
     }
 
     private void populateConstants() {
@@ -66,7 +71,7 @@ public class CalculatorContext {
 
     private void populateDefaultOneParameterMathFunctions() {
         for (Method m : getStaticOneParameterMethodsFromApfloatMath()) {
-            IMathFunction<Apfloat> function = a -> invokeApfloatMathMethod(m, a);
+            IMathFunction<T> function = a -> (T) invokeApfloatMathMethod(m, a);
             functions.put(m.getName(), FunctionValue.forFunction(1, function));
         }
     }
@@ -80,7 +85,7 @@ public class CalculatorContext {
                 .collect(Collectors.toList());
     }
 
-    private Apfloat invokeApfloatMathMethod(Method m, Apfloat[] a) throws CalculatorException {
+    private Apfloat invokeApfloatMathMethod(Method m, T[] a) throws CalculatorException {
         try {
             return (Apfloat) m.invoke(null, a);
         } catch (IllegalAccessException e) {
@@ -93,11 +98,11 @@ public class CalculatorContext {
         }
     }
 
-    public Map<String, FunctionValue> getFunctions() {
+    public Map<String, FunctionValue<T>> getFunctions() {
         return functions;
     }
 
-    public void setFunctions(Map<String, FunctionValue> functions) {
+    public void setFunctions(Map<String, FunctionValue<T>> functions) {
         this.functions = functions;
     }
 

@@ -1,17 +1,15 @@
 package io.github.arturangiel.rpncalculator.math;
 
-import org.apfloat.Apfloat;
-
-public class FunctionValue {
+public class FunctionValue<T extends Number> {
     private int parametersCount;
-    private IMathFunction<Apfloat> function;
+    private IMathFunction<T> function;
 
-    public FunctionValue(int parametersCount, IMathFunction<Apfloat> function) {
+    public FunctionValue(int parametersCount, IMathFunction<T> function) {
         this.parametersCount = parametersCount;
         this.function = function;
     }
 
-    public static FunctionValue forFunction(int parametersCount, IMathFunction<Apfloat> function) {
+    public static FunctionValue forFunction(int parametersCount, IMathFunction function) {
         return new FunctionValue(parametersCount, function);
     }
 
@@ -19,7 +17,7 @@ public class FunctionValue {
         return parametersCount;
     }
 
-    public IMathFunction<Apfloat> getFunction() {
+    public IMathFunction<T> getFunction() {
         return function;
     }
 }

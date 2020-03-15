@@ -12,23 +12,25 @@ import org.apfloat.Apfloat;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.NoSuchElementException;
 
 /**
  * Class for Reverse Polish Notation calculations
  */
-public class CalculatorImpl implements Calculator<Apfloat> {
+public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
     Logger logger = Logger.getLogger(Calculator.class);
 
-    private CalculatorContext context;
+    private CalculatorContext<T> context;
 
-    public CalculatorImpl(CalculatorContext context) {
+    public CalculatorImpl(CalculatorContext<T> context) {
         this.context = context;
     }
 
     public CalculatorImpl() {
-        this.context = CalculatorContext.getDefaultContext();
+        context = new CalculatorContext<>();
+        this.context = context.getDefaultContext();
     }
 
     /**
@@ -39,14 +41,14 @@ public class CalculatorImpl implements Calculator<Apfloat> {
      * @throws CalculatorException abstract Exception (@link #BadEquationException), #BadItemException, #CalculatorArithmeticException, #LackOfArgumentsException, #UnexpectedException
      */
     @Override
-    public Apfloat calculate(String equation) throws CalculatorException {
+    public T calculate(String equation) throws CalculatorException {
 
         logger.info(String.format("Calculating equation: %s", equation));
 
         String[] equationSplit = equation.trim().split("\\s+");
         logger.debug(String.format("Equation split with whitespace regex: %s", Arrays.toString(equationSplit)));
 
-        ArrayDeque<Apfloat> stack = new ArrayDeque<>();
+        ArrayDeque<T> stack = new ArrayDeque<>();
 
         for (int i = 0; i < equationSplit.length; i++) {
 
@@ -54,7 +56,7 @@ public class CalculatorImpl implements Calculator<Apfloat> {
             logger.debug(String.format("Processing item '%s' at position %d", item, (i + 1)));
 
             try {
-                stack.push(new Apfloat(item, context.getPrecision()));
+                stack.push((T) new Apfloat(item, context.getPrecision()));
                 logger.debug(String.format("Item '%s' pushed into the stack: %s", item, stack));
             } catch (NumberFormatException e) {
                 calculateOnStack(item, stack, i);
@@ -66,23 +68,23 @@ public class CalculatorImpl implements Calculator<Apfloat> {
             return stack.pop();
         } else {
             logger.error(String.format("Unexpectedly left on stack: %s", stack));
-            throw new BadEquationException(stack);
+            throw new BadEquationException((Deque<Number>) stack);
         }
     }
 
-    private void calculateOnStack(String operator, ArrayDeque<Apfloat> stack, int position)
+    private void calculateOnStack(String operator, ArrayDeque<T> stack, int position)
             throws CalculatorException {
 
         logger.debug(String.format("Processing operator/function '%s' at position %d", operator, (position + 1)));
 
         try {
             FunctionValue functionValue = context.getFunctions().get(operator);
-            Apfloat[] arguments = new Apfloat[functionValue.getParametersCount()];
+            T[] arguments = (T[]) new Apfloat[functionValue.getParametersCount()];
             for (int i = arguments.length; i > 0; i--) {
                 arguments[i - 1] = stack.pop();
             }
             logger.debug(String.format("Took %d arguments (%s) from stack: %s", arguments.length, Arrays.toString(arguments), stack));
-            Apfloat applied = functionValue.getFunction().apply(arguments);
+            T applied = (T) functionValue.getFunction().apply(arguments);
             stack.push(applied);
             logger.debug(String.format("Pushed value %s into the stack: %s", applied, stack));
         } catch (NullPointerException e) {
