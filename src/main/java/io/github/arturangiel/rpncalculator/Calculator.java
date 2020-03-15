@@ -6,5 +6,5 @@ public interface Calculator<T extends Number> {
 
     T calculate(String equation) throws CalculatorException;
 
-    CalculatorContext getContext();
+    CalculatorContext<T> getContext();
 }

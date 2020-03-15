@@ -97,7 +97,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
     }
 
     @Override
-    public CalculatorContext getContext() {
+    public CalculatorContext<T> getContext() {
         return context;
     }
 }

@@ -30,7 +30,7 @@ public class CalculatorContext<T extends Number> {
     }
 
     public CalculatorContext<T> getDefaultContext() {
-        context = new CalculatorContext();
+        context = new CalculatorContext<>();
         context.populateDefaultOperations();
         context.setPrecision(10);
         return context;
@@ -49,30 +49,30 @@ public class CalculatorContext<T extends Number> {
     }
 
     public CalculatorContext<T> getEmptyContext() {
-        return new CalculatorContext<T>();
+        return new CalculatorContext<>();
     }
 
     public CalculatorContext<T> addCustomFunction(String name, int parametersCount, IMathFunction<T> function) {
-        functions.put(name, FunctionValue.forFunction(parametersCount, function));
+        functions.put(name, new FunctionValue<>(parametersCount, function));
         return this;
     }
 
     private void populateDefaultOperations() {
-        functions.put("+", FunctionValue.forFunction(2, a -> ((Apfloat) a[0]).add((Apfloat) a[1])));
-        functions.put("-", FunctionValue.forFunction(2, a -> ((Apfloat) a[0]).subtract((Apfloat) a[1])));
-        functions.put("*", FunctionValue.forFunction(2, a -> ((Apfloat) a[0]).multiply((Apfloat) a[1])));
-        functions.put("/", FunctionValue.forFunction(2, a -> ((Apfloat) a[0]).divide((Apfloat) a[1])));
+        functions.put("+", new FunctionValue<T>(2, a -> (T) ((Apfloat) a[0]).add((Apfloat) a[1])));
+        functions.put("-", new FunctionValue<T>(2, a -> (T) ((Apfloat) a[0]).subtract((Apfloat) a[1])));
+        functions.put("*", new FunctionValue<T>(2, a -> (T) ((Apfloat) a[0]).multiply((Apfloat) a[1])));
+        functions.put("/", new FunctionValue<T>(2, a -> (T) ((Apfloat) a[0]).divide((Apfloat) a[1])));
     }
 
     private void populateConstants() {
-        functions.put("pi", FunctionValue.forFunction(0, (a) -> ApfloatMath.pi(precision)));
-        functions.put("e", FunctionValue.forFunction(0, (a) -> new Apfloat(2.718281828)));
+        functions.put("pi", new FunctionValue<T>(0, (a) -> (T) ApfloatMath.pi(precision)));
+        functions.put("e", new FunctionValue<T>(0, (a) -> (T) new Apfloat(2.718281828)));
     }
 
     private void populateDefaultOneParameterMathFunctions() {
         for (Method m : getStaticOneParameterMethodsFromApfloatMath()) {
             IMathFunction<T> function = a -> (T) invokeApfloatMathMethod(m, a);
-            functions.put(m.getName(), FunctionValue.forFunction(1, function));
+            functions.put(m.getName(), new FunctionValue<T>(1, function));
         }
     }
 
@@ -85,9 +85,9 @@ public class CalculatorContext<T extends Number> {
                 .collect(Collectors.toList());
     }
 
-    private Apfloat invokeApfloatMathMethod(Method m, T[] a) throws CalculatorException {
+    private T invokeApfloatMathMethod(Method m, T[] a) throws CalculatorException {
         try {
-            return (Apfloat) m.invoke(null, a);
+            return (T) m.invoke(null, a);
         } catch (IllegalAccessException e) {
             throw new UnexpectedException(e.getMessage());
         } catch (InvocationTargetException e) {

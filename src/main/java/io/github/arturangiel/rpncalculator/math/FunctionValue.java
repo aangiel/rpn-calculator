@@ -9,9 +9,6 @@ public class FunctionValue<T extends Number> {
         this.function = function;
     }
 
-    public static FunctionValue forFunction(int parametersCount, IMathFunction function) {
-        return new FunctionValue(parametersCount, function);
-    }
 
     public int getParametersCount() {
         return parametersCount;
