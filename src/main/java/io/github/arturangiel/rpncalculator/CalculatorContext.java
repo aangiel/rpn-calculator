@@ -1,6 +1,7 @@
 package io.github.arturangiel.rpncalculator;
 
 import io.github.arturangiel.rpncalculator.exception.CalculatorArithmeticException;
+import io.github.arturangiel.rpncalculator.exception.CalculatorException;
 import io.github.arturangiel.rpncalculator.exception.UnexpectedException;
 import io.github.arturangiel.rpncalculator.math.FunctionValue;
 import io.github.arturangiel.rpncalculator.math.IMathFunction;
@@ -46,21 +47,26 @@ public class CalculatorContext {
         return new CalculatorContext();
     }
 
+    public CalculatorContext addCustomFunction(String name, int parametersCount, IMathFunction<Apfloat> function) {
+        functions.put(name, FunctionValue.forFunction(parametersCount, function));
+        return this;
+    }
+
+    private void populateDefaultOperations() {
+        functions.put("+", FunctionValue.forFunction(2, a -> a[0].add(a[1])));
+        functions.put("-", FunctionValue.forFunction(2, a -> a[0].subtract(a[1])));
+        functions.put("*", FunctionValue.forFunction(2, a -> a[0].multiply(a[1])));
+        functions.put("/", FunctionValue.forFunction(2, a -> a[0].divide(a[1])));
+    }
+
+    private void populateConstants() {
+        functions.put("pi", FunctionValue.forFunction(0, (a) -> ApfloatMath.pi(precision)));
+        functions.put("e", FunctionValue.forFunction(0, (a) -> new Apfloat(2.718281828)));
+    }
+
     private void populateDefaultOneParameterMathFunctions() {
         for (Method m : getStaticOneParameterMethodsFromApfloatMath()) {
-            IMathFunction<Apfloat> function = a -> {
-                try {
-                    return (Apfloat) m.invoke(null, a);
-                } catch (IllegalAccessException e) {
-                    throw new UnexpectedException(e.getMessage());
-                } catch (InvocationTargetException e) {
-                    if (e.getTargetException() instanceof ArithmeticException)
-                        throw new CalculatorArithmeticException(e.getTargetException().getMessage());
-                    else
-                        throw new UnexpectedException(e.getTargetException().getMessage());
-                }
-            };
-
+            IMathFunction<Apfloat> function = a -> invokeApfloatMathMethod(m, a);
             functions.put(m.getName(), FunctionValue.forFunction(1, function));
         }
     }
@@ -74,16 +80,17 @@ public class CalculatorContext {
                 .collect(Collectors.toList());
     }
 
-    private void populateDefaultOperations() {
-        functions.put("+", FunctionValue.forFunction(2, a -> a[0].add(a[1])));
-        functions.put("-", FunctionValue.forFunction(2, a -> a[0].subtract(a[1])));
-        functions.put("*", FunctionValue.forFunction(2, a -> a[0].multiply(a[1])));
-        functions.put("/", FunctionValue.forFunction(2, a -> a[0].divide(a[1])));
-    }
-
-    private void populateConstants() {
-        functions.put("pi", FunctionValue.forFunction(0, (a) -> ApfloatMath.pi(precision)));
-        functions.put("e", FunctionValue.forFunction(0, (a) -> new Apfloat(2.718281828)));
+    private Apfloat invokeApfloatMathMethod(Method m, Apfloat[] a) throws CalculatorException {
+        try {
+            return (Apfloat) m.invoke(null, a);
+        } catch (IllegalAccessException e) {
+            throw new UnexpectedException(e.getMessage());
+        } catch (InvocationTargetException e) {
+            if (ArithmeticException.class.equals(e.getCause().getClass()))
+                throw new CalculatorArithmeticException(e.getCause().getMessage());
+            else
+                throw new UnexpectedException(e.getCause().getMessage());
+        }
     }
 
     public Map<String, FunctionValue> getFunctions() {
@@ -100,11 +107,6 @@ public class CalculatorContext {
 
     public void setPrecision(long precision) {
         this.precision = precision;
-    }
-
-    public CalculatorContext addCustomFunction(String name, int parametersCount, IMathFunction<Apfloat> function) {
-        functions.put(name, FunctionValue.forFunction(parametersCount, function));
-        return this;
     }
 
     public Set<String> getAvailableFunctions() {
