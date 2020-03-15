@@ -71,7 +71,7 @@ public class CalculatorImpl implements Calculator {
     private void calculateOnStack(String operator, ArrayDeque<Apfloat> stack, int position)
             throws CalculatorException {
 
-        logger.debug(String.format("Processing operator/function '%s' at position %d", operator, position));
+        logger.debug(String.format("Processing operator/function '%s' at position %d", operator, (position + 1)));
 
         try {
             FunctionValue functionValue = context.getFunctions().get(operator);
@@ -79,15 +79,15 @@ public class CalculatorImpl implements Calculator {
             for (int i = arguments.length; i > 0; i--) {
                 arguments[i - 1] = stack.pop();
             }
-            logger.debug(String.format("Took %d arguments (%s) from stack: %s", arguments.length, arguments, stack));
+            logger.debug(String.format("Took %d arguments (%s) from stack: %s", arguments.length, Arrays.toString(arguments), stack));
             Apfloat applied = functionValue.getFunction().apply(arguments);
             stack.push(applied);
             logger.debug(String.format("Pushed value %s into the stack: %s", applied, stack));
         } catch (NullPointerException e) {
-            logger.error(String.format("Operator/function '%s' at position %d unsupported", operator, position));
+            logger.error(String.format("Operator/function '%s' at position %d unsupported", operator, (position + 1)));
             throw new BadItemException(operator, position);
         } catch (NoSuchElementException e) {
-            logger.error(String.format("Unexpected end of stack for operator '%s' at position %d", operator, position));
+            logger.error(String.format("Unexpected end of stack for operator '%s' at position %d", operator, (position + 1)));
             throw new LackOfArgumentsException(operator, position);
         }
     }
