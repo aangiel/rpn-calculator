@@ -78,13 +78,13 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         logger.debug(String.format("Processing operator/function '%s' at position %d", operator, (position + 1)));
 
         try {
-            FunctionValue functionValue = context.getFunctions().get(operator);
+            FunctionValue<T> functionValue = context.getFunctions().get(operator);
             T[] arguments = (T[]) new Apfloat[functionValue.getParametersCount()];
             for (int i = arguments.length; i > 0; i--) {
                 arguments[i - 1] = stack.pop();
             }
             logger.debug(String.format("Took %d arguments (%s) from stack: %s", arguments.length, Arrays.toString(arguments), stack));
-            T applied = (T) functionValue.getFunction().apply(arguments);
+            T applied = functionValue.getFunction().apply(arguments);
             stack.push(applied);
             logger.debug(String.format("Pushed value %s into the stack: %s", applied, stack));
         } catch (NullPointerException e) {

@@ -67,7 +67,7 @@ public class CalculatorContext<T extends Number> {
 
     private void populateDefaultOperations() {
         SupplierStrategy<T> supplierStrategy = new SupplierStrategy<>();
-        DefaultOperationsSupplier supplier = supplierStrategy.getSupplier(clazz);
+        DefaultOperationsSupplier<T> supplier = supplierStrategy.getSupplier(clazz);
         functions.put("+", new FunctionValue<T>(2, supplier.getAddFunction()));
         functions.put("-", new FunctionValue<T>(2, supplier.getSubtractFunction()));
         functions.put("*", new FunctionValue<T>(2, supplier.getMultiplyFunction()));
