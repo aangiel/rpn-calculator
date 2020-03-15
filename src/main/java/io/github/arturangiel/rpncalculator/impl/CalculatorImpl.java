@@ -8,8 +8,9 @@ import io.github.arturangiel.rpncalculator.exception.CalculatorException;
 import io.github.arturangiel.rpncalculator.exception.LackOfArgumentsException;
 import io.github.arturangiel.rpncalculator.math.FunctionValue;
 import org.apache.log4j.Logger;
-import org.apfloat.Apfloat;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
@@ -56,10 +57,16 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
             logger.debug(String.format("Processing item '%s' at position %d", item, (i + 1)));
 
             try {
-                stack.push((T) new Apfloat(item, context.getPrecision()));
+                T toPush = context.getClazz().getConstructor(String.class, long.class).newInstance(item, context.getPrecision());
+                stack.push(toPush);
                 logger.debug(String.format("Item '%s' pushed into the stack: %s", item, stack));
-            } catch (NumberFormatException e) {
-                calculateOnStack(item, stack, i);
+            } catch (InvocationTargetException e) {
+                if (NumberFormatException.class.equals(e.getTargetException().getClass()))
+                    calculateOnStack(item, stack, i);
+                else
+                    e.printStackTrace();
+            } catch (InstantiationException | NoSuchMethodException | IllegalAccessException e) {
+                e.printStackTrace();
             }
         }
 
@@ -79,7 +86,8 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
         try {
             FunctionValue<T> functionValue = context.getFunctions().get(operator);
-            T[] arguments = (T[]) new Apfloat[functionValue.getParametersCount()];
+            @SuppressWarnings("unchecked")
+            T[] arguments = (T[]) Array.newInstance(context.getClazz(), functionValue.getParametersCount());
             for (int i = arguments.length; i > 0; i--) {
                 arguments[i - 1] = stack.pop();
             }
