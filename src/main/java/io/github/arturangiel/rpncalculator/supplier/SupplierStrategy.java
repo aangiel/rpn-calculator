@@ -16,6 +16,7 @@ public class SupplierStrategy<T extends Number> {
 
     private void populateStrategies() {
         strategies.put(Apfloat.class, new ApfloatDefaultOperationsSupplier());
+        strategies.put(Double.class, new DoubleDefaultOperationsSupplier());
     }
 
     public DefaultOperationsSupplier<T> getSupplier(Class<T> clazz) {

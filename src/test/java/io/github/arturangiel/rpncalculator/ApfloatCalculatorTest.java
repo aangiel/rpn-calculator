@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
-public class CalculatorTest {
+public class ApfloatCalculatorTest {
 
     Calculator<Apfloat> calculator;
 

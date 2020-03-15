@@ -2,14 +2,12 @@ package io.github.arturangiel.rpncalculator.impl;
 
 import io.github.arturangiel.rpncalculator.Calculator;
 import io.github.arturangiel.rpncalculator.CalculatorContext;
-import io.github.arturangiel.rpncalculator.exception.BadEquationException;
-import io.github.arturangiel.rpncalculator.exception.BadItemException;
-import io.github.arturangiel.rpncalculator.exception.CalculatorException;
-import io.github.arturangiel.rpncalculator.exception.LackOfArgumentsException;
+import io.github.arturangiel.rpncalculator.exception.*;
 import io.github.arturangiel.rpncalculator.math.FunctionValue;
 import org.apache.log4j.Logger;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayDeque;
 import java.util.Arrays;
@@ -38,7 +36,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
      * Main method for Reverse Polish Notation Calculator
      *
      * @param equation String with equation to calculate
-     * @return calculated #Apfloat
+     * @return result of calculation
      * @throws CalculatorException abstract Exception (@link #BadEquationException), #BadItemException, #CalculatorArithmeticException, #LackOfArgumentsException, #UnexpectedException
      */
     @Override
@@ -56,8 +54,25 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
             String item = equationSplit[i];
             logger.debug(String.format("Processing item '%s' at position %d", item, (i + 1)));
 
+            Constructor<T> constructor;
+
             try {
-                T toPush = context.getClazz().getConstructor(String.class, long.class).newInstance(item, context.getPrecision());
+                constructor = context.getClazz().getConstructor(String.class, long.class);
+            } catch (NoSuchMethodException e) {
+                try {
+                    constructor = context.getClazz().getConstructor(String.class);
+                } catch (NoSuchMethodException ex) {
+                    logger.error("No constructor");
+                    throw new UnexpectedException("No constructors (String, long) and (String)");
+                }
+            }
+
+            try {
+                T toPush;
+                if (constructor.getParameterCount() == 1)
+                    toPush = constructor.newInstance(item);
+                else
+                    toPush = constructor.newInstance(item, context.getPrecision());
                 stack.push(toPush);
                 logger.debug(String.format("Item '%s' pushed into the stack: %s", item, stack));
             } catch (InvocationTargetException e) {
@@ -65,7 +80,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
                     calculateOnStack(item, stack, i);
                 else
                     e.printStackTrace();
-            } catch (InstantiationException | NoSuchMethodException | IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
