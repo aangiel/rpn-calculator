@@ -47,42 +47,16 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         String[] equationSplit = equation.trim().split("\\s+");
         logger.debug(String.format("Equation split with whitespace regex: %s", Arrays.toString(equationSplit)));
 
-        ArrayDeque<T> stack = new ArrayDeque<>();
+        Deque<T> stack = new ArrayDeque<>();
 
         for (int i = 0; i < equationSplit.length; i++) {
 
             String item = equationSplit[i];
             logger.debug(String.format("Processing item '%s' at position %d", item, (i + 1)));
 
-            Constructor<T> constructor;
+            calculateItemAndPush(item, stack, i);
+            logger.debug(String.format("Item '%s' pushed into the stack: %s", item, stack));
 
-            try {
-                constructor = context.getClazz().getConstructor(String.class, long.class);
-            } catch (NoSuchMethodException e) {
-                try {
-                    constructor = context.getClazz().getConstructor(String.class);
-                } catch (NoSuchMethodException ex) {
-                    logger.error("No constructor");
-                    throw new UnexpectedException("No constructors (String, long) and (String)");
-                }
-            }
-
-            try {
-                T toPush;
-                if (constructor.getParameterCount() == 1)
-                    toPush = constructor.newInstance(item);
-                else
-                    toPush = constructor.newInstance(item, context.getPrecision());
-                stack.push(toPush);
-                logger.debug(String.format("Item '%s' pushed into the stack: %s", item, stack));
-            } catch (InvocationTargetException e) {
-                if (NumberFormatException.class.equals(e.getTargetException().getClass()))
-                    calculateOnStack(item, stack, i);
-                else
-                    e.printStackTrace();
-            } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
         }
 
         if (stack.size() == 1) {
@@ -94,7 +68,42 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         }
     }
 
-    private void calculateOnStack(String operator, ArrayDeque<T> stack, int position)
+    private void calculateItemAndPush(String item, Deque<T> stack, int position) throws CalculatorException {
+        Constructor<T> constructor;
+
+        try {
+            /*
+             * Used with Apfloat
+             */
+            constructor = context.getClazz().getConstructor(String.class, long.class);
+        } catch (NoSuchMethodException e) {
+            try {
+                /*
+                 * Used with other classes extending Number (i.e. Double, BigDecimal)
+                 */
+                constructor = context.getClazz().getConstructor(String.class);
+            } catch (NoSuchMethodException ex) {
+                logger.error("No constructor");
+                throw new UnexpectedException("No constructors (String, long) and (String)");
+            }
+        }
+
+        try {
+            if (constructor.getParameterCount() == 1)
+                stack.push(constructor.newInstance(item));
+            else
+                stack.push(constructor.newInstance(item, context.getPrecision()));
+        } catch (InvocationTargetException e) {
+            if (NumberFormatException.class.equals(e.getTargetException().getClass()))
+                calculateOnStack(item, stack, position);
+            else
+                throw new UnexpectedException("");
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new UnexpectedException("");
+        }
+    }
+
+    private void calculateOnStack(String operator, Deque<T> stack, int position)
             throws CalculatorException {
 
         logger.debug(String.format("Processing operator/function '%s' at position %d", operator, (position + 1)));
