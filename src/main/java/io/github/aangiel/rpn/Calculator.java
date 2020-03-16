@@ -1,6 +1,6 @@
-package io.github.arturangiel.rpncalculator;
+package io.github.aangiel.rpn;
 
-import io.github.arturangiel.rpncalculator.exception.CalculatorException;
+import io.github.aangiel.rpn.exception.CalculatorException;
 
 public interface Calculator<T extends Number> {
 

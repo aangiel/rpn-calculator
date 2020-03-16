@@ -1,6 +1,6 @@
-package io.github.arturangiel.rpncalculator;
+package io.github.aangiel.rpn;
 
-import io.github.arturangiel.rpncalculator.exception.*;
+import io.github.aangiel.rpn.exception.*;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 import org.junit.Before;

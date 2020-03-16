@@ -1,6 +1,6 @@
-package io.github.arturangiel.rpncalculator.supplier;
+package io.github.aangiel.rpn.supplier;
 
-import io.github.arturangiel.rpncalculator.math.IMathFunction;
+import io.github.aangiel.rpn.math.IMathFunction;
 
 public class DoubleDefaultOperationsSupplier<T extends Number> implements DefaultOperationsSupplier<Double> {
     @Override

@@ -1,4 +1,4 @@
-package io.github.arturangiel.rpncalculator.exception;
+package io.github.aangiel.rpn.exception;
 
 import java.util.Deque;
 

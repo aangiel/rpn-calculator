@@ -1,6 +1,6 @@
-package io.github.arturangiel.rpncalculator.math;
+package io.github.aangiel.rpn.math;
 
-import io.github.arturangiel.rpncalculator.exception.CalculatorException;
+import io.github.aangiel.rpn.exception.CalculatorException;
 
 @FunctionalInterface
 public interface IMathFunction<T extends Number> {

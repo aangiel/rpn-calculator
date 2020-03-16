@@ -1,6 +1,6 @@
-package io.github.arturangiel.rpncalculator;
+package io.github.aangiel.rpn;
 
-import io.github.arturangiel.rpncalculator.impl.CalculatorImpl;
+import io.github.aangiel.rpn.impl.CalculatorImpl;
 
 public class CalculatorFactory<T extends Number> {
     private Calculator<T> defaultCalculator;

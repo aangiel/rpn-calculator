@@ -1,4 +1,4 @@
-package io.github.arturangiel.rpncalculator.math;
+package io.github.aangiel.rpn.math;
 
 public class FunctionValue<T extends Number> {
     private int parametersCount;

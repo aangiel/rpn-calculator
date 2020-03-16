@@ -1,6 +1,6 @@
-package io.github.arturangiel.rpncalculator.supplier;
+package io.github.aangiel.rpn.supplier;
 
-import io.github.arturangiel.rpncalculator.math.IMathFunction;
+import io.github.aangiel.rpn.math.IMathFunction;
 import org.apfloat.Apfloat;
 
 public class ApfloatDefaultOperationsSupplier<T extends Number> implements DefaultOperationsSupplier<Apfloat> {

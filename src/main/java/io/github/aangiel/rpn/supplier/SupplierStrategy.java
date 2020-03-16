@@ -1,4 +1,4 @@
-package io.github.arturangiel.rpncalculator.supplier;
+package io.github.aangiel.rpn.supplier;
 
 import org.apfloat.Apfloat;
 

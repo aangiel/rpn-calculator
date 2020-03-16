@@ -1,9 +1,9 @@
-package io.github.arturangiel.rpncalculator.impl;
+package io.github.aangiel.rpn.impl;
 
-import io.github.arturangiel.rpncalculator.Calculator;
-import io.github.arturangiel.rpncalculator.CalculatorContext;
-import io.github.arturangiel.rpncalculator.exception.*;
-import io.github.arturangiel.rpncalculator.math.FunctionValue;
+import io.github.aangiel.rpn.Calculator;
+import io.github.aangiel.rpn.CalculatorContext;
+import io.github.aangiel.rpn.exception.*;
+import io.github.aangiel.rpn.math.FunctionValue;
 import org.apache.log4j.Logger;
 
 import java.lang.reflect.Array;

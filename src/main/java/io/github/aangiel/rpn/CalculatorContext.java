@@ -1,12 +1,12 @@
-package io.github.arturangiel.rpncalculator;
+package io.github.aangiel.rpn;
 
-import io.github.arturangiel.rpncalculator.exception.CalculatorArithmeticException;
-import io.github.arturangiel.rpncalculator.exception.CalculatorException;
-import io.github.arturangiel.rpncalculator.exception.UnexpectedException;
-import io.github.arturangiel.rpncalculator.math.FunctionValue;
-import io.github.arturangiel.rpncalculator.math.IMathFunction;
-import io.github.arturangiel.rpncalculator.supplier.DefaultOperationsSupplier;
-import io.github.arturangiel.rpncalculator.supplier.SupplierStrategy;
+import io.github.aangiel.rpn.exception.CalculatorArithmeticException;
+import io.github.aangiel.rpn.exception.CalculatorException;
+import io.github.aangiel.rpn.exception.UnexpectedException;
+import io.github.aangiel.rpn.math.FunctionValue;
+import io.github.aangiel.rpn.math.IMathFunction;
+import io.github.aangiel.rpn.supplier.DefaultOperationsSupplier;
+import io.github.aangiel.rpn.supplier.SupplierStrategy;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 
