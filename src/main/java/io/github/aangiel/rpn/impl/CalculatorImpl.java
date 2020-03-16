@@ -4,7 +4,8 @@ import io.github.aangiel.rpn.Calculator;
 import io.github.aangiel.rpn.CalculatorContext;
 import io.github.aangiel.rpn.exception.*;
 import io.github.aangiel.rpn.math.FunctionValue;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -19,7 +20,7 @@ import java.util.NoSuchElementException;
  */
 public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
-    Logger logger = Logger.getLogger(Calculator.class);
+    Logger logger = LogManager.getLogger(Calculator.class);
 
     private CalculatorContext<T> context;
 
