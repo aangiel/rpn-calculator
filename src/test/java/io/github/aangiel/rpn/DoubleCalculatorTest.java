@@ -22,6 +22,19 @@ public class DoubleCalculatorTest {
         CalculatorContext<Double> context = new CalculatorContext<>(Double.class);
 
         CalculatorFactory<Double> factory = new CalculatorFactory<>(context.getDefaultContext(Double.class));
+        context.getContext()
+                .addCustomFunction("**", 2, (a) -> a[0] * (a[1] * a[0]))
+                .addCustomFunction("^", 2, (a) -> a[0] / (a[1] * a[0]))
+                .addCustomFunction("fun", 3, (array) -> array[0] * array[1] * array[2])
+                .addCustomFunction("fun2", 4, (array) -> array[0] * array[1] * array[2] - array[3])
+
+                /*
+                 * Operations added from example: https://en.wikipedia.org/wiki/Reverse_Polish_notation
+                 */
+                .addCustomFunction("−", 2, a -> a[0] - a[1])
+                .addCustomFunction("÷", 2, a -> a[0] / a[1])
+//                .addCustomFunction("+", 2, a -> a[0].add(a[1]))
+                .addCustomFunction("×", 2, a -> a[0] * a[1]);
         calculator = factory.getCalculatorWithCustomContext(context.getContext());
     }
 
@@ -30,23 +43,20 @@ public class DoubleCalculatorTest {
         assertEquals(new Double(14.0), calculator.calculate("5 1 2 + 4 * + 3 -"));
         assertEquals(new Double(40), calculator.calculate("12 2 3 4 * 10 5 / + * +"));
         assertEquals(new Double(4), calculator.calculate("2 2 +"));
-        /*
-         * Only for a while
-         */
-//        assertEquals(new Double(-0.448073616), calculator.calculate("90 cos"));
+        assertEquals(new Double(-0.448073616), calculator.calculate("90 cos"));
         assertEquals(new Double(5), calculator.calculate("15 7 1 1 + - / 3 * 2 1 1 + + -"));
 
         /*
          * Example copied from https://en.wikipedia.org/wiki/Reverse_Polish_notation
          * Operands added in setUp method
          */
-//        assertEquals(new Apfloat(5), calculator.calculate("15 7 1 1 + − ÷ 3 × 2 1 1 + + −"));
+        assertEquals(new Double(5), calculator.calculate("15 7 1 1 + − ÷ 3 × 2 1 1 + + −"));
     }
 
     @Test
     public void calculateBadEquationException() {
         BadEquationException exception = assertThrows(BadEquationException.class, () -> calculator.calculate("12 2 3 4 * 10 5 / + * + 3"));
-        assertEquals("Left on stack: [3, 4e1]", exception.getMessage());
+        assertEquals("Left on stack: [3.0, 40.0]", exception.getMessage());
     }
 
     @Test
@@ -66,17 +76,17 @@ public class DoubleCalculatorTest {
 
     @Test
     public void calculateWithCustomOperation() throws CalculatorException {
-        assertEquals(new Apfloat(10), calculator.calculate("5 1 2 ** 4 * + 3 -"));
-        assertEquals(new Apfloat(-2.875), calculator.calculate("5 1 2 ** 4 * ^ 3 -"));
+        assertEquals(new Double(10), calculator.calculate("5 1 2 ** 4 * + 3 -"));
+        assertEquals(new Double(-2.875), calculator.calculate("5 1 2 ** 4 * ^ 3 -"));
 
     }
 
     @Test
     public void calculateWithCustomFunction() throws CalculatorException {
-        assertEquals(new Apfloat(98), calculator.calculate("5 1 4 3 2 fun * 4 * + 3 -"));
-        assertEquals(new Apfloat(98), calculator.calculate("5 1  4  3  2 fun * 4 * + 3 -"));
-        assertEquals(new Apfloat(102), calculator.calculate("5 1 2 3 4 fun * 4 * + 3.5 0 0 1 fun2 -"));
-        assertEquals(new Apfloat(102), calculator.calculate("5 1 24 * 4 * + -1 -"));
+        assertEquals(new Double(98), calculator.calculate("5 1 4 3 2 fun * 4 * + 3 -"));
+        assertEquals(new Double(98), calculator.calculate("5 1  4  3  2 fun * 4 * + 3 -"));
+        assertEquals(new Double(102), calculator.calculate("5 1 2 3 4 fun * 4 * + 3.5 0 0 1 fun2 -"));
+        assertEquals(new Double(102), calculator.calculate("5 1 24 * 4 * + -1 -"));
     }
 
     @Test
@@ -106,17 +116,17 @@ public class DoubleCalculatorTest {
 
     @Test
     public void calculateFloatingPoint() throws CalculatorException {
-        assertEquals(new Apfloat(17.54733345), calculator.calculate("12 23.234134 0.34234 12.2344534 * / +"));
+        assertEquals(new Double(17.54733345318171), calculator.calculate("12 23.234134 0.34234 12.2344534 * / +"));
     }
 
     @Test
     public void calculateWithMathFunctions() throws CalculatorException {
-        assertEquals(new Apfloat(5.34323729e12), calculator.calculate("23 tanh 30 cosh *"));
+        assertEquals(new Double(5.34323729e12), calculator.calculate("23 tanh 30 cosh *"));
     }
 
     @Test
     public void calculateHardOne() throws CalculatorException {
-        assertEquals(new Apfloat(-5.068680686e-9),
+        assertEquals(new Double(-5.068680686e-9),
                 calculator.calculate("-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 /"));
 
         BadItemException badItemException = assertThrows(BadItemException.class,
@@ -151,52 +161,52 @@ public class DoubleCalculatorTest {
     public void calculateEmpty() throws CalculatorException {
         BadItemException badItemException = assertThrows(BadItemException.class, () -> calculator.calculate(""));
         assertEquals("Bad item: '' at position: 1", badItemException.getMessage());
-        assertEquals(new Apfloat(2), calculator.calculate("2"));
+        assertEquals(new Double(2), calculator.calculate("2"));
     }
 
     @Test
     public void calculateInnerFunctions() throws CalculatorException {
         Apfloat radians = ApfloatMath.toRadians(new Apfloat(90, 10));
-        assertEquals(new Apfloat(1), calculator.calculate(radians + " sin"));
-        assertEquals(new Apfloat(1.570796326), calculator.calculate("90 toRadians"));
-        assertEquals(new Apfloat(1), calculator.calculate("90 toRadians sin"));
+        assertEquals(new Double(1), calculator.calculate(radians + " sin"));
+        assertEquals(new Double(1.570796326), calculator.calculate("90 toRadians"));
+        assertEquals(new Double(1), calculator.calculate("90 toRadians sin"));
     }
 
     @Test
     public void calculateAllStaticMethods() throws CalculatorException {
-        assertEquals(new Apfloat(4.49980967), calculator.calculate("90 log"));
+        assertEquals(new Double(4.49980967), calculator.calculate("90 log"));
 
         CalculatorArithmeticException calculatorArithmeticException1
                 = assertThrows(CalculatorArithmeticException.class, () -> calculator.calculate("0 log"));
         assertEquals("Logarithm of zero", calculatorArithmeticException1.getMessage());
 
-        assertEquals(new Apfloat(0), calculator.calculate("0 atanh"));
+        assertEquals(new Double(0), calculator.calculate("0 atanh"));
 
         CalculatorArithmeticException calculatorArithmeticException
                 = assertThrows(CalculatorArithmeticException.class, () -> calculator.calculate("10 atanh"));
         assertEquals("Logarithm of negative number; result would be complex", calculatorArithmeticException.getMessage());
 
-        assertEquals(new Apfloat(1), calculator.calculate("0 cos"));
-        assertEquals(new Apfloat(0), calculator.calculate("0 atan"));
-        assertEquals(new Apfloat(0), calculator.calculate("0 cbrt"));
-        assertEquals(new Apfloat(0), calculator.calculate("0 tanh"));
-        assertEquals(new Apfloat(0), calculator.calculate("0 sqrt"));
-        assertEquals(new Apfloat(0), calculator.calculate("0 sin"));
-        assertEquals(new Apfloat(1), calculator.calculate("0 exp"));
-        assertEquals(new Apfloat(0), calculator.calculate("0 frac"));
-        assertEquals(new Apfloat(0), calculator.calculate("0 tan"));
-        assertEquals(new Apfloat(3.626860407, 10), calculator.calculate("2 sinh"));
-        assertEquals(new Apfloat(1.762747174, 10), calculator.calculate("3 acosh"));
-        assertEquals(new Apfloat(2.864788975e2), calculator.calculate("5 toDegrees"));
-        assertEquals(new Apfloat(1.047197551), calculator.calculate("0.5 acos"));
-        assertEquals(new Apfloat(8.726646259e-2), calculator.calculate("5 toRadians"));
-        assertEquals(new Apfloat(1), calculator.calculate("0 cosh"));
-        assertEquals(new Apfloat(10), calculator.calculate("-10 abs"));
-        assertEquals(new Apfloat(-5), calculator.calculate("5 negate"));
-        assertEquals(new Apfloat(0), calculator.calculate("0 w"));
-        assertEquals(new Apfloat(0), calculator.calculate("0 asin"));
-        assertEquals(new Apfloat(0), calculator.calculate("0 asinh"));
-        assertEquals(new Apfloat(2.4e1), calculator.calculate("5 gamma"));
+        assertEquals(new Double(1), calculator.calculate("0 cos"));
+        assertEquals(new Double(0), calculator.calculate("0 atan"));
+        assertEquals(new Double(0), calculator.calculate("0 cbrt"));
+        assertEquals(new Double(0), calculator.calculate("0 tanh"));
+        assertEquals(new Double(0), calculator.calculate("0 sqrt"));
+        assertEquals(new Double(0), calculator.calculate("0 sin"));
+        assertEquals(new Double(1), calculator.calculate("0 exp"));
+        assertEquals(new Double(0), calculator.calculate("0 frac"));
+        assertEquals(new Double(0), calculator.calculate("0 tan"));
+        assertEquals(new Double(3.626860407), calculator.calculate("2 sinh"));
+        assertEquals(new Double(1.762747174), calculator.calculate("3 acosh"));
+        assertEquals(new Double(2.864788975e2), calculator.calculate("5 toDegrees"));
+        assertEquals(new Double(1.047197551), calculator.calculate("0.5 acos"));
+        assertEquals(new Double(8.726646259e-2), calculator.calculate("5 toRadians"));
+        assertEquals(new Double(1), calculator.calculate("0 cosh"));
+        assertEquals(new Double(10), calculator.calculate("-10 abs"));
+        assertEquals(new Double(-5), calculator.calculate("5 negate"));
+        assertEquals(new Double(0), calculator.calculate("0 w"));
+        assertEquals(new Double(0), calculator.calculate("0 asin"));
+        assertEquals(new Double(0), calculator.calculate("0 asinh"));
+        assertEquals(new Double(2.4e1), calculator.calculate("5 gamma"));
     }
 
     @Test
@@ -214,9 +224,9 @@ public class DoubleCalculatorTest {
 
     @Test
     public void calculateConstants() throws CalculatorException {
-        assertEquals(new Apfloat(6.283185307), calculator.calculate("pi 2 *"));
-        assertEquals(new Apfloat(3.141592653), calculator.calculate("pi"));
-        assertEquals(new Apfloat(2.718281828), calculator.calculate("e"));
-        assertEquals(new Apfloat(1.359140913), calculator.calculate("e 2 /"));
+        assertEquals(new Double(6.283185307), calculator.calculate("pi 2 *"));
+        assertEquals(new Double(3.141592653), calculator.calculate("pi"));
+        assertEquals(new Double(2.718281828), calculator.calculate("e"));
+        assertEquals(new Double(1.359140913), calculator.calculate("e 2 /"));
     }
 }
