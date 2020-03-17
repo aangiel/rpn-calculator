@@ -63,7 +63,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
             return stack.pop();
         } else {
             logger.error("Unexpectedly left on stack: {}", stack);
-            throw new BadEquationException((Deque<Number>) stack);
+            throw new BadEquationException(stack);
         }
     }
 
