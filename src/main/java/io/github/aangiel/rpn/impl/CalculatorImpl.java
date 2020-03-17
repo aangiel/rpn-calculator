@@ -43,28 +43,26 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
     @Override
     public T calculate(String equation) throws CalculatorException {
 
-        logger.info(String.format("Calculating equation: %s", equation));
+        logger.info("Calculating equation: {}", equation);
 
         String[] equationSplit = equation.trim().split("\\s+");
-        logger.debug(String.format("Equation split with whitespace regex: %s", Arrays.toString(equationSplit)));
+        logger.debug("Equation split with whitespace regex: {}", Arrays.toString(equationSplit));
 
         Deque<T> stack = new ArrayDeque<>();
 
         for (int i = 0; i < equationSplit.length; i++) {
 
             String item = equationSplit[i];
-            logger.debug(String.format("Processing item '%s' at position %d", item, (i + 1)));
+            logger.debug("Processing item '{}' at position {}", item, (i + 1));
 
             calculateItemAndPush(item, stack, i);
-            logger.debug(String.format("Item '%s' pushed into the stack: %s", item, stack));
-
         }
 
         if (stack.size() == 1) {
-            logger.info(String.format("Result = %s", stack.peek()));
+            logger.info("Result = {}", stack.peek());
             return stack.pop();
         } else {
-            logger.error(String.format("Unexpectedly left on stack: %s", stack));
+            logger.error("Unexpectedly left on stack: {}", stack);
             throw new BadEquationException((Deque<Number>) stack);
         }
     }
@@ -94,6 +92,8 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
                 stack.push(constructor.newInstance(item));
             else
                 stack.push(constructor.newInstance(item, context.getPrecision()));
+
+            logger.debug("Item '{}' pushed into the stack: {}", item, stack);
         } catch (InvocationTargetException e) {
             if (NumberFormatException.class.equals(e.getTargetException().getClass()))
                 calculateOnStack(item, stack, position);
@@ -107,7 +107,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
     private void calculateOnStack(String operator, Deque<T> stack, int position)
             throws CalculatorException {
 
-        logger.debug(String.format("Processing operator/function '%s' at position %d", operator, (position + 1)));
+        logger.debug("Processing operator/function '{}' at position {}", operator, (position + 1));
 
         try {
             FunctionValue<T> functionValue = context.getFunctions().get(operator);
@@ -116,15 +116,15 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
             for (int i = arguments.length; i > 0; i--) {
                 arguments[i - 1] = stack.pop();
             }
-            logger.debug(String.format("Took %d arguments (%s) from stack: %s", arguments.length, Arrays.toString(arguments), stack));
+            logger.debug("Took {} arguments ({}) from stack: {}", arguments.length, Arrays.toString(arguments), stack);
             T applied = functionValue.getFunction().apply(arguments);
             stack.push(applied);
-            logger.debug(String.format("Pushed value %s into the stack: %s", applied, stack));
+            logger.debug("Pushed value {} into the stack: {}", applied, stack);
         } catch (NullPointerException e) {
-            logger.error(String.format("Operator/function '%s' at position %d unsupported", operator, (position + 1)));
+            logger.error("Operator/function '{}' at position {} unsupported", operator, (position + 1));
             throw new BadItemException(operator, position);
         } catch (NoSuchElementException e) {
-            logger.error(String.format("Unexpected end of stack for operator '%s' at position %d", operator, (position + 1)));
+            logger.error("Unexpected end of stack for operator '{}' at position {}", operator, (position + 1));
             throw new LackOfArgumentsException(operator, position);
         }
     }
