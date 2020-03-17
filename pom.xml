@@ -114,8 +114,8 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/arturangiel/rpn-calculator.git</connection>
-        <developerConnection>scm:git:ssh://github.com/arturangiel/rpn-calculator.git</developerConnection>
-        <url>https://github.com/arturangiel/rpn-calculator/tree/master</url>
+        <connection>scm:git:git://github.com/aangiel/rpn-calculator.git</connection>
+        <developerConnection>scm:git:ssh://github.com/aangiel/rpn-calculator.git</developerConnection>
+        <url>https://github.com/aangiel/rpn-calculator/tree/master</url>
     </scm>
 </project>
