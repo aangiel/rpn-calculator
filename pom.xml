@@ -6,9 +6,9 @@
 
     <name>rpn-calculator</name>
     <description>Java library to calculate Reverse Polish Notation equations</description>
-    <url>http://github.com/arturangiel/rpn-calculator</url>
+    <url>https://aangiel.github.io/rpn-calculator</url>
 
-    <groupId>io.github.arturangiel</groupId>
+    <groupId>io.github.aangiel</groupId>
     <artifactId>rpn-calculator</artifactId>
     <version>0.9.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -109,7 +109,7 @@
         <developer>
             <name>Artur Angiel</name>
             <email>arturangiel@gmail.com</email>
-            <organizationUrl>https://github.com/arturangiel</organizationUrl>
+            <organizationUrl>https://github.com/aangiel</organizationUrl>
         </developer>
     </developers>
 
