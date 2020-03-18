@@ -23,18 +23,18 @@ public class DoubleCalculatorTest {
 
         CalculatorFactory<Double> factory = new CalculatorFactory<>(context.getDefaultContext(Double.class));
         context.getContext()
-                .addCustomFunction("**", 2, (a) -> a[0] * (a[1] * a[0]))
-                .addCustomFunction("^", 2, (a) -> a[0] / (a[1] * a[0]))
-                .addCustomFunction("fun", 3, (array) -> array[0] * array[1] * array[2])
-                .addCustomFunction("fun2", 4, (array) -> array[0] * array[1] * array[2] - array[3])
+                .addCustomFunction("**", 2, (a) -> a.get(0) * (a.get(1) * a.get(0)))
+                .addCustomFunction("^", 2, (a) -> a.get(0) / (a.get(1) * a.get(0)))
+                .addCustomFunction("fun", 3, (a) -> a.get(0) * a.get(1) * a.get(2))
+                .addCustomFunction("fun2", 4, (a) -> a.get(0) * a.get(1) * a.get(2) - a.get(3))
 
                 /*
                  * Operations added from example: https://en.wikipedia.org/wiki/Reverse_Polish_notation
                  */
-                .addCustomFunction("−", 2, a -> a[0] - a[1])
-                .addCustomFunction("÷", 2, a -> a[0] / a[1])
-//                .addCustomFunction("+", 2, a -> a[0].add(a[1]))
-                .addCustomFunction("×", 2, a -> a[0] * a[1]);
+                .addCustomFunction("−", 2, a -> a.get(0) - a.get(1))
+                .addCustomFunction("÷", 2, a -> a.get(0) / a.get(1))
+//                .addCustomFunction("+", 2, a -> a.get(0).add(a.get(1)))
+                .addCustomFunction("×", 2, a -> a.get(0) * a.get(1));
         calculator = factory.getCalculatorWithCustomContext(context.getContext());
     }
 

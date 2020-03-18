@@ -22,18 +22,18 @@ public class ApfloatCalculatorTest {
         CalculatorContext<Apfloat> context = new CalculatorContext<>(Apfloat.class);
 
         context.getMathFunctionsAndConstantsContext(Apfloat.class)
-                .addCustomFunction("**", 2, (a) -> a[0].multiply(a[1].multiply(a[0])))
-                .addCustomFunction("^", 2, (a) -> a[0].divide(a[1].multiply(a[0])))
-                .addCustomFunction("fun", 3, (array) -> array[0].multiply(array[1]).multiply(array[2]))
-                .addCustomFunction("fun2", 4, (array) -> array[0].multiply(array[1]).multiply(array[2]).subtract(array[3]))
+                .addCustomFunction("**", 2, (a) -> a.get(0).multiply(a.get(1).multiply(a.get(0))))
+                .addCustomFunction("^", 2, (a) -> a.get(0).divide(a.get(1).multiply(a.get(0))))
+                .addCustomFunction("fun", 3, (a) -> a.get(0).multiply(a.get(1)).multiply(a.get(2)))
+                .addCustomFunction("fun2", 4, (a) -> a.get(0).multiply(a.get(1)).multiply(a.get(2)).subtract(a.get(3)))
 
                 /*
                  * Operations added from example: https://en.wikipedia.org/wiki/Reverse_Polish_notation
                  */
-                .addCustomFunction("−", 2, a -> a[0].subtract(a[1]))
-                .addCustomFunction("÷", 2, a -> a[0].divide(a[1]))
-//                .addCustomFunction("+", 2, a -> a[0].add(a[1]))
-                .addCustomFunction("×", 2, a -> a[0].multiply(a[1]));
+                .addCustomFunction("−", 2, a -> a.get(0).subtract(a.get(1)))
+                .addCustomFunction("÷", 2, a -> a.get(0).divide(a.get(1)))
+//                .addCustomFunction("+", 2, a -> a.get(0).add(a.get(1)))
+                .addCustomFunction("×", 2, a -> a.get(0).multiply(a.get(1)));
 
         CalculatorFactory<Apfloat> factory = new CalculatorFactory<>(context.getContext());
         calculator = factory.getCalculatorWithCustomContext(context.getContext());

@@ -7,12 +7,12 @@ import io.github.aangiel.rpn.math.FunctionValue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Class for Reverse Polish Notation calculations
@@ -110,12 +110,11 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
         try {
             FunctionValue<T> functionValue = context.getFunctions().get(operator);
-            @SuppressWarnings("unchecked")
-            T[] arguments = (T[]) Array.newInstance(context.getClazz(), functionValue.getParametersCount());
-            for (int i = arguments.length; i > 0; i--) {
-                arguments[i - 1] = stack.pop();
-            }
-            logger.debug("Took {} arguments ({}) from stack: {}", arguments.length, Arrays.toString(arguments), stack);
+            List<T> arguments = new ArrayList<>();
+            IntStream.range(0, functionValue.getParametersCount())
+                    .forEach(x -> arguments.add(stack.pop()));
+            Collections.reverse(arguments);
+            logger.debug("Took {} arguments ({}) from stack: {}", arguments.size(), arguments, stack);
             T applied = functionValue.getFunction().apply(arguments);
             stack.push(applied);
             logger.debug("Pushed value {} into the stack: {}", applied, stack);

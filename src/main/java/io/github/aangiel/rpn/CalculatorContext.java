@@ -95,9 +95,9 @@ public class CalculatorContext<T extends Number> {
                 .collect(Collectors.toList());
     }
 
-    private T invokeApfloatMathMethod(Method m, T[] a) throws CalculatorException {
+    private T invokeApfloatMathMethod(Method m, List<T> a) throws CalculatorException {
         try {
-            return (T) m.invoke(null, a);
+            return (T) m.invoke(null, a.toArray());
         } catch (IllegalAccessException e) {
             throw new UnexpectedException(e.getMessage());
         } catch (InvocationTargetException e) {
