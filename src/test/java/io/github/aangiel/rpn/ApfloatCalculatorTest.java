@@ -160,8 +160,9 @@ public class ApfloatCalculatorTest {
 
     @Test
     public void calculateEmpty() throws CalculatorException {
-        BadItemException badItemException = assertThrows(BadItemException.class, () -> calculator.calculate(""));
-        assertEquals("Bad item: '' at position: 1", badItemException.getMessage());
+        EmptyEquationException emptyEquationException
+                = assertThrows(EmptyEquationException.class, () -> calculator.calculate("   "));
+        assertEquals("Empty equation", emptyEquationException.getMessage());
         assertEquals(new Apfloat(2), calculator.calculate("2"));
     }
 

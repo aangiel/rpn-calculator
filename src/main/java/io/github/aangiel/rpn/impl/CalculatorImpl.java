@@ -10,10 +10,9 @@ import org.apache.logging.log4j.Logger;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Class for Reverse Polish Notation calculations
@@ -23,6 +22,8 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
     Logger logger = LogManager.getLogger(Calculator.class);
 
     private CalculatorContext<T> context;
+
+    private static final Pattern WHITESPACE = Pattern.compile("\\s+");
 
     public CalculatorImpl(CalculatorContext<T> context) {
         this.context = context;
@@ -45,29 +46,27 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
         logger.info("Calculating equation: {}", equation);
 
-        String[] equationSplit = equation.trim().split("\\s+");
-        logger.debug("Equation split with whitespace regex: {}", Arrays.toString(equationSplit));
+        List<String> tokens = WHITESPACE.splitAsStream(equation).collect(Collectors.toList());
+        logger.debug("Equation split with whitespace regex: {}", tokens);
+
+        if (tokens.isEmpty()) throw new EmptyEquationException();
 
         Deque<T> stack = new ArrayDeque<>();
 
-        for (int i = 0; i < equationSplit.length; i++) {
-
-            String item = equationSplit[i];
-            logger.debug("Processing item '{}' at position {}", item, (i + 1));
-
-            calculateItemAndPush(item, stack, i);
+        int position = 0;
+        for (String token : tokens) {
+            logger.debug("Processing item '{}' at position {}", token, (position + 1));
+            calculateTokenAndPush(token, stack, position++);
         }
 
-        if (stack.size() == 1) {
-            logger.info("Result = {}", stack.peek());
-            return stack.pop();
-        } else {
-            logger.error("Unexpectedly left on stack: {}", stack);
-            throw new BadEquationException(stack);
-        }
+        if (stack.size() != 1) throw new BadEquationException(stack);
+
+        logger.info("Result = {}", stack.peek());
+        return stack.pop();
+
     }
 
-    private void calculateItemAndPush(String item, Deque<T> stack, int position) throws CalculatorException {
+    private void calculateTokenAndPush(String item, Deque<T> stack, int position) throws CalculatorException {
         Constructor<T> constructor;
 
         try {
