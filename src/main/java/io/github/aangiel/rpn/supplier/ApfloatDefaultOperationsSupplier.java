@@ -1,5 +1,6 @@
 package io.github.aangiel.rpn.supplier;
 
+import io.github.aangiel.rpn.math.ConstructorValue;
 import io.github.aangiel.rpn.math.IMathFunction;
 import org.apfloat.Apfloat;
 
@@ -22,5 +23,10 @@ public class ApfloatDefaultOperationsSupplier<T extends Number> implements Defau
     @Override
     public IMathFunction<Apfloat> getDivideFunction() {
         return a -> a.get(0).divide(a.get(1));
+    }
+
+    @Override
+    public ConstructorValue<Apfloat> getValue() {
+        return a -> new Apfloat((String) a.get(0), (long) a.get(1));
     }
 }

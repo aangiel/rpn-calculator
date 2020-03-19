@@ -1,5 +1,6 @@
 package io.github.aangiel.rpn.supplier;
 
+import io.github.aangiel.rpn.math.ConstructorValue;
 import io.github.aangiel.rpn.math.IMathFunction;
 
 public interface DefaultOperationsSupplier<T extends Number> {
@@ -11,4 +12,6 @@ public interface DefaultOperationsSupplier<T extends Number> {
     IMathFunction<T> getMultiplyFunction();
 
     IMathFunction<T> getDivideFunction();
+
+    ConstructorValue<T> getValue();
 }

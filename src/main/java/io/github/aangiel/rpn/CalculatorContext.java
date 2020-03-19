@@ -23,10 +23,13 @@ public class CalculatorContext<T extends Number> {
     private long precision;
     private CalculatorContext<T> context;
     private Class<T> clazz;
+    DefaultOperationsSupplier<T> supplier;
 
     public CalculatorContext(Class<T> clazz) {
         functions = new HashMap<>();
         this.clazz = clazz;
+        SupplierStrategy<T> supplierStrategy = new SupplierStrategy<>();
+        supplier = supplierStrategy.getSupplier(clazz);
     }
 
     public Class<T> getClazz() {
@@ -66,8 +69,6 @@ public class CalculatorContext<T extends Number> {
     }
 
     private void populateDefaultOperations() {
-        SupplierStrategy<T> supplierStrategy = new SupplierStrategy<>();
-        DefaultOperationsSupplier<T> supplier = supplierStrategy.getSupplier(clazz);
         functions.put("+", new FunctionValue<>(2, supplier.getAddFunction()));
         functions.put("-", new FunctionValue<>(2, supplier.getSubtractFunction()));
         functions.put("*", new FunctionValue<>(2, supplier.getMultiplyFunction()));
@@ -126,5 +127,9 @@ public class CalculatorContext<T extends Number> {
 
     public Set<String> getAvailableFunctions() {
         return functions.keySet();
+    }
+
+    public DefaultOperationsSupplier<T> getSupplier() {
+        return supplier;
     }
 }

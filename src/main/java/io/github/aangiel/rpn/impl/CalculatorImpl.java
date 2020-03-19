@@ -3,14 +3,14 @@ package io.github.aangiel.rpn.impl;
 import io.github.aangiel.rpn.Calculator;
 import io.github.aangiel.rpn.CalculatorContext;
 import io.github.aangiel.rpn.exception.*;
+import io.github.aangiel.rpn.math.ConstructorValue;
 import io.github.aangiel.rpn.math.FunctionValue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -24,6 +24,8 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
     private CalculatorContext<T> context;
 
     private static final Pattern WHITESPACE = Pattern.compile("\\s+");
+    private static final Collector<String, ?, LinkedList<String>>
+            LINKED_LIST_COLLECTOR = Collectors.toCollection(LinkedList::new);
 
     public CalculatorImpl(CalculatorContext<T> context) {
         this.context = context;
@@ -45,17 +47,15 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
         logger.info("Calculating equation: {}", equation);
 
-        List<String> tokens = WHITESPACE.splitAsStream(equation).collect(Collectors.toCollection(LinkedList::new));
+        List<String> tokens = WHITESPACE.splitAsStream(equation).collect(LINKED_LIST_COLLECTOR);
         logger.debug("Equation split with whitespace regex: {}", tokens);
 
         if (tokens.isEmpty()) throw new EmptyEquationException();
 
         Deque<T> stack = new ArrayDeque<>();
+        ListIterator<String> iterator = tokens.listIterator();
 
-        ListIterator<String> tokenIterator = tokens.listIterator();
-        while (tokenIterator.hasNext())
-            calculateTokenAndPush(tokenIterator, stack);
-
+        while (iterator.hasNext()) calculateTokenAndPush(iterator, stack);
 
         if (stack.size() != 1) throw new BadEquationException(stack);
 
@@ -66,42 +66,16 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
     private void calculateTokenAndPush(ListIterator<String> iterator, Deque<T> stack) throws CalculatorException {
 
-        Constructor<T> constructor;
         String token = iterator.next();
 
         logger.debug("Processing item '{}' at position {}", token, (iterator.previousIndex() + 1));
-
+        ConstructorValue<T> value = context.getSupplier().getValue();
         try {
-            /*
-             * Used with Apfloat
-             */
-            constructor = context.getClazz().getConstructor(String.class, long.class);
-        } catch (NoSuchMethodException e) {
-            try {
-                /*
-                 * Used with other classes extending Number (i.e. Double, BigDecimal)
-                 */
-                constructor = context.getClazz().getConstructor(String.class);
-            } catch (NoSuchMethodException ex) {
-                logger.error("No constructor");
-                throw new UnexpectedException("No constructors (String, long) and (String)");
-            }
-        }
-
-        try {
-            if (constructor.getParameterCount() == 1)
-                stack.push(constructor.newInstance(token));
-            else
-                stack.push(constructor.newInstance(token, context.getPrecision()));
-
+            T applied = value.apply(Arrays.asList(token, context.getPrecision()));
+            stack.push(applied);
             logger.debug("Item '{}' pushed into the stack: {}", token, stack);
-        } catch (InvocationTargetException e) {
-            if (NumberFormatException.class.equals(e.getTargetException().getClass()))
-                calculateOnStack(iterator, stack);
-            else
-                throw new UnexpectedException("");
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new UnexpectedException("");
+        } catch (NumberFormatException e) {
+            calculateOnStack(iterator, stack);
         }
     }
 
@@ -112,7 +86,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         String operator = iterator.next();
         int position = iterator.previousIndex();
 
-        logger.debug("Processing operator/function '{}' at position {}", operator, (position + 1));
+        logger.debug("Processing operator/function '{}' at position {}", operator, iterator.nextIndex());
 
         try {
             FunctionValue<T> functionValue = context.getFunctions().get(operator);
@@ -125,10 +99,10 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
             stack.push(applied);
             logger.debug("Pushed value {} into the stack: {}", applied, stack);
         } catch (NullPointerException e) {
-            logger.error("Operator/function '{}' at position {} unsupported", operator, (position + 1));
+            logger.error("Operator/function '{}' at position {} unsupported", operator, iterator.nextIndex());
             throw new BadItemException(operator, position);
         } catch (NoSuchElementException e) {
-            logger.error("Unexpected end of stack for operator '{}' at position {}", operator, (position + 1));
+            logger.error("Unexpected end of stack for operator '{}' at position {}", operator, iterator.nextIndex());
             throw new LackOfArgumentsException(operator, position);
         }
     }

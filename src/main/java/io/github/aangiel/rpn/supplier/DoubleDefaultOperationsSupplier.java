@@ -1,5 +1,6 @@
 package io.github.aangiel.rpn.supplier;
 
+import io.github.aangiel.rpn.math.ConstructorValue;
 import io.github.aangiel.rpn.math.IMathFunction;
 
 public class DoubleDefaultOperationsSupplier<T extends Number> implements DefaultOperationsSupplier<Double> {
@@ -21,5 +22,10 @@ public class DoubleDefaultOperationsSupplier<T extends Number> implements Defaul
     @Override
     public IMathFunction<Double> getDivideFunction() {
         return a -> a.get(0) / a.get(1);
+    }
+
+    @Override
+    public ConstructorValue<Double> getValue() {
+        return args -> new Double((String) args.get(0));
     }
 }
