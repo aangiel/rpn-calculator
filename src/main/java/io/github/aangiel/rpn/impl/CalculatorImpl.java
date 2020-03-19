@@ -29,9 +29,8 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         this.context = context;
     }
 
-    public CalculatorImpl() {
-//        context = new CalculatorContext<>();
-//        this.context = context.getDefaultContext();
+    private CalculatorImpl() {
+        throw new AssertionError();
     }
 
     /**
@@ -46,18 +45,17 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
         logger.info("Calculating equation: {}", equation);
 
-        List<String> tokens = WHITESPACE.splitAsStream(equation).collect(Collectors.toList());
+        List<String> tokens = WHITESPACE.splitAsStream(equation).collect(Collectors.toCollection(LinkedList::new));
         logger.debug("Equation split with whitespace regex: {}", tokens);
 
         if (tokens.isEmpty()) throw new EmptyEquationException();
 
         Deque<T> stack = new ArrayDeque<>();
 
-        int position = 0;
-        for (String token : tokens) {
-            logger.debug("Processing item '{}' at position {}", token, (position + 1));
-            calculateTokenAndPush(token, stack, position++);
-        }
+        ListIterator<String> tokenIterator = tokens.listIterator();
+        while (tokenIterator.hasNext())
+            calculateTokenAndPush(tokenIterator, stack);
+
 
         if (stack.size() != 1) throw new BadEquationException(stack);
 
@@ -66,8 +64,12 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
     }
 
-    private void calculateTokenAndPush(String item, Deque<T> stack, int position) throws CalculatorException {
+    private void calculateTokenAndPush(ListIterator<String> iterator, Deque<T> stack) throws CalculatorException {
+
         Constructor<T> constructor;
+        String token = iterator.next();
+
+        logger.debug("Processing item '{}' at position {}", token, (iterator.previousIndex() + 1));
 
         try {
             /*
@@ -88,14 +90,14 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
         try {
             if (constructor.getParameterCount() == 1)
-                stack.push(constructor.newInstance(item));
+                stack.push(constructor.newInstance(token));
             else
-                stack.push(constructor.newInstance(item, context.getPrecision()));
+                stack.push(constructor.newInstance(token, context.getPrecision()));
 
-            logger.debug("Item '{}' pushed into the stack: {}", item, stack);
+            logger.debug("Item '{}' pushed into the stack: {}", token, stack);
         } catch (InvocationTargetException e) {
             if (NumberFormatException.class.equals(e.getTargetException().getClass()))
-                calculateOnStack(item, stack, position);
+                calculateOnStack(iterator, stack);
             else
                 throw new UnexpectedException("");
         } catch (InstantiationException | IllegalAccessException e) {
@@ -103,8 +105,12 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         }
     }
 
-    private void calculateOnStack(String operator, Deque<T> stack, int position)
+    private void calculateOnStack(ListIterator<String> iterator, Deque<T> stack)
             throws CalculatorException {
+
+        iterator.previous();
+        String operator = iterator.next();
+        int position = iterator.previousIndex();
 
         logger.debug("Processing operator/function '{}' at position {}", operator, (position + 1));
 

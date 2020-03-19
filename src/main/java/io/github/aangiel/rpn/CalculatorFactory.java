@@ -16,7 +16,7 @@ public class CalculatorFactory<T extends Number> {
 
     public Calculator<T> getDefaultCalculator() {
         if (defaultCalculator == null)
-            defaultCalculator = new CalculatorImpl<>();
+            defaultCalculator = new CalculatorImpl<>(context.getDefaultContext(context.getClazz()));
         return defaultCalculator;
     }
 
