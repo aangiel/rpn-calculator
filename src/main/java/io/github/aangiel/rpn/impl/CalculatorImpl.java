@@ -68,7 +68,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
         String token = iterator.next();
 
-        logger.debug("Processing item '{}' at position {}", token, (iterator.previousIndex() + 1));
+        logger.debug("Processing item '{}' at position {}", token, iterator.nextIndex());
         ConstructorValue<T> value = context.getSupplier().getValue();
         try {
             T applied = value.apply(Arrays.asList(token, context.getPrecision()));
@@ -84,7 +84,6 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
         iterator.previous();
         String operator = iterator.next();
-        int position = iterator.previousIndex();
 
         logger.debug("Processing operator/function '{}' at position {}", operator, iterator.nextIndex());
 
@@ -100,10 +99,10 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
             logger.debug("Pushed value {} into the stack: {}", applied, stack);
         } catch (NullPointerException e) {
             logger.error("Operator/function '{}' at position {} unsupported", operator, iterator.nextIndex());
-            throw new BadItemException(operator, position);
+            throw new BadItemException(operator, iterator.nextIndex());
         } catch (NoSuchElementException e) {
             logger.error("Unexpected end of stack for operator '{}' at position {}", operator, iterator.nextIndex());
-            throw new LackOfArgumentsException(operator, position);
+            throw new LackOfArgumentsException(operator, iterator.nextIndex());
         }
     }
 
