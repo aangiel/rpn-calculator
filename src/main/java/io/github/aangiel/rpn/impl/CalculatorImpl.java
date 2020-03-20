@@ -31,13 +31,6 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         this.context = context;
     }
 
-    /**
-     * Main method for Reverse Polish Notation Calculator
-     *
-     * @param equation String with equation to calculate
-     * @return result of calculation
-     * @throws CalculatorException abstract Exception (@link #BadEquationException), #BadItemException, #CalculatorArithmeticException, #LackOfArgumentsException, #UnexpectedException
-     */
     @Override
     public T calculate(String equation) throws CalculatorException {
 
@@ -85,7 +78,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         logger.debug("Processing operator/function '{}' at position {}", operator, iterator.nextIndex());
 
         try {
-            FunctionValue<T> functionValue = context.getFunction(operator);
+            FunctionValue<T> functionValue = context.getFunctionOrOperator(operator);
             List<T> arguments = new ArrayList<>();
             IntStream.range(0, functionValue.getParametersCount())
                     .forEach(x -> arguments.add(stack.pop()));

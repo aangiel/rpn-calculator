@@ -21,18 +21,18 @@ public class ApfloatCalculatorTest {
     public void setUp() {
         calculator = CalculatorSupplier.getCalculator(Apfloat.class);
 
-        calculator.getContext().addFunction("**", 2, (a) -> a.get(0).multiply(a.get(1).multiply(a.get(0))))
-                .addFunction("^", 2, (a) -> a.get(0).divide(a.get(1).multiply(a.get(0))))
-                .addFunction("fun", 3, (a) -> a.get(0).multiply(a.get(1)).multiply(a.get(2)))
-                .addFunction("fun2", 4, (a) -> a.get(0).multiply(a.get(1)).multiply(a.get(2)).subtract(a.get(3)))
+        calculator.getContext().addFunctionOrOperator("**", 2, (a) -> a.get(0).multiply(a.get(1).multiply(a.get(0))))
+                .addFunctionOrOperator("^", 2, (a) -> a.get(0).divide(a.get(1).multiply(a.get(0))))
+                .addFunctionOrOperator("fun", 3, (a) -> a.get(0).multiply(a.get(1)).multiply(a.get(2)))
+                .addFunctionOrOperator("fun2", 4, (a) -> a.get(0).multiply(a.get(1)).multiply(a.get(2)).subtract(a.get(3)))
 
                 /*
                  * Operations added from example: https://en.wikipedia.org/wiki/Reverse_Polish_notation
                  */
-                .addFunction("−", 2, a -> a.get(0).subtract(a.get(1)))
-                .addFunction("÷", 2, a -> a.get(0).divide(a.get(1)))
+                .addFunctionOrOperator("−", 2, a -> a.get(0).subtract(a.get(1)))
+                .addFunctionOrOperator("÷", 2, a -> a.get(0).divide(a.get(1)))
 //      .addFunction("+", 2, a -> a.get(0).add(a.get(1)))
-                .addFunction("×", 2, a -> a.get(0).multiply(a.get(1)));
+                .addFunctionOrOperator("×", 2, a -> a.get(0).multiply(a.get(1)));
     }
 
     @Test
@@ -210,12 +210,12 @@ public class ApfloatCalculatorTest {
     @Test
     public void calculateCompareAvailableFunctions() {
         List<String> functions = Arrays.asList("**", "log", "atanh", "cos", "atan", "cbrt", "tanh", "−", "sqrt", "×", "sin", "exp", "frac", "^", "tan", "fun2", "sinh", "e", "acosh", "*", "toDegrees", "+", "acos", "toRadians", "-", "/", "cosh", "abs", "negate", "w", "÷", "pi", "asin", "asinh", "gamma", "fun");
-        assertEquals(functions, new ArrayList<>(calculator.getContext().getAvailableFunctions()));
+        assertEquals(functions, new ArrayList<>(calculator.getContext().getAvailableFunctionsAndOperators()));
     }
 
     @Test
     public void calculateCompareOthers() {
-        assertEquals(calculator.getContext().getAvailableFunctions(), calculator.getContext().getAvailableFunctions());
+        assertEquals(calculator.getContext().getAvailableFunctionsAndOperators(), calculator.getContext().getAvailableFunctionsAndOperators());
 //        .setPrecision(10);
         assertEquals(10, calculator.getContext().getPrecision());
     }

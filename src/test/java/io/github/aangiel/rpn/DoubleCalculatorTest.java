@@ -21,18 +21,18 @@ public class DoubleCalculatorTest {
     public void setUp() {
         calculator = CalculatorSupplier.getCalculator(Double.class);
 
-        calculator.getContext().addFunction("**", 2, (a) -> a.get(0) * (a.get(1) * (a.get(0))));
-        calculator.getContext().addFunction("^", 2, (a) -> a.get(0) / (a.get(1) * (a.get(0))));
-        calculator.getContext().addFunction("fun", 3, (a) -> a.get(0) * (a.get(1)) * (a.get(2)));
-        calculator.getContext().addFunction("fun2", 4, (a) -> a.get(0) * (a.get(1)) * (a.get(2)) - (a.get(3)));
+        calculator.getContext().addFunctionOrOperator("**", 2, (a) -> a.get(0) * (a.get(1) * (a.get(0))));
+        calculator.getContext().addFunctionOrOperator("^", 2, (a) -> a.get(0) / (a.get(1) * (a.get(0))));
+        calculator.getContext().addFunctionOrOperator("fun", 3, (a) -> a.get(0) * (a.get(1)) * (a.get(2)));
+        calculator.getContext().addFunctionOrOperator("fun2", 4, (a) -> a.get(0) * (a.get(1)) * (a.get(2)) - (a.get(3)));
 
         /*
          * Operations added from example: https://en.wikipedia.org/wiki/Reverse_Polish_notation
          */
-        calculator.getContext().addFunction("−", 2, a -> a.get(0) - (a.get(1)));
-        calculator.getContext().addFunction("÷", 2, a -> a.get(0) / (a.get(1)));
+        calculator.getContext().addFunctionOrOperator("−", 2, a -> a.get(0) - (a.get(1)));
+        calculator.getContext().addFunctionOrOperator("÷", 2, a -> a.get(0) / (a.get(1)));
 //      calculator.getContext().addFunction("+", 2, a -> a.get(0).add(a.get(1)));
-        calculator.getContext().addFunction("×", 2, a -> a.get(0) * (a.get(1)));
+        calculator.getContext().addFunctionOrOperator("×", 2, a -> a.get(0) * (a.get(1)));
     }
 
     @Test
@@ -209,12 +209,12 @@ public class DoubleCalculatorTest {
     @Test
     public void calculateCompareAvailableFunctions() {
         List<String> functions = Arrays.asList("**", "log", "cos", "log10", "expm1", "log1p", "rint", "atan", "cbrt", "tanh", "nextUp", "−", "sqrt", "×", "sin", "exp", "floor", "^", "tan", "signum", "fun2", "sinh", "e", "*", "toDegrees", "nextDown", "+", "acos", "toRadians", "ceil", "-", "/", "cosh", "abs", "÷", "ulp", "pi", "asin", "fun");
-        assertEquals(functions, new ArrayList<>(calculator.getContext().getAvailableFunctions()));
+        assertEquals(functions, new ArrayList<>(calculator.getContext().getAvailableFunctionsAndOperators()));
     }
 
     @Test
     public void calculateCompareOthers() {
-        assertEquals(calculator.getContext().getAvailableFunctions(), calculator.getContext().getAvailableFunctions());
+        assertEquals(calculator.getContext().getAvailableFunctionsAndOperators(), calculator.getContext().getAvailableFunctionsAndOperators());
         assertEquals(0, calculator.getContext().getPrecision());
     }
 

@@ -7,5 +7,5 @@ import java.util.List;
 @FunctionalInterface
 public interface IMathFunction<T extends Number> {
 
-    T apply(List<T> arguments) throws CalculatorException;
+    T apply(List<T> args) throws CalculatorException;
 }

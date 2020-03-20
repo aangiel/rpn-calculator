@@ -4,6 +4,9 @@ import io.github.aangiel.rpn.math.ConstructorValue;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 
+/**
+ * @see CalculatorContext
+ */
 public class ApfloatCalculatorContext extends CalculatorContext<Apfloat> {
 
     public ApfloatCalculatorContext() {
@@ -16,16 +19,16 @@ public class ApfloatCalculatorContext extends CalculatorContext<Apfloat> {
 
     @Override
     protected void populateDefaultOperations() {
-        addFunction("+", 2, args -> args.get(0).add(args.get(1)));
-        addFunction("-", 2, args -> args.get(0).subtract(args.get(1)));
-        addFunction("*", 2, args -> args.get(0).multiply(args.get(1)));
-        addFunction("/", 2, args -> args.get(0).divide(args.get(1)));
+        addFunctionOrOperator("+", 2, args -> args.get(0).add(args.get(1)));
+        addFunctionOrOperator("-", 2, args -> args.get(0).subtract(args.get(1)));
+        addFunctionOrOperator("*", 2, args -> args.get(0).multiply(args.get(1)));
+        addFunctionOrOperator("/", 2, args -> args.get(0).divide(args.get(1)));
     }
 
     @Override
     protected void populateConstants() {
-        addFunction("pi", 0, args -> ApfloatMath.pi(getPrecision()));
-        addFunction("e", 0, args -> new Apfloat(2.718281828));
+        addFunctionOrOperator("pi", 0, args -> ApfloatMath.pi(getPrecision()));
+        addFunctionOrOperator("e", 0, args -> new Apfloat(2.718281828));
     }
 
     @Override
