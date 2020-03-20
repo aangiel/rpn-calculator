@@ -15,7 +15,7 @@ public class BigDecimalCalculatorContext extends CalculatorContext<BigDecimal> {
         addFunction("+", 2, a -> a.get(0).add(a.get(1)));
         addFunction("-", 2, a -> a.get(0).subtract(a.get(1)));
         addFunction("*", 2, a -> a.get(0).multiply(a.get(1)));
-        addFunction("/", 2, a -> a.get(0).divide(a.get(1)));
+        addFunction("/", 2, a -> a.get(0).divide(a.get(1), BigDecimal.ROUND_CEILING));
     }
 
     @Override
