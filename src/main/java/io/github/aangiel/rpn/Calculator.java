@@ -27,7 +27,7 @@ public interface Calculator<T extends Number> {
      * @param equation String with equation to calculate
      * @return result of calculation of Class given in
      * {@link io.github.aangiel.rpn.CalculatorSupplier#getCalculator(Class) CalculatorSupplier.getCalculator(Class&#60;T extends Number&#62;)}
-     * @throws CalculatorException abstract Exception for
+     * @throws CalculatorException abstract {@link Exception} for
      *                             {@link BadEquationException}
      *                             , {@link BadItemException}
      *                             , {@link CalculatorArithmeticException}
