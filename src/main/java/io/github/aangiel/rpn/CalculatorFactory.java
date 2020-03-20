@@ -1,44 +1,29 @@
 package io.github.aangiel.rpn;
 
+import io.github.aangiel.rpn.context.ApfloatCalculatorContext;
 import io.github.aangiel.rpn.impl.CalculatorImpl;
+import org.apfloat.Apfloat;
 
-public class CalculatorFactory<T extends Number> {
-    private Calculator<T> defaultCalculator;
-    private Calculator<T> mathFunctionsCalculator;
-    private Calculator<T> mathFunctionsAndConstantsCalculator;
-    private Calculator<T> emptyCalculator;
+import java.util.HashMap;
+import java.util.Map;
 
-    private CalculatorContext<T> context;
+public final class CalculatorFactory<T extends Number> {
 
-    public CalculatorFactory(CalculatorContext<T> context) {
-        this.context = context;
+    private Map<Class, Calculator> calculators = new HashMap<>();
+
+    public CalculatorFactory() {
+        populateCalculators();
     }
 
-    public Calculator<T> getDefaultCalculator() {
-        if (defaultCalculator == null)
-            defaultCalculator = new CalculatorImpl<>(context.getDefaultContext(context.getClazz()));
-        return defaultCalculator;
+    private void populateCalculators() {
+        calculators.put(Apfloat.class, new CalculatorImpl(new ApfloatCalculatorContext()));
     }
 
-    public Calculator<T> getMathFunctionsCalculator() {
-        if (mathFunctionsCalculator == null)
-            mathFunctionsCalculator = new CalculatorImpl<>(context.getMathFunctionsContext(context.getClazz()));
-        return mathFunctionsCalculator;
-    }
-
-    public Calculator<T> getMathFunctionsAndConstantsCalculator() {
-        if (mathFunctionsAndConstantsCalculator == null)
-            mathFunctionsAndConstantsCalculator = new CalculatorImpl<>(context.getMathFunctionsAndConstantsContext(context.getClazz()));
-        return mathFunctionsAndConstantsCalculator;
-    }
-
-    public Calculator<T> getEmptyCalculator() {
-        if (emptyCalculator == null)
-            emptyCalculator = new CalculatorImpl<>(context.getEmptyContext(context.getClazz()));
-        return emptyCalculator;
-    }
-
-    public Calculator<T> getCalculatorWithCustomContext(CalculatorContext<T> context) {
-        return new CalculatorImpl<>(context);
+    public Calculator<T> getCalculator(Class<T> clazz) {
+        try {
+            return calculators.get(clazz);
+        } catch (NullPointerException e) {
+            throw new UnsupportedOperationException("Unsupported type");
+        }
     }
 }

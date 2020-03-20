@@ -19,24 +19,20 @@ public class ApfloatCalculatorTest {
 
     @Before
     public void setUp() {
-        CalculatorContext<Apfloat> context = new CalculatorContext<>(Apfloat.class);
+        CalculatorFactory<Apfloat> factory = new CalculatorFactory<>();
+        calculator = factory.getCalculator(Apfloat.class);
+        calculator.getContext().addFunction("**", 2, (a) -> a.get(0).multiply(a.get(1).multiply(a.get(0))));
+        calculator.getContext().addFunction("^", 2, (a) -> a.get(0).divide(a.get(1).multiply(a.get(0))));
+        calculator.getContext().addFunction("fun", 3, (a) -> a.get(0).multiply(a.get(1)).multiply(a.get(2)));
+        calculator.getContext().addFunction("fun2", 4, (a) -> a.get(0).multiply(a.get(1)).multiply(a.get(2)).subtract(a.get(3)));
 
-        context.getMathFunctionsAndConstantsContext(Apfloat.class)
-                .addCustomFunction("**", 2, (a) -> a.get(0).multiply(a.get(1).multiply(a.get(0))))
-                .addCustomFunction("^", 2, (a) -> a.get(0).divide(a.get(1).multiply(a.get(0))))
-                .addCustomFunction("fun", 3, (a) -> a.get(0).multiply(a.get(1)).multiply(a.get(2)))
-                .addCustomFunction("fun2", 4, (a) -> a.get(0).multiply(a.get(1)).multiply(a.get(2)).subtract(a.get(3)))
-
-                /*
-                 * Operations added from example: https://en.wikipedia.org/wiki/Reverse_Polish_notation
-                 */
-                .addCustomFunction("−", 2, a -> a.get(0).subtract(a.get(1)))
-                .addCustomFunction("÷", 2, a -> a.get(0).divide(a.get(1)))
-//                .addCustomFunction("+", 2, a -> a.get(0).add(a.get(1)))
-                .addCustomFunction("×", 2, a -> a.get(0).multiply(a.get(1)));
-
-        CalculatorFactory<Apfloat> factory = new CalculatorFactory<>(context.getContext());
-        calculator = factory.getCalculatorWithCustomContext(context.getContext());
+        /*
+         * Operations added from example: https://en.wikipedia.org/wiki/Reverse_Polish_notation
+         */
+        calculator.getContext().addFunction("−", 2, a -> a.get(0).subtract(a.get(1)));
+        calculator.getContext().addFunction("÷", 2, a -> a.get(0).divide(a.get(1)));
+//      calculator.getContext().addFunction("+", 2, a -> a.get(0).add(a.get(1)));
+        calculator.getContext().addFunction("×", 2, a -> a.get(0).multiply(a.get(1)));
     }
 
     @Test
@@ -57,7 +53,7 @@ public class ApfloatCalculatorTest {
     @Test
     public void calculateBadEquationException() {
         BadEquationException exception = assertThrows(BadEquationException.class, () -> calculator.calculate("12 2 3 4 * 10 5 / + * + 3"));
-        assertEquals("Left on stack: [3, 4e1]", exception.getMessage());
+        assertEquals("Left on stack: [4e1]", exception.getMessage());
     }
 
     @Test
@@ -112,7 +108,7 @@ public class ApfloatCalculatorTest {
     public void calculateConstructingFunctionsException() {
         BadEquationException exception =
                 assertThrows(BadEquationException.class, () -> calculator.calculate("08 90 sin"));
-        assertEquals("Left on stack: [8.93996663e-1, 8]", exception.getMessage());
+        assertEquals("Left on stack: [8]", exception.getMessage());
     }
 
     @Test
@@ -136,7 +132,7 @@ public class ApfloatCalculatorTest {
 
         BadEquationException badEquationException = assertThrows(BadEquationException.class,
                 () -> calculator.calculate("-0.5 23 24.234 tanh 234.4 23 4 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 /"));
-        assertEquals("Left on stack: [2.065501056e-6, -5e-1]", badEquationException.getMessage());
+        assertEquals("Left on stack: [-5e-1]", badEquationException.getMessage());
 
         BadItemException badItemException1 = assertThrows(BadItemException.class,
                 () -> calculator.calculate("-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384 e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 /"));
@@ -154,7 +150,7 @@ public class ApfloatCalculatorTest {
         BadEquationException constructingFunctionsException
                 = assertThrows(BadEquationException.class,
                 () -> calculator.calculate("-0.5 23 4 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 /"));
-        assertEquals("Left on stack: [-1.078258835e-6, -5e-1]", constructingFunctionsException.getMessage());
+        assertEquals("Left on stack: [-5e-1]", constructingFunctionsException.getMessage());
 
     }
 
@@ -214,13 +210,13 @@ public class ApfloatCalculatorTest {
     @Test
     public void calculateCompareAvailableFunctions() {
         List<String> functions = Arrays.asList("**", "log", "atanh", "cos", "atan", "cbrt", "tanh", "−", "sqrt", "×", "sin", "exp", "frac", "^", "tan", "fun2", "sinh", "e", "acosh", "*", "toDegrees", "+", "acos", "toRadians", "-", "/", "cosh", "abs", "negate", "w", "÷", "pi", "asin", "asinh", "gamma", "fun");
-        assertEquals(functions, new ArrayList<>(calculator.getContext().getAvailableFunctions()));
+        assertEquals(functions, new ArrayList<>(calculator.getContext().getFunctions().keySet()));
     }
 
     @Test
     public void calculateCompareOthers() {
-        assertEquals(calculator.getContext().getFunctions().keySet(), calculator.getContext().getAvailableFunctions());
-        calculator.getContext().setPrecision(10);
+        assertEquals(calculator.getContext().getFunctions().keySet(), calculator.getContext().getFunctions().keySet());
+//        calculator.getContext().setPrecision(10);
         assertEquals(10, calculator.getContext().getPrecision());
     }
 

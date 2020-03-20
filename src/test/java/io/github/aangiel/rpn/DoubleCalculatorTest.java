@@ -19,23 +19,20 @@ public class DoubleCalculatorTest {
 
     @Before
     public void setUp() {
-        CalculatorContext<Double> context = new CalculatorContext<>(Double.class);
+        CalculatorFactory<Double> factory = new CalculatorFactory<>();
+        calculator = factory.getCalculator(Double.class);
+        calculator.getContext().addFunction("**", 2, (a) -> a.get(0) * (a.get(1) * (a.get(0))));
+        calculator.getContext().addFunction("^", 2, (a) -> a.get(0) / (a.get(1) * (a.get(0))));
+        calculator.getContext().addFunction("fun", 3, (a) -> a.get(0) * (a.get(1)) * (a.get(2)));
+        calculator.getContext().addFunction("fun2", 4, (a) -> a.get(0) * (a.get(1)) * (a.get(2)) - (a.get(3)));
 
-        CalculatorFactory<Double> factory = new CalculatorFactory<>(context.getDefaultContext(Double.class));
-        context.getContext()
-                .addCustomFunction("**", 2, (a) -> a.get(0) * (a.get(1) * a.get(0)))
-                .addCustomFunction("^", 2, (a) -> a.get(0) / (a.get(1) * a.get(0)))
-                .addCustomFunction("fun", 3, (a) -> a.get(0) * a.get(1) * a.get(2))
-                .addCustomFunction("fun2", 4, (a) -> a.get(0) * a.get(1) * a.get(2) - a.get(3))
-
-                /*
-                 * Operations added from example: https://en.wikipedia.org/wiki/Reverse_Polish_notation
-                 */
-                .addCustomFunction("−", 2, a -> a.get(0) - a.get(1))
-                .addCustomFunction("÷", 2, a -> a.get(0) / a.get(1))
-//                .addCustomFunction("+", 2, a -> a.get(0).add(a.get(1)))
-                .addCustomFunction("×", 2, a -> a.get(0) * a.get(1));
-        calculator = factory.getCalculatorWithCustomContext(context.getContext());
+        /*
+         * Operations added from example: https://en.wikipedia.org/wiki/Reverse_Polish_notation
+         */
+        calculator.getContext().addFunction("−", 2, a -> a.get(0) - (a.get(1)));
+        calculator.getContext().addFunction("÷", 2, a -> a.get(0) / (a.get(1)));
+//      calculator.getContext().addFunction("+", 2, a -> a.get(0).add(a.get(1)));
+        calculator.getContext().addFunction("×", 2, a -> a.get(0) * (a.get(1)));
     }
 
     @Test
@@ -212,13 +209,12 @@ public class DoubleCalculatorTest {
     @Test
     public void calculateCompareAvailableFunctions() {
         List<String> functions = Arrays.asList("**", "log", "atanh", "cos", "atan", "cbrt", "tanh", "−", "sqrt", "×", "sin", "exp", "frac", "^", "tan", "fun2", "sinh", "e", "acosh", "*", "toDegrees", "+", "acos", "toRadians", "-", "/", "cosh", "abs", "negate", "w", "÷", "pi", "asin", "asinh", "gamma", "fun");
-        assertEquals(functions, new ArrayList<>(calculator.getContext().getAvailableFunctions()));
+        assertEquals(functions, new ArrayList<>(calculator.getContext().getFunctions().keySet()));
     }
 
     @Test
     public void calculateCompareOthers() {
-        assertEquals(calculator.getContext().getFunctions().keySet(), calculator.getContext().getAvailableFunctions());
-        calculator.getContext().setPrecision(10);
+        assertEquals(calculator.getContext().getFunctions().keySet(), calculator.getContext().getFunctions().keySet());
         assertEquals(10, calculator.getContext().getPrecision());
     }
 

@@ -1,7 +1,7 @@
 package io.github.aangiel.rpn.impl;
 
 import io.github.aangiel.rpn.Calculator;
-import io.github.aangiel.rpn.CalculatorContext;
+import io.github.aangiel.rpn.context.CalculatorContext;
 import io.github.aangiel.rpn.exception.*;
 import io.github.aangiel.rpn.math.ConstructorValue;
 import io.github.aangiel.rpn.math.FunctionValue;
@@ -19,7 +19,7 @@ import java.util.stream.IntStream;
  */
 public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
-    Logger logger = LogManager.getLogger(Calculator.class);
+    Logger logger = LogManager.getLogger(CalculatorImpl.class);
 
     private CalculatorContext<T> context;
 
@@ -52,15 +52,16 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
         if (tokens.isEmpty()) throw new EmptyEquationException();
 
-        Deque<T> stack = new ArrayDeque<>();
+        Deque<T> stack = new ArrayDeque<>(tokens.size());
         ListIterator<String> iterator = tokens.listIterator();
 
         while (iterator.hasNext()) calculateTokenAndPush(iterator, stack);
 
-        if (stack.size() != 1) throw new BadEquationException(stack);
+        T result = stack.pop();
+        if (!stack.isEmpty()) throw new BadEquationException(stack);
 
-        logger.info("Result = {}", stack.peek());
-        return stack.pop();
+        logger.info("Result = {}", result);
+        return result;
 
     }
 
@@ -69,7 +70,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         String token = iterator.next();
 
         logger.debug("Processing item '{}' at position {}", token, iterator.nextIndex());
-        ConstructorValue<T> value = context.getSupplier().getValue();
+        ConstructorValue<T> value = context.getValue();
         try {
             T applied = value.apply(Arrays.asList(token, context.getPrecision()));
             stack.push(applied);
