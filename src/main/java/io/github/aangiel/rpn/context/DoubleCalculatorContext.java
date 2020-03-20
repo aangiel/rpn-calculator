@@ -9,20 +9,22 @@ public class DoubleCalculatorContext extends CalculatorContext<Double> {
 
     @Override
     protected void populateDefaultOperations() {
-        addFunction("+", 2, a -> a.get(0) + a.get(1));
-        addFunction("-", 2, a -> a.get(0) - a.get(1));
-        addFunction("*", 2, a -> a.get(0) * a.get(1));
-        addFunction("/", 2, a -> a.get(0) / a.get(1));
+        addFunction("+", 2, args -> args.get(0) + args.get(1));
+        addFunction("-", 2, args -> args.get(0) - args.get(1));
+        addFunction("*", 2, args -> args.get(0) * args.get(1));
+        addFunction("/", 2, args -> args.get(0) / args.get(1));
     }
 
     @Override
     protected void populateConstants() {
-        addFunction("pi", 0, a -> Math.PI);
-        addFunction("e", 0, a -> Math.E);
+        addFunction("pi", 0, args -> Math.PI);
+        addFunction("e", 0, args -> Math.E);
     }
 
     @Override
     public ConstructorValue<Double> getValue() {
-        return a -> Double.valueOf((String) a.get(0));
+        return args -> Double.valueOf(
+                (String) args.get(0)
+        );
     }
 }

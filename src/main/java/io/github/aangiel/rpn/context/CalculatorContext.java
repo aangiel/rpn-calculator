@@ -24,10 +24,6 @@ public abstract class CalculatorContext<T extends Number> {
     private Class<?> mathClass;
     private long precision;
 
-    private CalculatorContext() {
-        throw new AssertionError();
-    }
-
     public CalculatorContext(Class<T> clazz, Class<?> mathClass, long precision) {
         this.clazz = clazz;
         this.mathClass = mathClass;
@@ -52,10 +48,6 @@ public abstract class CalculatorContext<T extends Number> {
         return functions;
     }
 
-    public Class<T> getClazz() {
-        return clazz;
-    }
-
     public long getPrecision() {
         return precision;
     }
@@ -65,24 +57,25 @@ public abstract class CalculatorContext<T extends Number> {
     }
 
     private void populateDefaultOneParameterMathFunctions() {
-        for (Method m : getStaticOneParameterMethodsFromMathClass()) {
-            IMathFunction<T> function = a -> (T) invokeMathMethod(m, a);
-            functions.put(m.getName(), new FunctionValue<>(1, function));
+        for (Method method : getStaticOneParameterMethodsFromMathClass()) {
+            IMathFunction<T> function = a -> (T) invokeMathMethod(method, a);
+            functions.put(method.getName(), new FunctionValue<>(1, function));
         }
     }
 
     private List<Method> getStaticOneParameterMethodsFromMathClass() {
         return Stream.of(mathClass.getMethods())
-                .filter(m -> clazz.equals(m.getReturnType()))
-                .filter(m -> m.getParameterCount() == 1)
-                .filter(m -> Arrays.equals(m.getParameterTypes(), new Class[]{clazz}))
-                .filter(m -> Modifier.isStatic(m.getModifiers()))
+                .filter(method -> clazz.equals(method.getReturnType()))
+                .filter(method -> method.getParameterCount() == 1)
+                .filter(method -> Arrays.equals(method.getParameterTypes(), new Class[]{clazz}))
+                .filter(method -> Modifier.isStatic(method.getModifiers()))
                 .collect(Collectors.toList());
     }
 
-    private T invokeMathMethod(Method m, List<T> a) throws CalculatorException {
+    @SuppressWarnings("unchecked")
+    private T invokeMathMethod(Method method, List<T> arguments) throws CalculatorException {
         try {
-            return (T) m.invoke(null, a.toArray());
+            return (T) method.invoke(null, arguments.toArray());
         } catch (IllegalAccessException e) {
             throw new UnexpectedException(e.getMessage());
         } catch (InvocationTargetException e) {

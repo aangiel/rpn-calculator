@@ -221,7 +221,7 @@ public class BigDecimalCalculatorTest {
     public void calculateConstants() throws CalculatorException {
         assertEquals(new BigDecimal("6.28"), calculator.calculate("pi 2 *"));
         assertEquals(new BigDecimal("3.14"), calculator.calculate("pi"));
-        assertEquals(new BigDecimal("2.718281827999999844536205273470841348171234130859375"), calculator.calculate("e"));
-        assertEquals(new BigDecimal("1.359140913999999922268102636735420674085617065429688"), calculator.calculate("e 2 /"));
+        assertEquals(new BigDecimal("2.718281828"), calculator.calculate("e"));
+        assertEquals(new BigDecimal("1.359140914"), calculator.calculate("e 2 /"));
     }
 }

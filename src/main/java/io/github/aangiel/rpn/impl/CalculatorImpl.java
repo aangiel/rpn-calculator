@@ -31,10 +31,6 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         this.context = context;
     }
 
-    private CalculatorImpl() {
-        throw new AssertionError();
-    }
-
     /**
      * Main method for Reverse Polish Notation Calculator
      *

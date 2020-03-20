@@ -19,6 +19,7 @@ public final class CalculatorSupplier {
         throw new AssertionError();
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends Number> Calculator<T> getCalculator(Class<T> clazz) {
         if (Objects.isNull(CALCULATORS)) populateCalculators();
 

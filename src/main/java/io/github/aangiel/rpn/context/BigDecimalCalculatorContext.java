@@ -12,20 +12,22 @@ public class BigDecimalCalculatorContext extends CalculatorContext<BigDecimal> {
 
     @Override
     protected void populateDefaultOperations() {
-        addFunction("+", 2, a -> a.get(0).add(a.get(1)));
-        addFunction("-", 2, a -> a.get(0).subtract(a.get(1)));
-        addFunction("*", 2, a -> a.get(0).multiply(a.get(1)));
-        addFunction("/", 2, a -> a.get(0).divide(a.get(1), BigDecimal.ROUND_CEILING));
+        addFunction("+", 2, args -> args.get(0).add(args.get(1)));
+        addFunction("-", 2, args -> args.get(0).subtract(args.get(1)));
+        addFunction("*", 2, args -> args.get(0).multiply(args.get(1)));
+        addFunction("/", 2, args -> args.get(0).divide(args.get(1), BigDecimal.ROUND_CEILING));
     }
 
     @Override
     protected void populateConstants() {
-        addFunction("pi", 0, (a) -> BigDecimal.valueOf(3.14));
-        addFunction("e", 0, (a) -> new BigDecimal("2.718281828"));
+        addFunction("pi", 0, args -> BigDecimal.valueOf(3.14));
+        addFunction("e", 0, args -> new BigDecimal("2.718281828"));
     }
 
     @Override
     public ConstructorValue<BigDecimal> getValue() {
-        return a -> new BigDecimal((String) a.get(0));
+        return args -> new BigDecimal(
+                (String) args.get(0)
+        );
     }
 }

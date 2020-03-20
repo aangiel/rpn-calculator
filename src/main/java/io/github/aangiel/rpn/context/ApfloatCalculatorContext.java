@@ -16,20 +16,23 @@ public class ApfloatCalculatorContext extends CalculatorContext<Apfloat> {
 
     @Override
     protected void populateDefaultOperations() {
-        addFunction("+", 2, a -> a.get(0).add(a.get(1)));
-        addFunction("-", 2, a -> a.get(0).subtract(a.get(1)));
-        addFunction("*", 2, a -> a.get(0).multiply(a.get(1)));
-        addFunction("/", 2, a -> a.get(0).divide(a.get(1)));
+        addFunction("+", 2, args -> args.get(0).add(args.get(1)));
+        addFunction("-", 2, args -> args.get(0).subtract(args.get(1)));
+        addFunction("*", 2, args -> args.get(0).multiply(args.get(1)));
+        addFunction("/", 2, args -> args.get(0).divide(args.get(1)));
     }
 
     @Override
     protected void populateConstants() {
-        addFunction("pi", 0, (a) -> ApfloatMath.pi(getPrecision()));
-        addFunction("e", 0, (a) -> new Apfloat(2.718281828));
+        addFunction("pi", 0, args -> ApfloatMath.pi(getPrecision()));
+        addFunction("e", 0, args -> new Apfloat(2.718281828));
     }
 
     @Override
     public ConstructorValue<Apfloat> getValue() {
-        return a -> new Apfloat((String) a.get(0), (long) a.get(1));
+        return args -> new Apfloat(
+                (String) args.get(0)
+                , (long) args.get(1)
+        );
     }
 }
