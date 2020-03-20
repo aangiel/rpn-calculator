@@ -208,12 +208,12 @@ public class BigDecimalCalculatorTest {
     @Test
     public void calculateCompareAvailableFunctions() {
         List<String> functions = Arrays.asList("**", "fun2", "e", "*", "+", "-", "/", "−", "÷", "×", "pi", "^", "fun");
-        assertEquals(functions, new ArrayList<>(calculator.getContext().getFunctions().keySet()));
+        assertEquals(functions, new ArrayList<>(calculator.getContext().getAvailableFunctions()));
     }
 
     @Test
     public void calculateCompareOthers() {
-        assertEquals(calculator.getContext().getFunctions().keySet(), calculator.getContext().getFunctions().keySet());
+        assertEquals(calculator.getContext().getAvailableFunctions(), calculator.getContext().getAvailableFunctions());
         assertEquals(10, calculator.getContext().getPrecision());
     }
 

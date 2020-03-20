@@ -35,4 +35,9 @@ public class ApfloatCalculatorContext extends CalculatorContext<Apfloat> {
                 , (long) args.get(1)
         );
     }
+
+    @Override
+    protected CalculatorContext<Apfloat> self() {
+        return this;
+    }
 }

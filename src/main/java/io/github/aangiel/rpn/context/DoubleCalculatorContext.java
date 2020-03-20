@@ -27,4 +27,9 @@ public class DoubleCalculatorContext extends CalculatorContext<Double> {
                 (String) args.get(0)
         );
     }
+
+    @Override
+    protected CalculatorContext<Double> self() {
+        return this;
+    }
 }

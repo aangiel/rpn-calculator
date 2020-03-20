@@ -10,10 +10,7 @@ import io.github.aangiel.rpn.math.IMathFunction;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -44,16 +41,23 @@ public abstract class CalculatorContext<T extends Number> {
 
     public abstract ConstructorValue<T> getValue();
 
-    public Map<String, FunctionValue<T>> getFunctions() {
-        return functions;
+    protected abstract CalculatorContext<T> self();
+
+    public Set<String> getAvailableFunctions() {
+        return functions.keySet();
+    }
+
+    public FunctionValue<T> getFunction(String name) {
+        return functions.get(name);
     }
 
     public long getPrecision() {
         return precision;
     }
 
-    public void addFunction(String name, int parameterCount, IMathFunction<T> function) {
+    public CalculatorContext<T> addFunction(String name, int parameterCount, IMathFunction<T> function) {
         functions.put(name, new FunctionValue<>(parameterCount, function));
+        return self();
     }
 
     private void populateDefaultOneParameterMathFunctions() {

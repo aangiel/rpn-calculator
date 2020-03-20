@@ -209,12 +209,12 @@ public class DoubleCalculatorTest {
     @Test
     public void calculateCompareAvailableFunctions() {
         List<String> functions = Arrays.asList("**", "log", "cos", "log10", "expm1", "log1p", "rint", "atan", "cbrt", "tanh", "nextUp", "−", "sqrt", "×", "sin", "exp", "floor", "^", "tan", "signum", "fun2", "sinh", "e", "*", "toDegrees", "nextDown", "+", "acos", "toRadians", "ceil", "-", "/", "cosh", "abs", "÷", "ulp", "pi", "asin", "fun");
-        assertEquals(functions, new ArrayList<>(calculator.getContext().getFunctions().keySet()));
+        assertEquals(functions, new ArrayList<>(calculator.getContext().getAvailableFunctions()));
     }
 
     @Test
     public void calculateCompareOthers() {
-        assertEquals(calculator.getContext().getFunctions().keySet(), calculator.getContext().getFunctions().keySet());
+        assertEquals(calculator.getContext().getAvailableFunctions(), calculator.getContext().getAvailableFunctions());
         assertEquals(0, calculator.getContext().getPrecision());
     }
 

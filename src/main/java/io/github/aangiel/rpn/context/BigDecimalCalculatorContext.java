@@ -30,4 +30,9 @@ public class BigDecimalCalculatorContext extends CalculatorContext<BigDecimal> {
                 (String) args.get(0)
         );
     }
+
+    @Override
+    protected CalculatorContext<BigDecimal> self() {
+        return this;
+    }
 }

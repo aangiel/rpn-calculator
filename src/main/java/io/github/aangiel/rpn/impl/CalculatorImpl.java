@@ -85,7 +85,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         logger.debug("Processing operator/function '{}' at position {}", operator, iterator.nextIndex());
 
         try {
-            FunctionValue<T> functionValue = context.getFunctions().get(operator);
+            FunctionValue<T> functionValue = context.getFunction(operator);
             List<T> arguments = new ArrayList<>();
             IntStream.range(0, functionValue.getParametersCount())
                     .forEach(x -> arguments.add(stack.pop()));
