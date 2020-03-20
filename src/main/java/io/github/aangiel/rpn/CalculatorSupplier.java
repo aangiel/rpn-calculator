@@ -2,6 +2,7 @@ package io.github.aangiel.rpn;
 
 import io.github.aangiel.rpn.context.ApfloatCalculatorContext;
 import io.github.aangiel.rpn.context.BigDecimalCalculatorContext;
+import io.github.aangiel.rpn.context.CalculatorContext;
 import io.github.aangiel.rpn.context.DoubleCalculatorContext;
 import io.github.aangiel.rpn.impl.CalculatorImpl;
 import org.apfloat.Apfloat;
@@ -9,20 +10,21 @@ import org.apfloat.Apfloat;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public final class CalculatorSupplier {
 
-    private static Map<Class<? extends Number>, Calculator<? extends Number>> CALCULATORS;
+    private final static Map<Class<? extends Number>, Calculator<? extends Number>> CALCULATORS = new HashMap<>();
 
     private CalculatorSupplier() {
         throw new AssertionError();
     }
 
+    static {
+        populateCalculators();
+    }
+
     @SuppressWarnings("unchecked")
     public static <T extends Number> Calculator<T> getCalculator(Class<T> clazz) {
-        if (Objects.isNull(CALCULATORS)) populateCalculators();
-
         try {
             return (Calculator<T>) CALCULATORS.get(clazz);
         } catch (NullPointerException e) {
@@ -30,11 +32,13 @@ public final class CalculatorSupplier {
         }
     }
 
-    private static void populateCalculators() {
-        CALCULATORS = new HashMap<>();
+    public static <T extends Number> void addCalculator(Class<T> clazz, CalculatorContext<T> contextImplementation) {
+        CALCULATORS.put(clazz, new CalculatorImpl<>(contextImplementation));
+    }
 
-        CALCULATORS.put(Apfloat.class, new CalculatorImpl<>(new ApfloatCalculatorContext()));
-        CALCULATORS.put(BigDecimal.class, new CalculatorImpl<>(new BigDecimalCalculatorContext()));
-        CALCULATORS.put(Double.class, new CalculatorImpl<>(new DoubleCalculatorContext()));
+    private static void populateCalculators() {
+        addCalculator(Apfloat.class, new ApfloatCalculatorContext());
+        addCalculator(BigDecimal.class, new BigDecimalCalculatorContext());
+        addCalculator(Double.class, new DoubleCalculatorContext());
     }
 }

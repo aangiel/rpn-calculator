@@ -7,7 +7,7 @@ import org.apfloat.ApfloatMath;
 /**
  * @see CalculatorContext
  */
-public class ApfloatCalculatorContext extends CalculatorContext<Apfloat> {
+public final class ApfloatCalculatorContext extends CalculatorContext<Apfloat> {
 
     public ApfloatCalculatorContext() {
         this(10);
@@ -28,13 +28,13 @@ public class ApfloatCalculatorContext extends CalculatorContext<Apfloat> {
     @Override
     protected void populateConstants() {
         addFunctionOrOperator("pi", 0, args -> ApfloatMath.pi(getPrecision()));
-        addFunctionOrOperator("e", 0, args -> new Apfloat(2.718281828));
+        addFunctionOrOperator("e", 0, args -> new Apfloat(Math.E));
     }
 
     @Override
     public ConstructorValue<Apfloat> getValue() {
         return args -> new Apfloat(
-                (String) args.get(0)
+                String.valueOf(args.get(0))
                 , (long) args.get(1)
         );
     }

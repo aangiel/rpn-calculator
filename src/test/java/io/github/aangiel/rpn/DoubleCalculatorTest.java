@@ -220,9 +220,9 @@ public class DoubleCalculatorTest {
 
     @Test
     public void calculateConstants() throws CalculatorException {
-        assertEquals(Double.valueOf(6.283185307179586), calculator.calculate("pi 2 *"));
-        assertEquals(Double.valueOf(3.141592653589793), calculator.calculate("pi"));
-        assertEquals(Double.valueOf(2.718281828459045), calculator.calculate("e"));
-        assertEquals(Double.valueOf(1.3591409142295225), calculator.calculate("e 2 /"));
+        assertEquals(Double.valueOf(2 * Math.PI), calculator.calculate("pi 2 *"));
+        assertEquals(Double.valueOf(Math.PI), calculator.calculate("pi"));
+        assertEquals(Double.valueOf(Math.E), calculator.calculate("e"));
+        assertEquals(Double.valueOf(Math.E / 2.0), calculator.calculate("e 2 /"));
     }
 }

@@ -219,9 +219,9 @@ public class BigDecimalCalculatorTest {
 
     @Test
     public void calculateConstants() throws CalculatorException {
-        assertEquals(new BigDecimal("6.28"), calculator.calculate("pi 2 *"));
-        assertEquals(new BigDecimal("3.14"), calculator.calculate("pi"));
-        assertEquals(new BigDecimal("2.718281828"), calculator.calculate("e"));
-        assertEquals(new BigDecimal("1.359140914"), calculator.calculate("e 2 /"));
+        assertEquals(new BigDecimal(String.valueOf(2 * Math.PI)), calculator.calculate("pi 2 *"));
+        assertEquals(new BigDecimal(String.valueOf(Math.PI)), calculator.calculate("pi"));
+        assertEquals(new BigDecimal(String.valueOf(Math.E)), calculator.calculate("e"));
+        assertEquals(new BigDecimal("1.359140914229523"), calculator.calculate("e 2 /"));
     }
 }

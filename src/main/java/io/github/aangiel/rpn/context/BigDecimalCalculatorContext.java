@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 /**
  * @see CalculatorContext
  */
-public class BigDecimalCalculatorContext extends CalculatorContext<BigDecimal> {
+public final class BigDecimalCalculatorContext extends CalculatorContext<BigDecimal> {
 
     public BigDecimalCalculatorContext() {
         super(BigDecimal.class, Math.class);
@@ -23,14 +23,14 @@ public class BigDecimalCalculatorContext extends CalculatorContext<BigDecimal> {
 
     @Override
     protected void populateConstants() {
-        addFunctionOrOperator("pi", 0, args -> BigDecimal.valueOf(3.14));
-        addFunctionOrOperator("e", 0, args -> new BigDecimal("2.718281828"));
+        addFunctionOrOperator("pi", 0, args -> BigDecimal.valueOf(Math.PI));
+        addFunctionOrOperator("e", 0, args -> BigDecimal.valueOf(Math.E));
     }
 
     @Override
     public ConstructorValue<BigDecimal> getValue() {
         return args -> new BigDecimal(
-                (String) args.get(0)
+                String.valueOf(args.get(0))
         );
     }
 

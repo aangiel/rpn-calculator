@@ -224,7 +224,7 @@ public class ApfloatCalculatorTest {
     public void calculateConstants() throws CalculatorException {
         assertEquals(new Apfloat(6.283185307), calculator.calculate("pi 2 *"));
         assertEquals(new Apfloat(3.141592653), calculator.calculate("pi"));
-        assertEquals(new Apfloat(2.718281828), calculator.calculate("e"));
-        assertEquals(new Apfloat(1.359140913), calculator.calculate("e 2 /"));
+        assertEquals(new Apfloat(Math.E), calculator.calculate("e"));
+        assertEquals(new Apfloat("1.359140914"), calculator.calculate("e 2 /"));
     }
 }

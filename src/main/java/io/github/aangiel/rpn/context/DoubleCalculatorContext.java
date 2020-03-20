@@ -5,7 +5,7 @@ import io.github.aangiel.rpn.math.ConstructorValue;
 /**
  * @see CalculatorContext
  */
-public class DoubleCalculatorContext extends CalculatorContext<Double> {
+public final class DoubleCalculatorContext extends CalculatorContext<Double> {
     public DoubleCalculatorContext() {
         super(double.class, Math.class);
     }
@@ -27,7 +27,7 @@ public class DoubleCalculatorContext extends CalculatorContext<Double> {
     @Override
     public ConstructorValue<Double> getValue() {
         return args -> Double.valueOf(
-                (String) args.get(0)
+                String.valueOf(args.get(0))
         );
     }
 
