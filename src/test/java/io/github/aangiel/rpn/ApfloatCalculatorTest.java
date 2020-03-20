@@ -19,8 +19,8 @@ public class ApfloatCalculatorTest {
 
     @Before
     public void setUp() {
-        CalculatorFactory<Apfloat> factory = new CalculatorFactory<>();
-        calculator = factory.getCalculator(Apfloat.class);
+        calculator = CalculatorSupplier.getCalculator(Apfloat.class);
+
         calculator.getContext().addFunction("**", 2, (a) -> a.get(0).multiply(a.get(1).multiply(a.get(0))));
         calculator.getContext().addFunction("^", 2, (a) -> a.get(0).divide(a.get(1).multiply(a.get(0))));
         calculator.getContext().addFunction("fun", 3, (a) -> a.get(0).multiply(a.get(1)).multiply(a.get(2)));

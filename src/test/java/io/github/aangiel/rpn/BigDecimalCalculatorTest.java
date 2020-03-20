@@ -18,8 +18,8 @@ public class BigDecimalCalculatorTest {
 
     @Before
     public void setUp() {
-        CalculatorFactory<BigDecimal> factory = new CalculatorFactory<>();
-        calculator = factory.getCalculator(BigDecimal.class);
+        calculator = CalculatorSupplier.getCalculator(BigDecimal.class);
+
         calculator.getContext().addFunction("**", 2, (a) -> a.get(0).multiply(a.get(1).multiply(a.get(0))));
         calculator.getContext().addFunction("^", 2, (a) -> a.get(0).divide(a.get(1).multiply(a.get(0))));
         calculator.getContext().addFunction("fun", 3, (a) -> a.get(0).multiply(a.get(1)).multiply(a.get(2)));

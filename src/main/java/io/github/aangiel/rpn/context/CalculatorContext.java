@@ -21,14 +21,14 @@ public abstract class CalculatorContext<T extends Number> {
 
     private Map<String, FunctionValue<T>> functions;
     private Class<T> clazz;
-    private Class mathClass;
+    private Class<?> mathClass;
     private long precision;
 
     private CalculatorContext() {
         throw new AssertionError();
     }
 
-    public CalculatorContext(Class clazz, Class mathClass, long precision) {
+    public CalculatorContext(Class<T> clazz, Class<?> mathClass, long precision) {
         this.clazz = clazz;
         this.mathClass = mathClass;
         this.precision = precision;
@@ -67,7 +67,7 @@ public abstract class CalculatorContext<T extends Number> {
     private void populateDefaultOneParameterMathFunctions() {
         for (Method m : getStaticOneParameterMethodsFromMathClass()) {
             IMathFunction<T> function = a -> (T) invokeMathMethod(m, a);
-            functions.put(m.getName(), new FunctionValue<T>(1, function));
+            functions.put(m.getName(), new FunctionValue<>(1, function));
         }
     }
 

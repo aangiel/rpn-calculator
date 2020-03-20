@@ -19,8 +19,8 @@ public class DoubleCalculatorTest {
 
     @Before
     public void setUp() {
-        CalculatorFactory<Double> factory = new CalculatorFactory<>();
-        calculator = factory.getCalculator(Double.class);
+        calculator = CalculatorSupplier.getCalculator(Double.class);
+
         calculator.getContext().addFunction("**", 2, (a) -> a.get(0) * (a.get(1) * (a.get(0))));
         calculator.getContext().addFunction("^", 2, (a) -> a.get(0) / (a.get(1) * (a.get(0))));
         calculator.getContext().addFunction("fun", 3, (a) -> a.get(0) * (a.get(1)) * (a.get(2)));

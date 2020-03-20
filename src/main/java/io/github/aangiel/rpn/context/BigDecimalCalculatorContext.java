@@ -21,7 +21,7 @@ public class BigDecimalCalculatorContext extends CalculatorContext<BigDecimal> {
     @Override
     protected void populateConstants() {
         addFunction("pi", 0, (a) -> BigDecimal.valueOf(3.14));
-        addFunction("e", 0, (a) -> new BigDecimal(2.718281828));
+        addFunction("e", 0, (a) -> new BigDecimal("2.718281828"));
     }
 
     @Override
