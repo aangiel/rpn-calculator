@@ -227,4 +227,15 @@ public class ApfloatCalculatorTest {
         assertEquals(new Apfloat(Math.E), calculator.calculate("e"));
         assertEquals(new Apfloat("1.359140914"), calculator.calculate("e 2 /"));
     }
+
+    //    @Test
+    public void performance() throws CalculatorException {
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 100000; i++) {
+            assertEquals(new Apfloat(-1.0137361372e-8),
+                    calculator.calculate("-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / -0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / +"));
+        }
+        long end = System.currentTimeMillis();
+        System.out.println(String.format("Performance: %s ms", end - start));
+    }
 }

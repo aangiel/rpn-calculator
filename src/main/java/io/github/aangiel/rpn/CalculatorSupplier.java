@@ -5,8 +5,8 @@ import io.github.aangiel.rpn.context.BigDecimalCalculatorContext;
 import io.github.aangiel.rpn.context.CalculatorContext;
 import io.github.aangiel.rpn.context.DoubleCalculatorContext;
 import io.github.aangiel.rpn.impl.CalculatorImpl;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.apfloat.Apfloat;
 
 import java.math.BigDecimal;
@@ -26,14 +26,14 @@ public final class CalculatorSupplier {
 
     static {
         populateCalculators();
-        logger.info("Available calculator types: {}", CALCULATORS.keySet());
+        logger.info(String.format("Available calculator types: %s", CALCULATORS.keySet()));
     }
 
     @SuppressWarnings("unchecked")
     public static <T extends Number> Calculator<T> getCalculator(Class<T> clazz) {
         Calculator<T> calculator = (Calculator<T>) CALCULATORS.get(clazz);
         if (Objects.isNull(calculator)) {
-            logger.error("Unsupported type: {}", clazz);
+            logger.error(String.format("Unsupported type: %s", clazz));
             throw new UnsupportedOperationException(String.format("Unsupported type: %s", clazz));
         }
         return calculator;
@@ -41,7 +41,7 @@ public final class CalculatorSupplier {
 
     public static <T extends Number> void addCalculator(Class<T> clazz, CalculatorContext<T> contextImplementation) {
         CALCULATORS.put(clazz, new CalculatorImpl<>(contextImplementation));
-        logger.debug("Calculator of type: {} added", clazz);
+        logger.debug(String.format("Calculator of type: %s added", clazz));
     }
 
     private static void populateCalculators() {

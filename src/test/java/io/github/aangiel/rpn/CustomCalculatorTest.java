@@ -2,7 +2,7 @@ package io.github.aangiel.rpn;
 
 import io.github.aangiel.rpn.context.CalculatorContext;
 import io.github.aangiel.rpn.exception.CalculatorException;
-import io.github.aangiel.rpn.math.IConstructorValue;
+import io.github.aangiel.rpn.math.IConstructor;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -56,7 +56,7 @@ public class CustomCalculatorTest {
         }
 
         @Override
-        public IConstructorValue<BigInteger> getValue() {
+        public IConstructor<BigInteger> getValue() {
             return args -> new BigInteger(String.valueOf(args.get(0)));
         }
 

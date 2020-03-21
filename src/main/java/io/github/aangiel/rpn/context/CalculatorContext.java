@@ -3,9 +3,9 @@ package io.github.aangiel.rpn.context;
 import io.github.aangiel.rpn.exception.CalculatorArithmeticException;
 import io.github.aangiel.rpn.exception.CalculatorException;
 import io.github.aangiel.rpn.exception.UnexpectedException;
-import io.github.aangiel.rpn.math.FunctionValue;
-import io.github.aangiel.rpn.math.IConstructorValue;
-import io.github.aangiel.rpn.math.IMathFunction;
+import io.github.aangiel.rpn.math.Function;
+import io.github.aangiel.rpn.math.IConstructor;
+import io.github.aangiel.rpn.math.IFunction;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,7 +23,7 @@ import java.util.stream.Stream;
  */
 public abstract class CalculatorContext<T extends Number> {
 
-    private Map<String, FunctionValue<T>> functions;
+    private Map<String, Function<T>> functions;
     private Class<T> clazz;
     private Class<?> mathClass;
     private long precision;
@@ -52,14 +52,14 @@ public abstract class CalculatorContext<T extends Number> {
 
     /**
      * Should be implemented as series of
-     * {@link #addFunctionOrOperator(String, int, IMathFunction) addFunctionOrOperator(String, int, IMathFunction)}
+     * {@link #addFunctionOrOperator(String, int, IFunction) addFunctionOrOperator(String, int, IMathFunction)}
      * invokes with default mathematical operations (+, -, *, /)
      */
     protected abstract void populateDefaultOperations();
 
     /**
      * Should be implemented as series of
-     * {@link #addFunctionOrOperator(String, int, IMathFunction) addFunctionOrOperator(String, int, IMathFunction)}
+     * {@link #addFunctionOrOperator(String, int, IFunction) addFunctionOrOperator(String, int, IMathFunction)}
      * invokes with mathematical constants (i.e. PI or e)
      */
     protected abstract void populateConstants();
@@ -73,15 +73,16 @@ public abstract class CalculatorContext<T extends Number> {
      *         );
      * </pre>
      *
-     * @return {@link IConstructorValue ConstructorValue}
+     * @return {@link IConstructor ConstructorValue}
      * which is used during parsing of equation while trying to parse number
      */
-    public abstract IConstructorValue<T> getValue();
+    public abstract IConstructor<T> getValue();
 
     /**
      * Should be always implemented as <pre>return this;</pre>, because it's used in chaining of
-     * {@link #addFunctionOrOperator(String, int, IMathFunction) addFunctionOrOperator(String, int, IMathFunction)}
+     * {@link #addFunctionOrOperator(String, int, IFunction) addFunctionOrOperator(String, int, IMathFunction)}
      * method.
+     *
      * @return this
      */
     protected abstract CalculatorContext<T> self();
@@ -90,15 +91,15 @@ public abstract class CalculatorContext<T extends Number> {
      * Adds function or operator for use in equations passed as String to
      * {@link io.github.aangiel.rpn.Calculator#calculate(String) Calculator.calculate(String)}
      * method.
-     * @param name Name of the function or operator (i.e. "*" for multiplying or "sin" for sinus)
+     *
+     * @param name           Name of the function or operator (i.e. "*" for multiplying or "sin" for sinus)
      * @param parameterCount Number of parameters passed to function (i.e. 2 for "*" or 1 for "sin")
-     * @param function Lambda which will be used during parsing equation (i.e. <pre>args -&#62; args.get(0) + args.get(1)</pre>
-     *                 <br><pre>args</pre> is defined as
-     *                 {@link IMathFunction#apply(List) &#60;T extends Number&#62; T apply(List&#60;T&#62; args)}
-     * @return <pre>this</pre> for chaining of adding functions or operators
+     * @param function       Lambda which will be used during parsing equation (i.e. args -&#62; args.get(0) + args.get(1)<br>
+     *                       args is defined as {@link IFunction#apply(List) &#60;T extends Number&#62; T apply(List&#60;T&#62; args)}
+     * @return this for chaining of adding functions or operators
      */
-    public CalculatorContext<T> addFunctionOrOperator(String name, int parameterCount, IMathFunction<T> function) {
-        functions.put(name, new FunctionValue<>(parameterCount, function));
+    public CalculatorContext<T> addFunctionOrOperator(String name, int parameterCount, IFunction<T> function) {
+        functions.put(name, new Function<>(parameterCount, function));
         return self();
     }
 
@@ -113,10 +114,11 @@ public abstract class CalculatorContext<T extends Number> {
     /**
      * Returns lambda used during parsing of equation passed by
      * {@link io.github.aangiel.rpn.Calculator#calculate(String) Calculator.calculate(String)}
+     *
      * @param name function or operator to be returned
      * @return Lambda which is used to calculate value for specified function or operator and its' arguments
      */
-    public FunctionValue<T> getFunctionOrOperator(String name) {
+    public Function<T> getFunctionOrOperator(String name) {
         return functions.get(name);
     }
 
@@ -139,8 +141,8 @@ public abstract class CalculatorContext<T extends Number> {
         if (Objects.isNull(mathClass)) return;
 
         for (Method method : getStaticOneParameterMethodsFromMathClass()) {
-            IMathFunction<T> function = a -> (T) invokeMathMethod(method, a);
-            functions.put(method.getName(), new FunctionValue<>(1, function));
+            IFunction<T> function = a -> (T) invokeMathMethod(method, a);
+            functions.put(method.getName(), new Function<>(1, function));
         }
     }
 
