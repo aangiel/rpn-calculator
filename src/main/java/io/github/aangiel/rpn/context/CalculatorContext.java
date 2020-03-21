@@ -136,6 +136,8 @@ public abstract class CalculatorContext<T extends Number> {
     }
 
     private void populateDefaultOneParameterMathFunctions() {
+        if (Objects.isNull(mathClass)) return;
+
         for (Method method : getStaticOneParameterMethodsFromMathClass()) {
             IMathFunction<T> function = a -> (T) invokeMathMethod(method, a);
             functions.put(method.getName(), new FunctionValue<>(1, function));

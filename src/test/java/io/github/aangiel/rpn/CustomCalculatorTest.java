@@ -43,7 +43,7 @@ public class CustomCalculatorTest {
     public static class BigIntegerContext extends CalculatorContext<BigInteger> {
 
         protected BigIntegerContext() {
-            super(BigInteger.class, BigInteger.class);
+            super(BigInteger.class, null);
         }
 
         @Override
