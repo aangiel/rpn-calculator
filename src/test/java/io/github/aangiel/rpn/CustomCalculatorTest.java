@@ -2,13 +2,14 @@ package io.github.aangiel.rpn;
 
 import io.github.aangiel.rpn.context.CalculatorContext;
 import io.github.aangiel.rpn.exception.CalculatorException;
-import io.github.aangiel.rpn.math.ConstructorValue;
+import io.github.aangiel.rpn.math.IConstructorValue;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigInteger;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 public class CustomCalculatorTest {
 
@@ -30,6 +31,15 @@ public class CustomCalculatorTest {
         assertEquals("[+]", calculator.getContext().getAvailableFunctionsAndOperators().toString());
     }
 
+    @Test
+    public void unsupportedType() {
+        UnsupportedOperationException unsupportedOperationException
+                = assertThrows(UnsupportedOperationException.class
+                , () -> CalculatorSupplier.getCalculator(Integer.class));
+        assertEquals("Unsupported type: class java.lang.Integer", unsupportedOperationException.getMessage());
+
+    }
+
     public static class BigIntegerContext extends CalculatorContext<BigInteger> {
 
         protected BigIntegerContext() {
@@ -46,7 +56,7 @@ public class CustomCalculatorTest {
         }
 
         @Override
-        public ConstructorValue<BigInteger> getValue() {
+        public IConstructorValue<BigInteger> getValue() {
             return args -> new BigInteger(String.valueOf(args.get(0)));
         }
 

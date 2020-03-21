@@ -1,6 +1,6 @@
 package io.github.aangiel.rpn.context;
 
-import io.github.aangiel.rpn.math.ConstructorValue;
+import io.github.aangiel.rpn.math.IConstructorValue;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 
@@ -32,7 +32,7 @@ public final class ApfloatCalculatorContext extends CalculatorContext<Apfloat> {
     }
 
     @Override
-    public ConstructorValue<Apfloat> getValue() {
+    public IConstructorValue<Apfloat> getValue() {
         return args -> new Apfloat(
                 String.valueOf(args.get(0))
                 , (long) args.get(1)

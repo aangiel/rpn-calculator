@@ -10,6 +10,7 @@ import org.apfloat.Apfloat;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public final class CalculatorSupplier {
 
@@ -25,11 +26,10 @@ public final class CalculatorSupplier {
 
     @SuppressWarnings("unchecked")
     public static <T extends Number> Calculator<T> getCalculator(Class<T> clazz) {
-        try {
-            return (Calculator<T>) CALCULATORS.get(clazz);
-        } catch (NullPointerException e) {
-            throw new UnsupportedOperationException("Unsupported type");
-        }
+        Calculator<T> calculator = (Calculator<T>) CALCULATORS.get(clazz);
+        if (Objects.isNull(calculator))
+            throw new UnsupportedOperationException(String.format("Unsupported type: %s", clazz));
+        return calculator;
     }
 
     public static <T extends Number> void addCalculator(Class<T> clazz, CalculatorContext<T> contextImplementation) {

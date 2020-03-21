@@ -3,8 +3,8 @@ package io.github.aangiel.rpn.context;
 import io.github.aangiel.rpn.exception.CalculatorArithmeticException;
 import io.github.aangiel.rpn.exception.CalculatorException;
 import io.github.aangiel.rpn.exception.UnexpectedException;
-import io.github.aangiel.rpn.math.ConstructorValue;
 import io.github.aangiel.rpn.math.FunctionValue;
+import io.github.aangiel.rpn.math.IConstructorValue;
 import io.github.aangiel.rpn.math.IMathFunction;
 
 import java.lang.reflect.InvocationTargetException;
@@ -72,10 +72,11 @@ public abstract class CalculatorContext<T extends Number> {
      *                 (String) args.get(0)
      *         );
      * </pre>
-     * @return {@link ConstructorValue ConstructorValue}
+     *
+     * @return {@link IConstructorValue ConstructorValue}
      * which is used during parsing of equation while trying to parse number
      */
-    public abstract ConstructorValue<T> getValue();
+    public abstract IConstructorValue<T> getValue();
 
     /**
      * Should be always implemented as <pre>return this;</pre>, because it's used in chaining of

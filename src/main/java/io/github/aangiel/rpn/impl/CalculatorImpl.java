@@ -3,8 +3,8 @@ package io.github.aangiel.rpn.impl;
 import io.github.aangiel.rpn.Calculator;
 import io.github.aangiel.rpn.context.CalculatorContext;
 import io.github.aangiel.rpn.exception.*;
-import io.github.aangiel.rpn.math.ConstructorValue;
 import io.github.aangiel.rpn.math.FunctionValue;
+import io.github.aangiel.rpn.math.IConstructorValue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,6 +16,8 @@ import java.util.stream.IntStream;
 
 /**
  * Class for Reverse Polish Notation calculations
+ *
+ * @see Calculator
  */
 public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
@@ -59,7 +61,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         String token = iterator.next();
 
         logger.debug("Processing item '{}' at position {}", token, iterator.nextIndex());
-        ConstructorValue<T> value = context.getValue();
+        IConstructorValue<T> value = context.getValue();
         try {
             T applied = value.apply(Arrays.asList(token, context.getPrecision()));
             stack.push(applied);
