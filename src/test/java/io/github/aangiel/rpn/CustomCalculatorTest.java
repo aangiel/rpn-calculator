@@ -17,7 +17,7 @@ public class CustomCalculatorTest {
 
     @Before
     public void setUp() {
-        CalculatorSupplier.INSTANCE.addCalculator(BigInteger.class, new BigIntegerContext());
+        CalculatorSupplier.INSTANCE.addCalculator(BigInteger.class, new BigIntegerContext2());
         calculator = CalculatorSupplier.INSTANCE.getCalculator(BigInteger.class);
     }
 
@@ -40,7 +40,7 @@ public class CustomCalculatorTest {
 
     }
 
-    public static class BigIntegerContext extends CalculatorContext<BigInteger> {
+    public static class BigIntegerContext2 extends CalculatorContext<BigInteger> {
 
         @Override
         protected void populateDefaultOperations() {
