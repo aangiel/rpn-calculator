@@ -54,7 +54,7 @@ public abstract class CalculatorContext<T extends Number> {
     /**
      *
      */
-    protected abstract void populateDefaultOneParameterMathFunctions();
+    protected abstract void populateMathFunctions();
 
     /**
      * Lambda for returning new Object of type <pre>&#60;T extends Number&#62;</pre><br><br>
@@ -125,7 +125,7 @@ public abstract class CalculatorContext<T extends Number> {
     private void populateFunctions() {
         functions = new HashMap<>();
         populateDefaultOperations();
-        populateDefaultOneParameterMathFunctions();
+        populateMathFunctions();
         populateConstants();
     }
 

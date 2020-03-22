@@ -32,7 +32,7 @@ public final class DoubleCalculatorContext extends CalculatorContext<Double> {
     }
 
     @Override
-    protected void populateDefaultOneParameterMathFunctions() {
+    protected void populateMathFunctions() {
         addFunctionOrOperator("abs", 1, args -> Math.abs(args.get(0)));
         addFunctionOrOperator("acos", 1, args -> Math.acos(args.get(0)));
         addFunctionOrOperator("asin", 1, args -> Math.asin(args.get(0)));

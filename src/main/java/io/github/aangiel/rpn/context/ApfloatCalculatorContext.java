@@ -39,7 +39,7 @@ public final class ApfloatCalculatorContext extends CalculatorContext<Apfloat> {
     }
 
     @Override
-    protected void populateDefaultOneParameterMathFunctions() {
+    protected void populateMathFunctions() {
         addFunctionOrOperator("abs", 1, args -> ApfloatMath.abs(args.get(0)));
         addFunctionOrOperator("acos", 1, args -> ApfloatMath.acos(args.get(0)));
         addFunctionOrOperator("acosh", 1, args -> ApfloatMath.acosh(args.get(0)));

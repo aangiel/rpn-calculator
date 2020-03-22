@@ -23,7 +23,7 @@ public final class BigDecimalCalculatorContext extends CalculatorContext<BigDeci
     }
 
     @Override
-    protected void populateDefaultOneParameterMathFunctions() {
+    protected void populateMathFunctions() {
     }
 
     @Override

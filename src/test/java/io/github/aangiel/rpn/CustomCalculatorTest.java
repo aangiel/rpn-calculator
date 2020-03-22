@@ -62,7 +62,7 @@ public class CustomCalculatorTest {
         }
 
         @Override
-        protected void populateDefaultOneParameterMathFunctions() {
+        protected void populateMathFunctions() {
         }
 
     }
