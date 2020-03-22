@@ -2,10 +2,8 @@ package io.github.aangiel.rpn.math;
 
 import io.github.aangiel.rpn.context.CalculatorContext;
 
-import java.util.List;
-
 /**
- * Used as lambda in {@link CalculatorContext#getValue() CalculatorContext.getValue()}
+ * Used as lambda in {@link CalculatorContext#getConstructor() CalculatorContext.getValue()}
  * You should implement during extending above class as returning new Object from constructor of type extending
  * {@link Number Number}
  *
@@ -14,5 +12,5 @@ import java.util.List;
 @FunctionalInterface
 public interface IConstructor<T extends Number> {
 
-    T apply(List<Object> args);
+    T apply(String value);
 }

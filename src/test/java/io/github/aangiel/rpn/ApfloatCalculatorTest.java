@@ -19,7 +19,7 @@ public class ApfloatCalculatorTest {
 
     @Before
     public void setUp() {
-        calculator = CalculatorSupplier.getCalculator(Apfloat.class);
+        calculator = CalculatorSupplier.INSTANCE.getCalculator(Apfloat.class);
 
         calculator.getContext().addFunctionOrOperator("**", 2, (a) -> a.get(0).multiply(a.get(1).multiply(a.get(0))))
                 .addFunctionOrOperator("^", 2, (a) -> a.get(0).divide(a.get(1).multiply(a.get(0))))

@@ -19,7 +19,7 @@ public class DoubleCalculatorTest {
 
     @Before
     public void setUp() {
-        calculator = CalculatorSupplier.getCalculator(Double.class);
+        calculator = CalculatorSupplier.INSTANCE.getCalculator(Double.class);
 
         calculator.getContext().addFunctionOrOperator("**", 2, (a) -> a.get(0) * (a.get(1) * (a.get(0))));
         calculator.getContext().addFunctionOrOperator("^", 2, (a) -> a.get(0) / (a.get(1) * (a.get(0))));

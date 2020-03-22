@@ -43,11 +43,16 @@ public abstract class CalculatorContext<T extends Number> {
 
     /**
      * Should be invoked only by subclass and pass hardcoded parameters.
-     * @param clazz Class extending {@link Number Number} which you are implementing (i.e. <pre>double.class</pre>)
+     *
+     * @param clazz     Class extending {@link Number Number} which you are implementing (i.e. <pre>double.class</pre>)
      * @param mathClass Class with static, one-parameter math methods (i.e. <pre>Math.class</pre>)
      */
     protected CalculatorContext(Class<T> clazz, Class<?> mathClass) {
         this(clazz, mathClass, 0);
+    }
+
+    protected CalculatorContext(Class<T> clazz) {
+        this(clazz, null);
     }
 
     /**
@@ -76,7 +81,7 @@ public abstract class CalculatorContext<T extends Number> {
      * @return {@link IConstructor ConstructorValue}
      * which is used during parsing of equation while trying to parse number
      */
-    public abstract IConstructor<T> getValue();
+    public abstract IConstructor<T> getConstructor();
 
     /**
      * Should be always implemented as <pre>return this;</pre>, because it's used in chaining of

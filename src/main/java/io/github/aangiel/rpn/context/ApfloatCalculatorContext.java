@@ -32,11 +32,8 @@ public final class ApfloatCalculatorContext extends CalculatorContext<Apfloat> {
     }
 
     @Override
-    public IConstructor<Apfloat> getValue() {
-        return args -> new Apfloat(
-                String.valueOf(args.get(0))
-                , (long) args.get(1)
-        );
+    public IConstructor<Apfloat> getConstructor() {
+        return value -> new Apfloat(value, getPrecision());
     }
 
     @Override

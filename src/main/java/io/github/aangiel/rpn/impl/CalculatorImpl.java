@@ -4,7 +4,6 @@ import io.github.aangiel.rpn.Calculator;
 import io.github.aangiel.rpn.context.CalculatorContext;
 import io.github.aangiel.rpn.exception.*;
 import io.github.aangiel.rpn.math.Function;
-import io.github.aangiel.rpn.math.IConstructor;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -12,7 +11,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  * Class for Reverse Polish Notation calculations
@@ -21,7 +19,7 @@ import java.util.stream.IntStream;
  */
 public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
-    Logger logger = LogManager.getLogger(CalculatorImpl.class);
+    private static final Logger LOG = LogManager.getLogger(CalculatorImpl.class);
 
     private CalculatorContext<T> context;
 
@@ -34,12 +32,17 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
     }
 
     @Override
+    public CalculatorContext<T> getContext() {
+        return context;
+    }
+
+    @Override
     public T calculate(String equation) throws CalculatorException {
 
-        logger.info(String.format("Calculating equation: %s", equation));
+        LOG.info(String.format("Calculating equation: %s", equation));
 
         List<String> tokens = WHITESPACE.splitAsStream(equation).collect(LINKED_LIST_COLLECTOR);
-        logger.debug(String.format("Equation split with whitespace regex: %s", tokens));
+        LOG.debug(String.format("Equation split with whitespace regex: %s", tokens));
 
         if (tokens.isEmpty()) throw new EmptyEquationException();
 
@@ -51,7 +54,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         T result = stack.pop();
         if (!stack.isEmpty()) throw new BadEquationException(stack);
 
-        logger.info(String.format("Result = %s", result));
+        LOG.info(String.format("Result = %s", result));
         return result;
 
     }
@@ -60,12 +63,11 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
         String token = iterator.next();
 
-        logger.debug(String.format("Processing item '%s' at position %s", token, iterator.nextIndex()));
-        IConstructor<T> value = context.getValue();
+        LOG.debug(String.format("Processing item '%s' at position %s", token, iterator.nextIndex()));
         try {
-            T applied = value.apply(Arrays.asList(token, context.getPrecision()));
+            T applied = context.getConstructor().apply(token);
             stack.push(applied);
-            logger.debug(String.format("Item '%s' pushed into the stack: %s", token, stack));
+            LOG.debug(String.format("Item '%s' pushed into the stack: %s", token, stack));
         } catch (NumberFormatException e) {
             calculateOnStack(iterator, stack);
         }
@@ -77,29 +79,33 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         iterator.previous();
         String operator = iterator.next();
 
-        logger.debug(String.format("Processing operator/function '%s' at position %s", operator, iterator.nextIndex()));
+        LOG.debug(String.format("Processing operator/function '%s' at position %s", operator, iterator.nextIndex()));
 
         try {
             Function<T> function = context.getFunctionOrOperator(operator);
-            List<T> arguments = new ArrayList<>();
-            IntStream.range(0, function.getParametersCount())
-                    .forEach(x -> arguments.add(stack.pop()));
-            Collections.reverse(arguments);
-            logger.debug(String.format("Took %s arguments (%s) from stack: %s", arguments.size(), arguments, stack));
-            T applied = function.get().apply(arguments);
-            stack.push(applied);
-            logger.debug(String.format("Pushed value %s into the stack: %s", applied, stack));
+
+            List<T> arguments = popArgumentsForFunctionOrOperator(function, stack);
+            LOG.debug(String.format("Took %s arguments (%s) from stack: %s", arguments.size(), arguments, stack));
+
+            T value = function.get().apply(arguments);
+            stack.push(value);
+            LOG.debug(String.format("Pushed value %s into the stack: %s", value, stack));
         } catch (NullPointerException e) {
-            logger.error(String.format("Operator/function '%s' at position %s unsupported", operator, iterator.nextIndex()));
+            LOG.error(String.format("Operator/function '%s' at position %s unsupported", operator, iterator.nextIndex()));
             throw new BadItemException(operator, iterator.nextIndex());
-        } catch (NoSuchElementException e) {
-            logger.error(String.format("Unexpected end of stack for operator '%s' at position %s", operator, iterator.nextIndex()));
+        } catch (IndexOutOfBoundsException e) {
+            LOG.error(String.format("Unexpected end of stack for operator '%s' at position %s", operator, iterator.nextIndex()));
             throw new LackOfArgumentsException(operator, iterator.nextIndex());
         }
     }
 
-    @Override
-    public CalculatorContext<T> getContext() {
-        return context;
+    private List<T> popArgumentsForFunctionOrOperator(Function<T> function, Deque<T> stack) {
+        List<T> arguments =
+                stack.stream()
+                        .limit(function.getParametersCount())
+                        .peek(e -> stack.pop())
+                        .collect(Collectors.toList());
+        Collections.reverse(arguments);
+        return arguments;
     }
 }

@@ -17,8 +17,8 @@ public class CustomCalculatorTest {
 
     @Before
     public void setUp() {
-        CalculatorSupplier.addCalculator(BigInteger.class, new BigIntegerContext());
-        calculator = CalculatorSupplier.getCalculator(BigInteger.class);
+        CalculatorSupplier.INSTANCE.addCalculator(BigInteger.class, new BigIntegerContext());
+        calculator = CalculatorSupplier.INSTANCE.getCalculator(BigInteger.class);
     }
 
     @Test
@@ -35,7 +35,7 @@ public class CustomCalculatorTest {
     public void unsupportedType() {
         UnsupportedOperationException unsupportedOperationException
                 = assertThrows(UnsupportedOperationException.class
-                , () -> CalculatorSupplier.getCalculator(Integer.class));
+                , () -> CalculatorSupplier.INSTANCE.getCalculator(Integer.class));
         assertEquals("Unsupported type: class java.lang.Integer", unsupportedOperationException.getMessage());
 
     }
@@ -56,8 +56,8 @@ public class CustomCalculatorTest {
         }
 
         @Override
-        public IConstructor<BigInteger> getValue() {
-            return args -> new BigInteger(String.valueOf(args.get(0)));
+        public IConstructor<BigInteger> getConstructor() {
+            return BigInteger::new;
         }
 
         @Override

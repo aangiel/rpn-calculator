@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 public final class BigDecimalCalculatorContext extends CalculatorContext<BigDecimal> {
 
     public BigDecimalCalculatorContext() {
-        super(BigDecimal.class, Math.class);
+        super(BigDecimal.class);
     }
 
     @Override
@@ -28,10 +28,8 @@ public final class BigDecimalCalculatorContext extends CalculatorContext<BigDeci
     }
 
     @Override
-    public IConstructor<BigDecimal> getValue() {
-        return args -> new BigDecimal(
-                String.valueOf(args.get(0))
-        );
+    public IConstructor<BigDecimal> getConstructor() {
+        return BigDecimal::new;
     }
 
     @Override

@@ -18,7 +18,7 @@ public class BigDecimalCalculatorTest {
 
     @Before
     public void setUp() {
-        calculator = CalculatorSupplier.getCalculator(BigDecimal.class);
+        calculator = CalculatorSupplier.INSTANCE.getCalculator(BigDecimal.class);
 
         calculator.getContext().addFunctionOrOperator("**", 2, (a) -> a.get(0).multiply(a.get(1).multiply(a.get(0))));
         calculator.getContext().addFunctionOrOperator("^", 2, (a) -> a.get(0).divide(a.get(1).multiply(a.get(0))));

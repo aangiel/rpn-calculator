@@ -25,10 +25,8 @@ public final class DoubleCalculatorContext extends CalculatorContext<Double> {
     }
 
     @Override
-    public IConstructor<Double> getValue() {
-        return args -> Double.valueOf(
-                String.valueOf(args.get(0))
-        );
+    public IConstructor<Double> getConstructor() {
+        return Double::valueOf;
     }
 
     @Override

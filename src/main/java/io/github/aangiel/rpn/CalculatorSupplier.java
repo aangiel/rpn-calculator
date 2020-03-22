@@ -14,37 +14,34 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public final class CalculatorSupplier {
+public enum CalculatorSupplier {
 
-    private final static Logger logger = LogManager.getLogger(CalculatorSupplier.class);
+    INSTANCE;
 
-    private final static Map<Class<? extends Number>, Calculator<? extends Number>> CALCULATORS = new HashMap<>();
+    private final Logger LOG = LogManager.getLogger(CalculatorSupplier.class);
 
-    private CalculatorSupplier() {
-        throw new AssertionError();
-    }
+    private final Map<Class<? extends Number>, Calculator<? extends Number>> CALCULATORS = new HashMap<>();
 
-    static {
+    CalculatorSupplier() {
         populateCalculators();
-        logger.info(String.format("Available calculator types: %s", CALCULATORS.keySet()));
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends Number> Calculator<T> getCalculator(Class<T> clazz) {
+    public <T extends Number> Calculator<T> getCalculator(Class<T> clazz) {
         Calculator<T> calculator = (Calculator<T>) CALCULATORS.get(clazz);
         if (Objects.isNull(calculator)) {
-            logger.error(String.format("Unsupported type: %s", clazz));
+            LOG.error(String.format("Unsupported type: %s", clazz));
             throw new UnsupportedOperationException(String.format("Unsupported type: %s", clazz));
         }
         return calculator;
     }
 
-    public static <T extends Number> void addCalculator(Class<T> clazz, CalculatorContext<T> contextImplementation) {
+    public <T extends Number> void addCalculator(Class<T> clazz, CalculatorContext<T> contextImplementation) {
         CALCULATORS.put(clazz, new CalculatorImpl<>(contextImplementation));
-        logger.debug(String.format("Calculator of type: %s added", clazz));
+        LOG.debug(String.format("Calculator of type: %s added", clazz));
     }
 
-    private static void populateCalculators() {
+    private void populateCalculators() {
         addCalculator(Apfloat.class, new ApfloatCalculatorContext());
         addCalculator(BigDecimal.class, new BigDecimalCalculatorContext());
         addCalculator(Double.class, new DoubleCalculatorContext());
