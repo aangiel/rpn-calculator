@@ -14,6 +14,10 @@ public final class ApfloatCalculatorContext extends CalculatorContext<Apfloat> {
         super(10);
     }
 
+    public ApfloatCalculatorContext(long precision) {
+        super(precision);
+    }
+
     @Override
     protected void populateDefaultOperations() {
         addFunctionOrOperator("+", 2, args -> args.get(0).add(args.get(1)));

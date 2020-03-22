@@ -116,10 +116,15 @@ public abstract class CalculatorContext<T extends Number> {
 
     /**
      * Returns precision used with {@link org.apfloat.Apfloat Apfloat} which is currently implemented.
+     *
      * @return precision for {@link org.apfloat.Apfloat Apfloat} type.
      */
     public long getPrecision() {
         return precision;
+    }
+
+    public void setPrecision(long precision) {
+        this.precision = precision;
     }
 
     private void populateFunctions() {
