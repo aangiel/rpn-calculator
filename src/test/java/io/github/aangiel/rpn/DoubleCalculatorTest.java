@@ -208,7 +208,7 @@ public class DoubleCalculatorTest {
 
     @Test
     public void calculateCompareAvailableFunctions() {
-        List<String> functions = Arrays.asList("**", "log", "cos", "log10", "expm1", "log1p", "rint", "atan", "cbrt", "tanh", "nextUp", "−", "sqrt", "×", "sin", "exp", "floor", "^", "tan", "signum", "fun2", "sinh", "e", "*", "toDegrees", "nextDown", "+", "acos", "toRadians", "ceil", "-", "/", "cosh", "abs", "÷", "ulp", "pi", "asin", "fun");
+        List<String> functions = Arrays.asList("**", "copySign", "log", "cos", "expm1", "log1p", "log10", "nextAfter", "atan", "cbrt", "tanh", "−", "min", "sqrt", "hypot", "×", "sin", "exp", "floor", "^", "atan2", "tan", "fun2", "max", "sinh", "e", "*", "toDegrees", "+", "acos", "ceil", "toRadians", "-", "/", "cosh", "abs", "÷", "pi", "asin", "fun");
         assertEquals(functions, new ArrayList<>(calculator.getContext().getAvailableFunctionsAndOperators()));
     }
 

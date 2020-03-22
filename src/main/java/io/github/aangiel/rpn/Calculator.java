@@ -30,10 +30,8 @@ public interface Calculator<T extends Number> {
      * @throws CalculatorException abstract {@link Exception} for
      *                             {@link BadEquationException}
      *                             , {@link BadItemException}
-     *                             , {@link CalculatorArithmeticException}
      *                             , {@link EmptyEquationException}
      *                             , {@link LackOfArgumentsException}
-     *                             , {@link UnexpectedException}
      * @see <a href="https://en.wikipedia.org/wiki/Reverse_Polish_notation">Wikipedia</a>
      */
     T calculate(String equation) throws CalculatorException;

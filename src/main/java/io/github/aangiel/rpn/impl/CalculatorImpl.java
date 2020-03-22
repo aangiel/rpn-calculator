@@ -3,7 +3,7 @@ package io.github.aangiel.rpn.impl;
 import io.github.aangiel.rpn.Calculator;
 import io.github.aangiel.rpn.context.CalculatorContext;
 import io.github.aangiel.rpn.exception.*;
-import io.github.aangiel.rpn.math.Function;
+import io.github.aangiel.rpn.math.MathFunction;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -80,10 +80,10 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         LOG.debug(String.format("Processing operator/function '%s' at position %s", operator, iterator.nextIndex()));
 
         try {
-            Function<T> function = context.getFunctionOrOperator(operator);
-            List<T> arguments = popArgumentsForFunctionOrOperator(function, stack);
+            MathFunction<T> mathFunction = context.getFunctionOrOperator(operator);
+            List<T> arguments = popArgumentsForFunctionOrOperator(mathFunction, stack);
             LOG.debug(String.format("Took %s arguments (%s) from stack: %s", arguments.size(), arguments, stack));
-            T value = function.get().apply(arguments);
+            T value = mathFunction.get().apply(arguments);
             stack.push(value);
             LOG.debug(String.format("Pushed value %s into the stack: %s", value, stack));
         } catch (NullPointerException e) {
@@ -95,9 +95,9 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         }
     }
 
-    private List<T> popArgumentsForFunctionOrOperator(Function<T> function, Deque<T> stack) {
+    private List<T> popArgumentsForFunctionOrOperator(MathFunction<T> mathFunction, Deque<T> stack) {
         List<T> arguments = stack.stream()
-                .limit(function.getParametersCount())
+                .limit(mathFunction.getParametersCount())
                 .peek(e -> stack.pop())
                 .collect(Collectors.toList());
         Collections.reverse(arguments);

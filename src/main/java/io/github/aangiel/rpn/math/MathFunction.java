@@ -1,13 +1,18 @@
 package io.github.aangiel.rpn.math;
 
+import io.github.aangiel.rpn.context.CalculatorContext;
+
+import java.util.List;
+import java.util.function.Function;
+
 /**
  * Used as value class in {@link java.util.HashMap HashMap} in
- * {@link io.github.aangiel.rpn.context.CalculatorContext#getFunctionOrOperator(String)
+ * {@link CalculatorContext#getFunctionOrOperator(String)
  * CalculatorContext.getFunctionOrOperator(String)}
  *
  * <br><br>
  * <p>
- * It holds quantity of parameters for lambda provided to function of type {@link IFunction}.
+ * It holds quantity of parameters for lambda provided to function of type {@link Function}.
  *
  * <br><br>
  * <p>
@@ -16,12 +21,12 @@ package io.github.aangiel.rpn.math;
  *
  * @param <T> extends Number
  */
-public final class Function<T extends Number> {
+public final class MathFunction<T extends Number> {
 
     private final int parametersCount;
-    private final IFunction<T> function;
+    private final Function<List<T>, T> function;
 
-    public Function(int parametersCount, IFunction<T> function) {
+    public MathFunction(int parametersCount, Function<List<T>, T> function) {
         this.parametersCount = parametersCount;
         this.function = function;
     }
@@ -42,7 +47,7 @@ public final class Function<T extends Number> {
      *
      * @return Lambda for calculating operations and functions
      */
-    public IFunction<T> get() {
+    public Function<List<T>, T> get() {
         return function;
     }
 }
