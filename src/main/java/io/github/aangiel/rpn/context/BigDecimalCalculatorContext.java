@@ -8,12 +8,21 @@ import java.util.function.Function;
  */
 public final class BigDecimalCalculatorContext extends CalculatorContext<BigDecimal> {
 
+
+    public BigDecimalCalculatorContext(int bigDecimalRoundingMode) {
+        super(bigDecimalRoundingMode);
+    }
+
+    public BigDecimalCalculatorContext() {
+        this(BigDecimal.ROUND_CEILING);
+    }
+
     @Override
     protected void populateDefaultOperations() {
         addFunctionOrOperator("+", 2, args -> args.get(0).add(args.get(1)));
         addFunctionOrOperator("-", 2, args -> args.get(0).subtract(args.get(1)));
         addFunctionOrOperator("*", 2, args -> args.get(0).multiply(args.get(1)));
-        addFunctionOrOperator("/", 2, args -> args.get(0).divide(args.get(1), BigDecimal.ROUND_CEILING));
+        addFunctionOrOperator("/", 2, args -> args.get(0).divide(args.get(1), getRoundingMode()));
     }
 
     @Override

@@ -19,6 +19,7 @@ public abstract class CalculatorContext<T extends Number> {
 
     private Map<String, MathFunction<T>> functions;
     private long precision;
+    private int roundingMode;
 
     /**
      * Should be invoked only by subclass and pass hardcoded parameters.
@@ -30,11 +31,13 @@ public abstract class CalculatorContext<T extends Number> {
         populateFunctions();
     }
 
-    /**
-     * Should be invoked only by subclass and pass hardcoded parameters.
-     */
+    protected CalculatorContext(int roundingMode) {
+        this.roundingMode = roundingMode;
+        populateFunctions();
+    }
+
     protected CalculatorContext() {
-        this(10);
+        populateFunctions();
     }
 
     /**
@@ -125,6 +128,14 @@ public abstract class CalculatorContext<T extends Number> {
 
     public void setPrecision(long precision) {
         this.precision = precision;
+    }
+
+    public int getRoundingMode() {
+        return roundingMode;
+    }
+
+    public void setRoundingMode(int roundingMode) {
+        this.roundingMode = roundingMode;
     }
 
     private void populateFunctions() {

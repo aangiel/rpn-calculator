@@ -11,7 +11,7 @@ import java.util.function.Function;
 public final class ApfloatCalculatorContext extends CalculatorContext<Apfloat> {
 
     public ApfloatCalculatorContext() {
-        super(10);
+        this(10L);
     }
 
     public ApfloatCalculatorContext(long precision) {

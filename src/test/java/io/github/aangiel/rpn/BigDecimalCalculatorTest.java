@@ -103,22 +103,10 @@ public class BigDecimalCalculatorTest {
         assertEquals("Lack of arguments for: + at position: 9", exception.getMessage());
     }
 
-//    @Test
-//    public void calculateConstructingFunctionsException() {
-//        BadEquationException exception =
-//                assertThrows(BadEquationException.class, () -> calculator.calculate("08 90 sin"));
-//        assertEquals("Left on stack: [8.93996663e-1, 8]", exception.getMessage());
-//    }
-
     @Test
     public void calculateFloatingPoint() throws CalculatorException {
         assertEquals(new BigDecimal("17.547334"), calculator.calculate("12 23.234134 0.34234 12.2344534 * / +"));
     }
-
-//    @Test
-//    public void calculateWithMathFunctions() throws CalculatorException {
-//        assertEquals(new BigDecimal("5.34323729e12"), calculator.calculate("23 tanh 30 cosh *"));
-//    }
 
     @Test
     public void calculateHardOne() throws CalculatorException {
@@ -160,51 +148,6 @@ public class BigDecimalCalculatorTest {
         assertEquals(new BigDecimal(2), calculator.calculate("2"));
     }
 
-//    @Test
-//    public void calculateInnerFunctions() throws CalculatorException {
-//        Apfloat radians = ApfloatMath.toRadians(new Apfloat(90, 10));
-//        assertEquals(new BigDecimal(1), calculator.calculate(radians + " sin"));
-//        assertEquals(new BigDecimal("1.570796326"), calculator.calculate("90 toRadians"));
-//        assertEquals(new BigDecimal(1), calculator.calculate("90 toRadians sin"));
-//    }
-
-//    @Test
-//    public void calculateAllStaticMethods() throws CalculatorException {
-//        assertEquals(new BigDecimal("4.49980967"), calculator.calculate("90 log"));
-//
-//        CalculatorArithmeticException calculatorArithmeticException1
-//                = assertThrows(CalculatorArithmeticException.class, () -> calculator.calculate("0 log"));
-//        assertEquals("Logarithm of zero", calculatorArithmeticException1.getMessage());
-//
-//        assertEquals(new BigDecimal(0), calculator.calculate("0 atanh"));
-//
-//        CalculatorArithmeticException calculatorArithmeticException
-//                = assertThrows(CalculatorArithmeticException.class, () -> calculator.calculate("10 atanh"));
-//        assertEquals("Logarithm of negative number; result would be complex", calculatorArithmeticException.getMessage());
-//
-//        assertEquals(new BigDecimal(1), calculator.calculate("0 cos"));
-//        assertEquals(new BigDecimal(0), calculator.calculate("0 atan"));
-//        assertEquals(new BigDecimal(0), calculator.calculate("0 cbrt"));
-//        assertEquals(new BigDecimal(0), calculator.calculate("0 tanh"));
-//        assertEquals(new BigDecimal(0), calculator.calculate("0 sqrt"));
-//        assertEquals(new BigDecimal(0), calculator.calculate("0 sin"));
-//        assertEquals(new BigDecimal(1), calculator.calculate("0 exp"));
-//        assertEquals(new BigDecimal(0), calculator.calculate("0 frac"));
-//        assertEquals(new BigDecimal(0), calculator.calculate("0 tan"));
-//        assertEquals(new BigDecimal("3.626860407"), calculator.calculate("2 sinh"));
-//        assertEquals(new BigDecimal("1.762747174"), calculator.calculate("3 acosh"));
-//        assertEquals(new BigDecimal("2.864788975e2"), calculator.calculate("5 toDegrees"));
-//        assertEquals(new BigDecimal("1.047197551"), calculator.calculate("0.5 acos"));
-//        assertEquals(new BigDecimal("8.726646259e-2"), calculator.calculate("5 toRadians"));
-//        assertEquals(new BigDecimal(1), calculator.calculate("0 cosh"));
-//        assertEquals(new BigDecimal(10), calculator.calculate("-10 abs"));
-//        assertEquals(new BigDecimal(-5), calculator.calculate("5 negate"));
-//        assertEquals(new BigDecimal(0), calculator.calculate("0 w"));
-//        assertEquals(new BigDecimal(0), calculator.calculate("0 asin"));
-//        assertEquals(new BigDecimal(0), calculator.calculate("0 asinh"));
-//        assertEquals(new BigDecimal("2.4e1"), calculator.calculate("5 gamma"));
-//    }
-
     @Test
     public void calculateCompareAvailableFunctions() {
         List<String> functions = Arrays.asList("**", "fun2", "e", "*", "+", "-", "/", "−", "÷", "×", "pi", "^", "fun");
@@ -214,7 +157,7 @@ public class BigDecimalCalculatorTest {
     @Test
     public void calculateCompareOthers() {
         assertEquals(calculator.getContext().getAvailableFunctionsAndOperators(), calculator.getContext().getAvailableFunctionsAndOperators());
-        assertEquals(10, calculator.getContext().getPrecision());
+        assertEquals(0, calculator.getContext().getPrecision());
     }
 
     @Test

@@ -215,7 +215,7 @@ public class DoubleCalculatorTest {
     @Test
     public void calculateCompareOthers() {
         assertEquals(calculator.getContext().getAvailableFunctionsAndOperators(), calculator.getContext().getAvailableFunctionsAndOperators());
-        assertEquals(10, calculator.getContext().getPrecision());
+        assertEquals(0, calculator.getContext().getPrecision());
     }
 
     @Test
