@@ -8,10 +8,6 @@ import java.util.function.Function;
  */
 public final class BigDecimalCalculatorContext extends CalculatorContext<BigDecimal> {
 
-    public BigDecimalCalculatorContext() {
-        super(BigDecimal.class);
-    }
-
     @Override
     protected void populateDefaultOperations() {
         addFunctionOrOperator("+", 2, args -> args.get(0).add(args.get(1)));
@@ -24,6 +20,10 @@ public final class BigDecimalCalculatorContext extends CalculatorContext<BigDeci
     protected void populateConstants() {
         addFunctionOrOperator("pi", 0, args -> BigDecimal.valueOf(Math.PI));
         addFunctionOrOperator("e", 0, args -> BigDecimal.valueOf(Math.E));
+    }
+
+    @Override
+    protected void populateDefaultOneParameterMathFunctions() {
     }
 
     @Override

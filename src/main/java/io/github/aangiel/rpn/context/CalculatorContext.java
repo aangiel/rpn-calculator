@@ -1,17 +1,12 @@
 package io.github.aangiel.rpn.context;
 
-import io.github.aangiel.rpn.exception.CalculatorArithmeticException;
-import io.github.aangiel.rpn.exception.CalculatorException;
-import io.github.aangiel.rpn.exception.UnexpectedException;
 import io.github.aangiel.rpn.math.Function;
 import io.github.aangiel.rpn.math.IFunction;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Base abstract class used by {@link io.github.aangiel.rpn.Calculator Calculator}.
@@ -23,35 +18,23 @@ import java.util.stream.Stream;
 public abstract class CalculatorContext<T extends Number> {
 
     private Map<String, Function<T>> functions;
-    private Class<T> clazz;
-    private Class<?> mathClass;
     private long precision;
 
     /**
      * Should be invoked only by subclass and pass hardcoded parameters.
-     * @param clazz Class extending {@link Number Number} which you are implementing (i.e. <pre>double.class</pre>)
-     * @param mathClass Class with static, one-parameter math methods (i.e. <pre>Math.class</pre>)
+     *
      * @param precision used only with {@link org.apfloat.Apfloat Apfloat} type, which is currently implemented
      */
-    protected CalculatorContext(Class<T> clazz, Class<?> mathClass, long precision) {
-        this.clazz = clazz;
-        this.mathClass = mathClass;
+    protected CalculatorContext(long precision) {
         this.precision = precision;
         populateFunctions();
     }
 
     /**
      * Should be invoked only by subclass and pass hardcoded parameters.
-     *
-     * @param clazz     Class extending {@link Number Number} which you are implementing (i.e. <pre>double.class</pre>)
-     * @param mathClass Class with static, one-parameter math methods (i.e. <pre>Math.class</pre>)
      */
-    protected CalculatorContext(Class<T> clazz, Class<?> mathClass) {
-        this(clazz, mathClass, 0);
-    }
-
-    protected CalculatorContext(Class<T> clazz) {
-        this(clazz, null);
+    protected CalculatorContext() {
+        this(10);
     }
 
     /**
@@ -67,6 +50,11 @@ public abstract class CalculatorContext<T extends Number> {
      * invokes with mathematical constants (i.e. PI or e)
      */
     protected abstract void populateConstants();
+
+    /**
+     *
+     */
+    protected abstract void populateDefaultOneParameterMathFunctions();
 
     /**
      * Lambda for returning new Object of type <pre>&#60;T extends Number&#62;</pre><br><br>
@@ -141,35 +129,4 @@ public abstract class CalculatorContext<T extends Number> {
         populateConstants();
     }
 
-    private void populateDefaultOneParameterMathFunctions() {
-        if (Objects.isNull(mathClass)) return;
-
-        for (Method method : getStaticOneParameterMethodsFromMathClass()) {
-            IFunction<T> function = a -> (T) invokeMathMethod(method, a);
-            functions.put(method.getName(), new Function<>(1, function));
-        }
-    }
-
-    private List<Method> getStaticOneParameterMethodsFromMathClass() {
-        return Stream.of(mathClass.getMethods())
-                .filter(method -> clazz.equals(method.getReturnType()))
-                .filter(method -> method.getParameterCount() == 1)
-                .filter(method -> Arrays.equals(method.getParameterTypes(), new Class[]{clazz}))
-                .filter(method -> Modifier.isStatic(method.getModifiers()))
-                .collect(Collectors.toList());
-    }
-
-    @SuppressWarnings("unchecked")
-    private T invokeMathMethod(Method method, List<T> arguments) throws CalculatorException {
-        try {
-            return (T) method.invoke(null, arguments.toArray());
-        } catch (IllegalAccessException e) {
-            throw new UnexpectedException(e.getMessage());
-        } catch (InvocationTargetException e) {
-            if (ArithmeticException.class.equals(e.getCause().getClass()))
-                throw new CalculatorArithmeticException(e.getCause().getMessage());
-            else
-                throw new UnexpectedException(e.getCause().getMessage());
-        }
-    }
 }

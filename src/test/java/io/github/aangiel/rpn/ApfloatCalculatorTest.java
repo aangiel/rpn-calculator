@@ -174,15 +174,15 @@ public class ApfloatCalculatorTest {
     public void calculateAllStaticMethods() throws CalculatorException {
         assertEquals(new Apfloat(4.49980967), calculator.calculate("90 log"));
 
-        CalculatorArithmeticException calculatorArithmeticException1
-                = assertThrows(CalculatorArithmeticException.class, () -> calculator.calculate("0 log"));
-        assertEquals("Logarithm of zero", calculatorArithmeticException1.getMessage());
+        ArithmeticException arithmeticException1
+                = assertThrows(ArithmeticException.class, () -> calculator.calculate("0 log"));
+        assertEquals("Logarithm of zero", arithmeticException1.getMessage());
 
         assertEquals(new Apfloat(0), calculator.calculate("0 atanh"));
 
-        CalculatorArithmeticException calculatorArithmeticException
-                = assertThrows(CalculatorArithmeticException.class, () -> calculator.calculate("10 atanh"));
-        assertEquals("Logarithm of negative number; result would be complex", calculatorArithmeticException.getMessage());
+        ArithmeticException arithmeticException
+                = assertThrows(ArithmeticException.class, () -> calculator.calculate("10 atanh"));
+        assertEquals("Logarithm of negative number; result would be complex", arithmeticException.getMessage());
 
         assertEquals(new Apfloat(1), calculator.calculate("0 cos"));
         assertEquals(new Apfloat(0), calculator.calculate("0 atan"));
@@ -200,7 +200,7 @@ public class ApfloatCalculatorTest {
         assertEquals(new Apfloat(8.726646259e-2), calculator.calculate("5 toRadians"));
         assertEquals(new Apfloat(1), calculator.calculate("0 cosh"));
         assertEquals(new Apfloat(10), calculator.calculate("-10 abs"));
-        assertEquals(new Apfloat(-5), calculator.calculate("5 negate"));
+//        assertEquals(new Apfloat(-5), calculator.calculate("5 negate"));
         assertEquals(new Apfloat(0), calculator.calculate("0 w"));
         assertEquals(new Apfloat(0), calculator.calculate("0 asin"));
         assertEquals(new Apfloat(0), calculator.calculate("0 asinh"));
@@ -209,7 +209,7 @@ public class ApfloatCalculatorTest {
 
     @Test
     public void calculateCompareAvailableFunctions() {
-        List<String> functions = Arrays.asList("**", "log", "atanh", "cos", "atan", "cbrt", "tanh", "−", "sqrt", "×", "sin", "exp", "frac", "^", "tan", "fun2", "sinh", "e", "acosh", "*", "toDegrees", "+", "acos", "toRadians", "-", "/", "cosh", "abs", "negate", "w", "÷", "pi", "asin", "asinh", "gamma", "fun");
+        List<String> functions = Arrays.asList("**", "atanh", "copySign", "log", "agm", "cos", "multiplySubtract", "atan", "cbrt", "tanh", "−", "min", "multiplyAdd", "truncate", "sqrt", "×", "pow", "sin", "exp", "floor", "frac", "^", "atan2", "tan", "fun2", "max", "sinh", "e", "acosh", "*", "toDegrees", "+", "acos", "ceil", "toRadians", "fmod", "-", "/", "cosh", "abs", "w", "÷", "pi", "asin", "asinh", "gamma", "fun");
         assertEquals(functions, new ArrayList<>(calculator.getContext().getAvailableFunctionsAndOperators()));
     }
 

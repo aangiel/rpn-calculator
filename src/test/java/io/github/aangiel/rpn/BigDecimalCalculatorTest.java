@@ -214,7 +214,7 @@ public class BigDecimalCalculatorTest {
     @Test
     public void calculateCompareOthers() {
         assertEquals(calculator.getContext().getAvailableFunctionsAndOperators(), calculator.getContext().getAvailableFunctionsAndOperators());
-        assertEquals(0, calculator.getContext().getPrecision());
+        assertEquals(10, calculator.getContext().getPrecision());
     }
 
     @Test

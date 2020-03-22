@@ -42,10 +42,6 @@ public class CustomCalculatorTest {
 
     public static class BigIntegerContext extends CalculatorContext<BigInteger> {
 
-        protected BigIntegerContext() {
-            super(BigInteger.class, null);
-        }
-
         @Override
         protected void populateDefaultOperations() {
             addFunctionOrOperator("+", 2, args -> args.get(0).add(args.get(1)));
@@ -64,5 +60,10 @@ public class CustomCalculatorTest {
         protected CalculatorContext<BigInteger> self() {
             return this;
         }
+
+        @Override
+        protected void populateDefaultOneParameterMathFunctions() {
+        }
+
     }
 }
