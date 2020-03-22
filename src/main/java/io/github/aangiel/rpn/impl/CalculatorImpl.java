@@ -62,7 +62,6 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
     private void calculateTokenAndPush(ListIterator<String> iterator, Deque<T> stack) throws CalculatorException {
 
         String token = iterator.next();
-
         LOG.debug(String.format("Processing item '%s' at position %s", token, iterator.nextIndex()));
         try {
             T applied = context.getConstructor().apply(token);
@@ -78,15 +77,12 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
         iterator.previous();
         String operator = iterator.next();
-
         LOG.debug(String.format("Processing operator/function '%s' at position %s", operator, iterator.nextIndex()));
 
         try {
             Function<T> function = context.getFunctionOrOperator(operator);
-
             List<T> arguments = popArgumentsForFunctionOrOperator(function, stack);
             LOG.debug(String.format("Took %s arguments (%s) from stack: %s", arguments.size(), arguments, stack));
-
             T value = function.get().apply(arguments);
             stack.push(value);
             LOG.debug(String.format("Pushed value %s into the stack: %s", value, stack));
@@ -100,11 +96,10 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
     }
 
     private List<T> popArgumentsForFunctionOrOperator(Function<T> function, Deque<T> stack) {
-        List<T> arguments =
-                stack.stream()
-                        .limit(function.getParametersCount())
-                        .peek(e -> stack.pop())
-                        .collect(Collectors.toList());
+        List<T> arguments = stack.stream()
+                .limit(function.getParametersCount())
+                .peek(e -> stack.pop())
+                .collect(Collectors.toList());
         Collections.reverse(arguments);
         return arguments;
     }

@@ -13,16 +13,20 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 public enum CalculatorSupplier {
 
-    INSTANCE;
+    INSTANCE(CalculatorImpl::new);
 
     private final Logger LOG = LogManager.getLogger(CalculatorSupplier.class);
 
     private final Map<Class<? extends Number>, Calculator<? extends Number>> CALCULATORS = new HashMap<>();
 
-    CalculatorSupplier() {
+    private final Function<CalculatorContext<? extends Number>, Calculator<? extends Number>> implementation;
+
+    CalculatorSupplier(Function<CalculatorContext<? extends Number>, Calculator<? extends Number>> implementation) {
+        this.implementation = implementation;
         populateCalculators();
     }
 
@@ -37,7 +41,7 @@ public enum CalculatorSupplier {
     }
 
     public <T extends Number> void addCalculator(Class<T> clazz, CalculatorContext<T> contextImplementation) {
-        CALCULATORS.put(clazz, new CalculatorImpl<>(contextImplementation));
+        CALCULATORS.put(clazz, implementation.apply(contextImplementation));
         LOG.debug(String.format("Calculator of type: %s added", clazz));
     }
 

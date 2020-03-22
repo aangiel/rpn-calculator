@@ -1,8 +1,7 @@
 package io.github.aangiel.rpn.context;
 
-import io.github.aangiel.rpn.math.IConstructor;
-
 import java.math.BigDecimal;
+import java.util.function.Function;
 
 /**
  * @see CalculatorContext
@@ -28,7 +27,7 @@ public final class BigDecimalCalculatorContext extends CalculatorContext<BigDeci
     }
 
     @Override
-    public IConstructor<BigDecimal> getConstructor() {
+    public Function<String, BigDecimal> getConstructor() {
         return BigDecimal::new;
     }
 

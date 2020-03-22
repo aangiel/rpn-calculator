@@ -1,6 +1,6 @@
 package io.github.aangiel.rpn.context;
 
-import io.github.aangiel.rpn.math.IConstructor;
+import java.util.function.Function;
 
 /**
  * @see CalculatorContext
@@ -25,7 +25,7 @@ public final class DoubleCalculatorContext extends CalculatorContext<Double> {
     }
 
     @Override
-    public IConstructor<Double> getConstructor() {
+    public Function<String, Double> getConstructor() {
         return Double::valueOf;
     }
 

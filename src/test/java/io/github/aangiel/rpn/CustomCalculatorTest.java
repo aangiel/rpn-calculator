@@ -2,11 +2,11 @@ package io.github.aangiel.rpn;
 
 import io.github.aangiel.rpn.context.CalculatorContext;
 import io.github.aangiel.rpn.exception.CalculatorException;
-import io.github.aangiel.rpn.math.IConstructor;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigInteger;
+import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -56,7 +56,7 @@ public class CustomCalculatorTest {
         }
 
         @Override
-        public IConstructor<BigInteger> getConstructor() {
+        public Function<String, BigInteger> getConstructor() {
             return BigInteger::new;
         }
 

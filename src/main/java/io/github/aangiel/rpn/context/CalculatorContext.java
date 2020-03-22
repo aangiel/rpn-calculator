@@ -4,7 +4,6 @@ import io.github.aangiel.rpn.exception.CalculatorArithmeticException;
 import io.github.aangiel.rpn.exception.CalculatorException;
 import io.github.aangiel.rpn.exception.UnexpectedException;
 import io.github.aangiel.rpn.math.Function;
-import io.github.aangiel.rpn.math.IConstructor;
 import io.github.aangiel.rpn.math.IFunction;
 
 import java.lang.reflect.InvocationTargetException;
@@ -78,10 +77,10 @@ public abstract class CalculatorContext<T extends Number> {
      *         );
      * </pre>
      *
-     * @return {@link IConstructor ConstructorValue}
+     * @return {@link java.util.function.Function Function&#60;String, T extends Number&#62;}
      * which is used during parsing of equation while trying to parse number
      */
-    public abstract IConstructor<T> getConstructor();
+    public abstract java.util.function.Function<String, T> getConstructor();
 
     /**
      * Should be always implemented as <pre>return this;</pre>, because it's used in chaining of
