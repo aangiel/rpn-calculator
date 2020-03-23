@@ -52,7 +52,7 @@ public class CustomCalculatorTest {
         }
 
         @Override
-        public Function<String, BigInteger> getConstructor() {
+        public Function<String, BigInteger> getNumberConstructor() {
             return BigInteger::new;
         }
 

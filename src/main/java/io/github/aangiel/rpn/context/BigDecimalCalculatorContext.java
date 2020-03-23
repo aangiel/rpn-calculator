@@ -36,7 +36,7 @@ public final class BigDecimalCalculatorContext extends CalculatorContext<BigDeci
     }
 
     @Override
-    public Function<String, BigDecimal> getConstructor() {
+    public Function<String, BigDecimal> getNumberConstructor() {
         return BigDecimal::new;
     }
 

@@ -1,6 +1,6 @@
 package io.github.aangiel.rpn.context;
 
-import io.github.aangiel.rpn.math.MathFunction;
+import io.github.aangiel.rpn.math.FunctionOrOperator;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.function.Function;
  */
 public abstract class CalculatorContext<T extends Number> {
 
-    private Map<String, MathFunction<T>> functions;
+    private Map<String, FunctionOrOperator<T>> functions;
     private long precision;
     private int roundingMode;
 
@@ -50,7 +50,7 @@ public abstract class CalculatorContext<T extends Number> {
     /**
      * Should be implemented as series of
      * {@link #addFunctionOrOperator(String, int, Function) addFunctionOrOperator(String, int, IMathFunction)}
-     * invokes with mathematical constants (i.e. PI or e)
+     * invokes with mathematical constants (e.g. PI or e)
      */
     protected abstract void populateConstants();
 
@@ -61,7 +61,7 @@ public abstract class CalculatorContext<T extends Number> {
 
     /**
      * Lambda for returning new Object of type <pre>&#60;T extends Number&#62;</pre><br><br>
-     * Should be implemented as i.e.
+     * Should be implemented as e.g.
      * <pre>
      *     return args -&#62; Double.valueOf(
      *                 (String) args.get(0)
@@ -71,7 +71,7 @@ public abstract class CalculatorContext<T extends Number> {
      * @return {@link Function Function&#60;String, T extends Number&#62;}
      * which is used during parsing of equation while trying to parse number
      */
-    public abstract Function<String, T> getConstructor();
+    public abstract Function<String, T> getNumberConstructor();
 
     /**
      * Should be always implemented as <pre>return this;</pre>, because it's used in chaining of
@@ -87,14 +87,14 @@ public abstract class CalculatorContext<T extends Number> {
      * {@link io.github.aangiel.rpn.Calculator#calculate(String) Calculator.calculate(String)}
      * method.
      *
-     * @param name           Name of the function or operator (i.e. "*" for multiplying or "sin" for sinus)
-     * @param parameterCount Number of parameters passed to function (i.e. 2 for "*" or 1 for "sin")
-     * @param function       Lambda which will be used during parsing equation (i.e. args -&#62; args.get(0) + args.get(1)<br>
+     * @param name           Name of the function or operator (e.g. "*" for multiplying or "sin" for sinus)
+     * @param parameterCount Number of parameters passed to function (e.g. 2 for "*" or 1 for "sin")
+     * @param function       Lambda which will be used during parsing equation (e.g. args -&#62; args.get(0) + args.get(1)<br>
      *                       args is defined as {@link Function &#60;T extends Number&#62; T apply(List&#60;T&#62; args)}
      * @return this for chaining of adding functions or operators
      */
     public CalculatorContext<T> addFunctionOrOperator(String name, int parameterCount, Function<List<T>, T> function) {
-        functions.put(name, new MathFunction<>(parameterCount, function));
+        functions.put(name, new FunctionOrOperator<>(parameterCount, function));
         return self();
     }
 
@@ -113,7 +113,7 @@ public abstract class CalculatorContext<T extends Number> {
      * @param name function or operator to be returned
      * @return Lambda which is used to calculate value for specified function or operator and its' arguments
      */
-    public MathFunction<T> getFunctionOrOperator(String name) {
+    public FunctionOrOperator<T> getFunctionOrOperator(String name) {
         return functions.get(name);
     }
 

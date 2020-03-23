@@ -22,7 +22,7 @@ public final class DoubleCalculatorContext extends CalculatorContext<Double> {
     }
 
     @Override
-    public Function<String, Double> getConstructor() {
+    public Function<String, Double> getNumberConstructor() {
         return Double::valueOf;
     }
 

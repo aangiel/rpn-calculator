@@ -21,12 +21,12 @@ import java.util.function.Function;
  *
  * @param <T> extends Number
  */
-public final class MathFunction<T extends Number> {
+public final class FunctionOrOperator<T extends Number> {
 
     private final int parametersCount;
     private final Function<List<T>, T> function;
 
-    public MathFunction(int parametersCount, Function<List<T>, T> function) {
+    public FunctionOrOperator(int parametersCount, Function<List<T>, T> function) {
         this.parametersCount = parametersCount;
         this.function = function;
     }

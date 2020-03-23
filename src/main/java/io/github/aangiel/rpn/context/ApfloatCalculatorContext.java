@@ -19,6 +19,16 @@ public final class ApfloatCalculatorContext extends CalculatorContext<Apfloat> {
     }
 
     @Override
+    public Function<String, Apfloat> getNumberConstructor() {
+        return value -> new Apfloat(value, getPrecision());
+    }
+
+    @Override
+    protected CalculatorContext<Apfloat> self() {
+        return this;
+    }
+
+    @Override
     protected void populateDefaultOperations() {
         addFunctionOrOperator("+", 2, args -> args.get(0).add(args.get(1)));
         addFunctionOrOperator("-", 2, args -> args.get(0).subtract(args.get(1)));
@@ -30,16 +40,6 @@ public final class ApfloatCalculatorContext extends CalculatorContext<Apfloat> {
     protected void populateConstants() {
         addFunctionOrOperator("pi", 0, args -> ApfloatMath.pi(getPrecision()));
         addFunctionOrOperator("e", 0, args -> new Apfloat(Math.E));
-    }
-
-    @Override
-    public Function<String, Apfloat> getConstructor() {
-        return value -> new Apfloat(value, getPrecision());
-    }
-
-    @Override
-    protected CalculatorContext<Apfloat> self() {
-        return this;
     }
 
     @Override
