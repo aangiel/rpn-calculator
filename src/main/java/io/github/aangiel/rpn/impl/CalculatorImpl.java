@@ -14,7 +14,8 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
- * Class for Reverse Polish Notation calculations
+ * Implementation of interface {@link Calculator} for Reverse Polish Notation calculations.
+ * This is the only one implementation.
  *
  * @see Calculator
  */
