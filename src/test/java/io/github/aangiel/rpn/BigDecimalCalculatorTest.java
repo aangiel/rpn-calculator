@@ -145,6 +145,11 @@ public class BigDecimalCalculatorTest {
     public void calculateEmpty() throws CalculatorException {
         EmptyEquationException emptyEquationException = assertThrows(EmptyEquationException.class, () -> calculator.calculate(""));
         assertEquals("Empty equation", emptyEquationException.getMessage());
+
+        EmptyEquationException emptyEquationException1
+                = assertThrows(EmptyEquationException.class, () -> calculator.calculate(null));
+        assertEquals("Empty equation", emptyEquationException1.getMessage());
+
         assertEquals(new BigDecimal(2), calculator.calculate("2"));
     }
 
