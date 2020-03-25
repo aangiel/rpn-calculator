@@ -4,7 +4,6 @@ import io.github.aangiel.rpn.Calculator;
 import io.github.aangiel.rpn.context.CalculatorContext;
 import io.github.aangiel.rpn.exception.*;
 import io.github.aangiel.rpn.math.FunctionOrOperator;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -43,12 +42,12 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
         LOG.info(String.format("Calculating equation: %s", equation));
 
-        if (StringUtils.isAllBlank(equation)) throw new EmptyEquationException();
+        if (Objects.isNull(equation) || equation.isBlank()) throw new EmptyEquationException();
 
         var tokens = WHITESPACE.splitAsStream(equation).collect(LINKED_LIST_COLLECTOR);
         LOG.debug(String.format("Equation split with whitespace regex: %s", tokens));
 
-        Deque<T> stack = new ArrayDeque<>(tokens.size());
+        var stack = new ArrayDeque<T>(tokens.size());
         var iterator = tokens.listIterator();
 
         while (iterator.hasNext()) calculateNextTokenAndPushItToStack(iterator, stack);
