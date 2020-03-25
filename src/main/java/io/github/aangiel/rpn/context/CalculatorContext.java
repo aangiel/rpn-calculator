@@ -61,12 +61,7 @@ public abstract class CalculatorContext<T extends Number> {
 
     /**
      * Lambda for returning new Object of type <pre>&#60;T extends Number&#62;</pre><br><br>
-     * Should be implemented as e.g.
-     * <pre>
-     *     return args -&#62; Double.valueOf(
-     *                 (String) args.get(0)
-     *         );
-     * </pre>
+     * Should be implemented as e.g. {@code return args -> Double.valueOf(args.get(0));}
      *
      * @return {@link Function Function&#60;String, T extends Number&#62;}
      * which is used during parsing of equation while trying to parse number
@@ -74,7 +69,7 @@ public abstract class CalculatorContext<T extends Number> {
     public abstract Function<String, T> getNumberConstructor();
 
     /**
-     * Should be always implemented as <pre>return this;</pre>, because it's used in chaining of
+     * Should be always implemented as {@code return this;}, because it's used in chaining of
      * {@link #addFunctionOrOperator(String, int, Function) addFunctionOrOperator(String, int, IMathFunction)}
      * method.
      *
