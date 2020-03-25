@@ -48,7 +48,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         var tokens = WHITESPACE.splitAsStream(equation).collect(LINKED_LIST_COLLECTOR);
         LOG.debug(String.format("Equation split with whitespace regex: %s", tokens));
 
-        Deque<T> stack = new ArrayDeque<>(tokens.size());
+        var stack = new ArrayDeque<T>(tokens.size());
         var iterator = tokens.listIterator();
 
         while (iterator.hasNext()) calculateNextTokenAndPushItToStack(iterator, stack);
