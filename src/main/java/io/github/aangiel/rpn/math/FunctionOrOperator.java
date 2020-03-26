@@ -1,14 +1,12 @@
 package io.github.aangiel.rpn.math;
 
-import io.github.aangiel.rpn.context.CalculatorContext;
-
 import java.util.List;
 import java.util.function.Function;
 
 /**
  * Used as value class in {@link java.util.HashMap HashMap} in
- * {@link CalculatorContext#getFunctionOrOperator(String)
- * CalculatorContext.getFunctionOrOperator(String)}
+ * {@link io.github.aangiel.rpn.interfaces.FunctionOrOperatorContext#getFunctionOrOperator(String)
+ * FunctionOrOperatorContext.getFunctionOrOperator(String)}
  *
  * <br><br>
  * <p>

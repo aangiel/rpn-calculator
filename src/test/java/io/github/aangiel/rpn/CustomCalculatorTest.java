@@ -1,6 +1,6 @@
 package io.github.aangiel.rpn;
 
-import io.github.aangiel.rpn.context.CalculatorContext;
+import io.github.aangiel.rpn.context.AbstractCalculatorContext;
 import io.github.aangiel.rpn.exception.CalculatorException;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +17,7 @@ public class CustomCalculatorTest {
 
     @Before
     public void setUp() {
-        CalculatorSupplier.INSTANCE.addCalculator(BigInteger.class, new BigIntegerContext22());
+        CalculatorSupplier.INSTANCE.addCalculator(BigInteger.class, new BigIntegerContext());
         calculator = CalculatorSupplier.INSTANCE.getCalculator(BigInteger.class);
     }
 
@@ -40,7 +40,7 @@ public class CustomCalculatorTest {
 
     }
 
-    public static class BigIntegerContext22 extends CalculatorContext<BigInteger> {
+    public static class BigIntegerContext extends AbstractCalculatorContext<BigInteger> {
 
         @Override
         protected void populateDefaultOperations() {
@@ -57,7 +57,7 @@ public class CustomCalculatorTest {
         }
 
         @Override
-        protected CalculatorContext<BigInteger> self() {
+        public BigIntegerContext self() {
             return this;
         }
 

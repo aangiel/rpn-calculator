@@ -2,9 +2,9 @@ package io.github.aangiel.rpn;
 
 import io.github.aangiel.rpn.context.ApfloatCalculatorContext;
 import io.github.aangiel.rpn.context.BigDecimalCalculatorContext;
-import io.github.aangiel.rpn.context.CalculatorContext;
 import io.github.aangiel.rpn.context.DoubleCalculatorContext;
 import io.github.aangiel.rpn.impl.CalculatorImpl;
+import io.github.aangiel.rpn.interfaces.CalculatorContext;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apfloat.Apfloat;

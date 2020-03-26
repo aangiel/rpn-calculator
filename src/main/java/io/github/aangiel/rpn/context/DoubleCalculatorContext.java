@@ -3,9 +3,9 @@ package io.github.aangiel.rpn.context;
 import java.util.function.Function;
 
 /**
- * @see CalculatorContext
+ * @see AbstractCalculatorContext
  */
-public final class DoubleCalculatorContext extends CalculatorContext<Double> {
+public final class DoubleCalculatorContext extends AbstractCalculatorContext<Double> {
 
     @Override
     protected void populateDefaultOperations() {
@@ -27,7 +27,7 @@ public final class DoubleCalculatorContext extends CalculatorContext<Double> {
     }
 
     @Override
-    protected CalculatorContext<Double> self() {
+    public DoubleCalculatorContext self() {
         return this;
     }
 

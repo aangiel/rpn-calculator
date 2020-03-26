@@ -1,21 +1,24 @@
 package io.github.aangiel.rpn.context;
 
+import io.github.aangiel.rpn.interfaces.RoundingModeContext;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.function.Function;
 
 /**
- * @see CalculatorContext
+ * @see AbstractCalculatorContext
  */
-public final class BigDecimalCalculatorContext extends CalculatorContext<BigDecimal> {
+public final class BigDecimalCalculatorContext extends AbstractCalculatorContext<BigDecimal> implements RoundingModeContext {
 
+    private final RoundingMode roundingMode;
 
     public BigDecimalCalculatorContext() {
         this(RoundingMode.CEILING);
     }
 
-    public BigDecimalCalculatorContext(RoundingMode bigDecimalRoundingMode) {
-        super(bigDecimalRoundingMode);
+    public BigDecimalCalculatorContext(RoundingMode roundingMode) {
+        this.roundingMode = roundingMode;
     }
 
     @Override
@@ -42,7 +45,12 @@ public final class BigDecimalCalculatorContext extends CalculatorContext<BigDeci
     }
 
     @Override
-    protected CalculatorContext<BigDecimal> self() {
+    public BigDecimalCalculatorContext self() {
         return this;
+    }
+
+    @Override
+    public RoundingMode getRoundingMode() {
+        return roundingMode;
     }
 }

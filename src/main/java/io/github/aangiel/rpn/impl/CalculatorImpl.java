@@ -1,8 +1,8 @@
 package io.github.aangiel.rpn.impl;
 
 import io.github.aangiel.rpn.Calculator;
-import io.github.aangiel.rpn.context.CalculatorContext;
 import io.github.aangiel.rpn.exception.*;
+import io.github.aangiel.rpn.interfaces.CalculatorContext;
 import io.github.aangiel.rpn.math.FunctionOrOperator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -22,7 +22,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
     private static final Logger LOG = LogManager.getLogger(CalculatorImpl.class);
 
-    private CalculatorContext<T> context;
+    private final CalculatorContext<T> context;
 
     private static final Pattern WHITESPACE = Pattern.compile("\\s+");
     private static final Collector<String, ?, LinkedList<String>>

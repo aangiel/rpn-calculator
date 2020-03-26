@@ -160,12 +160,6 @@ public class BigDecimalCalculatorTest {
     }
 
     @Test
-    public void calculateCompareOthers() {
-        assertEquals(calculator.getContext().getAvailableFunctionsAndOperators(), calculator.getContext().getAvailableFunctionsAndOperators());
-        assertEquals(0, calculator.getContext().getPrecision());
-    }
-
-    @Test
     public void calculateConstants() throws CalculatorException {
         assertEquals(new BigDecimal(String.valueOf(2 * Math.PI)), calculator.calculate("pi 2 *"));
         assertEquals(new BigDecimal(String.valueOf(Math.PI)), calculator.calculate("pi"));
