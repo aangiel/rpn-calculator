@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public enum CalculatorSupplier {
 
@@ -34,7 +35,7 @@ public enum CalculatorSupplier {
     public <T extends Number> Calculator<T> getCalculator(Class<T> clazz) {
         return Optional
                 .ofNullable((Calculator<T>) CALCULATORS.get(clazz))
-                .orElseThrow(() -> new UnsupportedOperationException(String.format("Unsupported type: %s", clazz)));
+                .orElseThrow(uoe(clazz));
     }
 
     public <T extends Number> void addCalculator(Class<T> clazz, CalculatorContext<T> contextImplementation) {
@@ -46,5 +47,9 @@ public enum CalculatorSupplier {
         addCalculator(Apfloat.class, new ApfloatCalculatorContext());
         addCalculator(BigDecimal.class, new BigDecimalCalculatorContext());
         addCalculator(Double.class, new DoubleCalculatorContext());
+    }
+
+    private <T extends Number> Supplier<UnsupportedOperationException> uoe(Class<T> clazz) {
+        return () -> new UnsupportedOperationException(String.format("Unsupported type: %s", clazz));
     }
 }
