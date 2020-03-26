@@ -74,6 +74,12 @@ public abstract class CalculatorContext<T extends Number> {
      */
     protected abstract void populateMathFunctions();
 
+    protected final void populateDefaultMathFunctions(Class<?> mathClass, Class<T> clazz) {
+        var helper = new MathHelper();
+        var mathFunctions = helper.getMathFunctions(mathClass, clazz);
+        functions.putAll(mathFunctions);
+    }
+
     /**
      * Lambda for returning new Object of type <pre>&#60;T extends Number&#62;</pre><br><br>
      * Should be implemented as e.g. {@code return args -> Double.valueOf(args.get(0));}
@@ -141,9 +147,9 @@ public abstract class CalculatorContext<T extends Number> {
         return roundingMode;
     }
 
-    class MathHelper {
+    private final class MathHelper {
 
-        protected HashMap<String, FunctionOrOperator<T>> getMathFunctions(Class<?> mathClass, Class<T> clazz) {
+        private HashMap<String, FunctionOrOperator<T>> getMathFunctions(Class<?> mathClass, Class<T> clazz) {
             Objects.requireNonNull(mathClass, "Argument 'mathClass' is null");
             Objects.requireNonNull(clazz, "Argument 'clazz' is null");
 
@@ -162,17 +168,17 @@ public abstract class CalculatorContext<T extends Number> {
         private List<Method> getStaticOneParameterMethodsFromMathClass(Class<?> mathClass, Class<T> clazz) {
             return Stream.of(mathClass.getMethods())
                     .filter(method -> clazz.equals(method.getReturnType()))
-                    .filter(method -> predicateValue(method, clazz))
+                    .filter(predicate(clazz))
                     .filter(method -> Modifier.isStatic(method.getModifiers()))
                     .collect(Collectors.toList());
         }
 
-        private boolean predicateValue(Method method, Class<T> clazz) {
-            Predicate<Method> predicate1 = a -> Arrays.equals(a.getParameterTypes(), new Class[]{clazz});
-            Predicate<Method> predicate2 = a -> Arrays.equals(a.getParameterTypes(), new Class[]{clazz, clazz});
-            Predicate<Method> predicate3 = a -> Arrays.equals(a.getParameterTypes(), new Class[]{clazz, clazz, clazz});
-            Predicate<Method> predicate4 = a -> Arrays.equals(a.getParameterTypes(), new Class[]{clazz, clazz, clazz, clazz});
-            return predicate1.or(predicate2).or(predicate3).or(predicate4).test(method);
+        private Predicate<Method> predicate(Class<T> clazz) {
+            Predicate<Method> predicate1 = m -> Arrays.equals(m.getParameterTypes(), new Class[]{clazz});
+            Predicate<Method> predicate2 = m -> Arrays.equals(m.getParameterTypes(), new Class[]{clazz, clazz});
+            Predicate<Method> predicate3 = m -> Arrays.equals(m.getParameterTypes(), new Class[]{clazz, clazz, clazz});
+            Predicate<Method> predicate4 = m -> Arrays.equals(m.getParameterTypes(), new Class[]{clazz, clazz, clazz, clazz});
+            return predicate1.or(predicate2).or(predicate3).or(predicate4);
         }
 
         @SuppressWarnings("unchecked")

@@ -44,8 +44,6 @@ public final class ApfloatCalculatorContext extends CalculatorContext<Apfloat> {
 
     @Override
     protected void populateMathFunctions() {
-        MathHelper helper = new MathHelper();
-        var mathFunctions = helper.getMathFunctions(ApfloatMath.class, Apfloat.class);
-        functions.putAll(mathFunctions);
+        populateDefaultMathFunctions(ApfloatMath.class, Apfloat.class);
     }
 }

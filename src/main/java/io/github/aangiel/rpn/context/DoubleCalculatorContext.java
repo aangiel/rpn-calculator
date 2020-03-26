@@ -33,8 +33,6 @@ public final class DoubleCalculatorContext extends CalculatorContext<Double> {
 
     @Override
     protected void populateMathFunctions() {
-        MathHelper helper = new MathHelper();
-        var mathFunctions = helper.getMathFunctions(Math.class, double.class);
-        functions.putAll(mathFunctions);
+        populateDefaultMathFunctions(Math.class, double.class);
     }
 }
