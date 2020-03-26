@@ -1,7 +1,6 @@
 package io.github.aangiel.rpn;
 
-import io.github.aangiel.rpn.exception.BadEquationException;
-import io.github.aangiel.rpn.exception.CalculatorException;
+import io.github.aangiel.rpn.exception.*;
 import io.github.aangiel.rpn.interfaces.CalculatorContext;
 
 /**
