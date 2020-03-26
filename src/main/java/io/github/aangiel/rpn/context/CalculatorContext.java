@@ -2,6 +2,7 @@ package io.github.aangiel.rpn.context;
 
 import io.github.aangiel.rpn.math.FunctionOrOperator;
 
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ public abstract class CalculatorContext<T extends Number> {
 
     private Map<String, FunctionOrOperator<T>> functions;
     private long precision;
-    private int roundingMode;
+    private RoundingMode roundingMode;
 
     /**
      * Should be invoked only by subclass and pass hardcoded parameters.
@@ -31,7 +32,7 @@ public abstract class CalculatorContext<T extends Number> {
         populateFunctions();
     }
 
-    protected CalculatorContext(int roundingMode) {
+    protected CalculatorContext(RoundingMode roundingMode) {
         this.roundingMode = roundingMode;
         populateFunctions();
     }
@@ -121,16 +122,8 @@ public abstract class CalculatorContext<T extends Number> {
         return precision;
     }
 
-    public void setPrecision(long precision) {
-        this.precision = precision;
-    }
-
-    public int getRoundingMode() {
+    public RoundingMode getRoundingMode() {
         return roundingMode;
-    }
-
-    public void setRoundingMode(int roundingMode) {
-        this.roundingMode = roundingMode;
     }
 
     private void populateFunctions() {
