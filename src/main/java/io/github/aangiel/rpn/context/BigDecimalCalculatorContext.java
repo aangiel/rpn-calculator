@@ -10,12 +10,12 @@ import java.util.function.Function;
 public final class BigDecimalCalculatorContext extends CalculatorContext<BigDecimal> {
 
 
-    public BigDecimalCalculatorContext(RoundingMode bigDecimalRoundingMode) {
-        super(bigDecimalRoundingMode);
-    }
-
     public BigDecimalCalculatorContext() {
         this(RoundingMode.CEILING);
+    }
+
+    public BigDecimalCalculatorContext(RoundingMode bigDecimalRoundingMode) {
+        super(bigDecimalRoundingMode);
     }
 
     @Override

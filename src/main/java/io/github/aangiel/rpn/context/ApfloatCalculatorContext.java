@@ -10,12 +10,12 @@ import java.util.function.Function;
  */
 public final class ApfloatCalculatorContext extends CalculatorContext<Apfloat> {
 
-    public ApfloatCalculatorContext() {
-        this(10L);
-    }
-
     public ApfloatCalculatorContext(long precision) {
         super(precision);
+    }
+
+    public ApfloatCalculatorContext() {
+        this(10L);
     }
 
     @Override

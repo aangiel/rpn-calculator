@@ -18,9 +18,13 @@ import java.util.function.Function;
  */
 public abstract class CalculatorContext<T extends Number> {
 
-    private Map<String, FunctionOrOperator<T>> functions;
-    private long precision;
-    private RoundingMode roundingMode;
+    private final Map<String, FunctionOrOperator<T>> functions;
+    private final long precision;
+    private final RoundingMode roundingMode;
+
+    protected CalculatorContext() {
+        this(0);
+    }
 
     /**
      * Should be invoked only by subclass and pass hardcoded parameters.
@@ -28,17 +32,24 @@ public abstract class CalculatorContext<T extends Number> {
      * @param precision used only with {@link org.apfloat.Apfloat Apfloat} type, which is currently implemented
      */
     protected CalculatorContext(long precision) {
-        this.precision = precision;
-        populateFunctions();
+        this(precision, RoundingMode.CEILING);
     }
 
     protected CalculatorContext(RoundingMode roundingMode) {
+        this(0, roundingMode);
+    }
+
+    private CalculatorContext(long precision, RoundingMode roundingMode) {
+        this.precision = precision;
         this.roundingMode = roundingMode;
+        functions = new HashMap<>();
         populateFunctions();
     }
 
-    protected CalculatorContext() {
-        populateFunctions();
+    private void populateFunctions() {
+        populateDefaultOperations();
+        populateMathFunctions();
+        populateConstants();
     }
 
     /**
@@ -124,13 +135,6 @@ public abstract class CalculatorContext<T extends Number> {
 
     public RoundingMode getRoundingMode() {
         return roundingMode;
-    }
-
-    private void populateFunctions() {
-        functions = new HashMap<>();
-        populateDefaultOperations();
-        populateMathFunctions();
-        populateConstants();
     }
 
 }
