@@ -6,9 +6,7 @@ import org.apfloat.ApfloatMath;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -214,8 +212,9 @@ public class ApfloatCalculatorTest {
 
     @Test
     public void calculateCompareAvailableFunctions() {
-        List<String> functions = Arrays.asList("**", "atanh", "copySign", "log", "agm", "cos", "multiplySubtract", "atan", "cbrt", "tanh", "−", "min", "multiplyAdd", "truncate", "sqrt", "×", "pow", "sin", "exp", "floor", "frac", "^", "atan2", "tan", "fun2", "max", "sinh", "e", "acosh", "*", "toDegrees", "+", "acos", "ceil", "toRadians", "fmod", "-", "/", "cosh", "abs", "w", "÷", "pi", "asin", "asinh", "gamma", "fun");
-        assertEquals(functions, new ArrayList<>(calculator.getContext().getAvailableFunctionsAndOperators()));
+
+        var functions = Set.of("**", "log", "atanh", "copySign", "cos", "agm", "multiplySubtract", "atan", "cbrt", "tanh", "−", "min", "multiplyAdd", "sqrt", "×", "sin", "pow", "exp", "frac", "^", "atan2", "tan", "fun2", "sinh", "max", "e", "acosh", "*", "toDegrees", "+", "acos", "toRadians", "fmod", "-", "/", "cosh", "abs", "negate", "w", "÷", "pi", "asin", "asinh", "gamma", "fun");
+        assertEquals(functions, calculator.getContext().getAvailableFunctionsAndOperators());
     }
 
     @Test

@@ -6,9 +6,7 @@ import org.apfloat.ApfloatMath;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -213,8 +211,8 @@ public class DoubleCalculatorTest {
 
     @Test
     public void calculateCompareAvailableFunctions() {
-        List<String> functions = Arrays.asList("**", "copySign", "log", "cos", "expm1", "log1p", "log10", "nextAfter", "atan", "cbrt", "tanh", "−", "min", "sqrt", "hypot", "×", "sin", "exp", "floor", "^", "atan2", "tan", "fun2", "max", "sinh", "e", "*", "toDegrees", "+", "acos", "ceil", "toRadians", "-", "/", "cosh", "abs", "÷", "pi", "asin", "fun");
-        assertEquals(functions, new ArrayList<>(calculator.getContext().getAvailableFunctionsAndOperators()));
+        var functions = Set.of("**", "log", "copySign", "cos", "log10", "expm1", "log1p", "rint", "nextAfter", "atan", "cbrt", "tanh", "nextUp", "−", "min", "sqrt", "hypot", "×", "sin", "pow", "exp", "floor", "^", "atan2", "tan", "signum", "fun2", "sinh", "max", "e", "*", "toDegrees", "nextDown", "+", "acos", "toRadians", "ceil", "-", "/", "cosh", "IEEEremainder", "abs", "÷", "ulp", "pi", "asin", "fma", "fun");
+        assertEquals(functions, calculator.getContext().getAvailableFunctionsAndOperators());
     }
 
     @Test

@@ -2,12 +2,14 @@ package io.github.aangiel.rpn.context;
 
 import io.github.aangiel.rpn.math.FunctionOrOperator;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.math.RoundingMode;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Base abstract class used by {@link io.github.aangiel.rpn.Calculator Calculator}.
@@ -18,7 +20,7 @@ import java.util.function.Function;
  */
 public abstract class CalculatorContext<T extends Number> {
 
-    private final Map<String, FunctionOrOperator<T>> functions;
+    protected final Map<String, FunctionOrOperator<T>> functions;
     private final long precision;
     private final RoundingMode roundingMode;
 
@@ -107,6 +109,7 @@ public abstract class CalculatorContext<T extends Number> {
 
     /**
      * Returns set of available functions and operators just for check what operations are available with this library.
+     *
      * @return Set of available functions and operators.
      */
     public Set<String> getAvailableFunctionsAndOperators() {
@@ -135,6 +138,46 @@ public abstract class CalculatorContext<T extends Number> {
 
     public RoundingMode getRoundingMode() {
         return roundingMode;
+    }
+
+    class MathHelper {
+
+        protected HashMap<String, FunctionOrOperator<T>> getDefaultOneParameterMathFunctions(Class<?> mathClass, Class<T> clazz) {
+            Objects.requireNonNull(mathClass, "Argument 'mathClass' is null");
+            Objects.requireNonNull(clazz, "Argument 'clazz' is null");
+
+            var result = new HashMap<String, FunctionOrOperator<T>>();
+
+            for (Method method : getStaticOneParameterMethodsFromMathClass(mathClass, clazz)) {
+                Function<List<T>, T> function = a -> (T) invokeMathMethod(method, a);
+                result.put(method.getName(), new FunctionOrOperator<>(1, function));
+            }
+
+            return result;
+        }
+
+        private List<Method> getStaticOneParameterMethodsFromMathClass(Class<?> mathClass, Class<T> clazz) {
+            return Stream.of(mathClass.getMethods())
+                    .filter(method -> clazz.equals(method.getReturnType()))
+                    .filter(method -> method.getParameterCount() == 1)
+                    .filter(method -> Arrays.equals(method.getParameterTypes(), new Class[]{clazz}))
+                    .filter(method -> Modifier.isStatic(method.getModifiers()))
+                    .collect(Collectors.toList());
+        }
+
+        @SuppressWarnings("unchecked")
+        private T invokeMathMethod(Method method, List<T> arguments) {
+            try {
+                return (T) method.invoke(null, arguments.toArray());
+            } catch (IllegalAccessException e) {
+                throw new UnsupportedOperationException(e.getMessage());
+            } catch (InvocationTargetException e) {
+                if (ArithmeticException.class.equals(e.getTargetException().getClass()))
+                    throw (ArithmeticException) e.getTargetException();
+                else
+                    throw new UnsupportedOperationException(e.getMessage());
+            }
+        }
     }
 
 }
