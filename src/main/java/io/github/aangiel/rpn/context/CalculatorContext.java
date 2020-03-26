@@ -8,6 +8,7 @@ import java.lang.reflect.Modifier;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -142,13 +143,15 @@ public abstract class CalculatorContext<T extends Number> {
 
     class MathHelper {
 
-        protected HashMap<String, FunctionOrOperator<T>> getDefaultOneParameterMathFunctions(Class<?> mathClass, Class<T> clazz) {
+        protected HashMap<String, FunctionOrOperator<T>> getMathFunctions(Class<?> mathClass, Class<T> clazz) {
             Objects.requireNonNull(mathClass, "Argument 'mathClass' is null");
             Objects.requireNonNull(clazz, "Argument 'clazz' is null");
 
             var result = new HashMap<String, FunctionOrOperator<T>>();
 
-            for (Method method : getStaticOneParameterMethodsFromMathClass(mathClass, clazz)) {
+            var availableMethods = getStaticOneParameterMethodsFromMathClass(mathClass, clazz);
+
+            for (Method method : availableMethods) {
                 Function<List<T>, T> function = a -> (T) invokeMathMethod(method, a);
                 result.put(method.getName(), new FunctionOrOperator<>(1, function));
             }
@@ -159,10 +162,17 @@ public abstract class CalculatorContext<T extends Number> {
         private List<Method> getStaticOneParameterMethodsFromMathClass(Class<?> mathClass, Class<T> clazz) {
             return Stream.of(mathClass.getMethods())
                     .filter(method -> clazz.equals(method.getReturnType()))
-                    .filter(method -> method.getParameterCount() == 1)
-                    .filter(method -> Arrays.equals(method.getParameterTypes(), new Class[]{clazz}))
+                    .filter(method -> predicateValue(method, clazz))
                     .filter(method -> Modifier.isStatic(method.getModifiers()))
                     .collect(Collectors.toList());
+        }
+
+        private boolean predicateValue(Method method, Class<T> clazz) {
+            Predicate<Method> predicate1 = a -> Arrays.equals(a.getParameterTypes(), new Class[]{clazz});
+            Predicate<Method> predicate2 = a -> Arrays.equals(a.getParameterTypes(), new Class[]{clazz, clazz});
+            Predicate<Method> predicate3 = a -> Arrays.equals(a.getParameterTypes(), new Class[]{clazz, clazz, clazz});
+            Predicate<Method> predicate4 = a -> Arrays.equals(a.getParameterTypes(), new Class[]{clazz, clazz, clazz, clazz});
+            return predicate1.or(predicate2).or(predicate3).or(predicate4).test(method);
         }
 
         @SuppressWarnings("unchecked")

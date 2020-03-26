@@ -44,19 +44,8 @@ public final class ApfloatCalculatorContext extends CalculatorContext<Apfloat> {
 
     @Override
     protected void populateMathFunctions() {
-
         MathHelper helper = new MathHelper();
-        var defaultOneParameterMathFunctions = helper.getDefaultOneParameterMathFunctions(ApfloatMath.class, Apfloat.class);
-        functions.putAll(defaultOneParameterMathFunctions);
-
-        addFunctionOrOperator("agm", 2, args -> ApfloatMath.agm(args.get(0), args.get(1)));
-        addFunctionOrOperator("atan2", 2, args -> ApfloatMath.atan2(args.get(0), args.get(1)));
-        addFunctionOrOperator("copySign", 2, args -> ApfloatMath.copySign(args.get(0), args.get(1)));
-        addFunctionOrOperator("fmod", 2, args -> ApfloatMath.fmod(args.get(0), args.get(1)));
-        addFunctionOrOperator("max", 2, args -> ApfloatMath.max(args.get(0), args.get(1)));
-        addFunctionOrOperator("min", 1, args -> ApfloatMath.min(args.get(0), args.get(1)));
-        addFunctionOrOperator("multiplyAdd", 4, args -> ApfloatMath.multiplyAdd(args.get(0), args.get(1), args.get(2), args.get(3)));
-        addFunctionOrOperator("multiplySubtract", 4, args -> ApfloatMath.multiplySubtract(args.get(0), args.get(1), args.get(2), args.get(3)));
-        addFunctionOrOperator("pow", 2, args -> ApfloatMath.pow(args.get(0), args.get(1)));
+        var mathFunctions = helper.getMathFunctions(ApfloatMath.class, Apfloat.class);
+        functions.putAll(mathFunctions);
     }
 }

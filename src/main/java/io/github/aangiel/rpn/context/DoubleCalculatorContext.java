@@ -34,17 +34,7 @@ public final class DoubleCalculatorContext extends CalculatorContext<Double> {
     @Override
     protected void populateMathFunctions() {
         MathHelper helper = new MathHelper();
-        var defaultOneParameterMathFunctions = helper.getDefaultOneParameterMathFunctions(Math.class, double.class);
-        functions.putAll(defaultOneParameterMathFunctions);
-
-        addFunctionOrOperator("atan2", 2, args -> Math.atan2(args.get(0), args.get(1)));
-        addFunctionOrOperator("copySign", 2, args -> Math.copySign(args.get(0), args.get(1)));
-        addFunctionOrOperator("fma", 3, args -> Math.fma(args.get(0), args.get(1), args.get(2)));
-        addFunctionOrOperator("hypot", 2, args -> Math.hypot(args.get(0), args.get(1)));
-        addFunctionOrOperator("IEEEremainder", 2, args -> Math.IEEEremainder(args.get(0), args.get(1)));
-        addFunctionOrOperator("max", 2, args -> Math.max(args.get(0), args.get(1)));
-        addFunctionOrOperator("min", 2, args -> Math.min(args.get(0), args.get(1)));
-        addFunctionOrOperator("nextAfter", 2, args -> Math.nextAfter(args.get(0), args.get(1)));
-        addFunctionOrOperator("pow", 2, args -> Math.pow(args.get(0), args.get(1)));
+        var mathFunctions = helper.getMathFunctions(Math.class, double.class);
+        functions.putAll(mathFunctions);
     }
 }
