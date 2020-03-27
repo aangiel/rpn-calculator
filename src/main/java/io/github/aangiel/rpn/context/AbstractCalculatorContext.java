@@ -87,7 +87,7 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
 
             for (Method method : availableMethods) {
                 Function<List<N>, N> function = a -> invokeMathMethod(method, a);
-                result.put(method.getName(), new FunctionOrOperator<>(1, function));
+                result.put(method.getName(), new FunctionOrOperator<>(method.getParameterCount(), function));
             }
 
             return result;

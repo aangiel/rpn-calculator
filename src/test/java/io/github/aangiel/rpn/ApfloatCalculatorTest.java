@@ -208,6 +208,8 @@ public class ApfloatCalculatorTest {
         assertEquals(new Apfloat(0), calculator.calculate("0 asin"));
         assertEquals(new Apfloat(0), calculator.calculate("0 asinh"));
         assertEquals(new Apfloat(2.4e1), calculator.calculate("5 gamma"));
+        assertEquals(new Apfloat("5.957966013"), calculator.calculate("5 7 agm"));
+        assertEquals(new Apfloat("41"), calculator.calculate("5 7 2 3 multiplyAdd"));
     }
 
     @Test
