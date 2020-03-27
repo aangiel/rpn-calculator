@@ -53,8 +53,8 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
      */
     protected abstract void populateMathFunctions();
 
-    protected final void populateDefaultMathFunctions(Class<?> mathClass, Class<T> clazz) {
-        var mathFunctions = MathHelper.getMathFunctions(mathClass, clazz);
+    protected final void populateDefaultMathFunctions(Class<?> mathClass, Class<T> clazz, int maxParametersCount) {
+        var mathFunctions = MathHelper.getMathFunctions(mathClass, clazz, maxParametersCount);
         functions.putAll(mathFunctions);
     }
 
@@ -77,13 +77,13 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
 
     private static final class MathHelper {
 
-        private static <N extends Number> HashMap<String, FunctionOrOperator<N>> getMathFunctions(Class<?> mathClass, Class<N> clazz) {
+        private static <N extends Number> HashMap<String, FunctionOrOperator<N>> getMathFunctions(Class<?> mathClass, Class<N> clazz, int maxParametersCount) {
             Objects.requireNonNull(mathClass, "Argument 'mathClass' is null");
             Objects.requireNonNull(clazz, "Argument 'clazz' is null");
 
             var result = new HashMap<String, FunctionOrOperator<N>>();
 
-            var availableMethods = getStaticOneParameterMethodsFromMathClass(mathClass, clazz);
+            var availableMethods = getStaticOneParameterMethodsFromMathClass(mathClass, clazz, maxParametersCount);
 
             for (Method method : availableMethods) {
                 Function<List<N>, N> function = a -> invokeMathMethod(method, a);
@@ -93,20 +93,24 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
             return result;
         }
 
-        private static <N extends Number> List<Method> getStaticOneParameterMethodsFromMathClass(Class<?> mathClass, Class<N> clazz) {
+        private static <N extends Number> List<Method> getStaticOneParameterMethodsFromMathClass(Class<?> mathClass, Class<N> clazz, int maxParametersCount) {
             return Stream.of(mathClass.getMethods())
                     .filter(method -> clazz.equals(method.getReturnType()))
-                    .filter(predicate(clazz))
+                    .filter(method -> predicate(clazz, method, maxParametersCount))
                     .filter(method -> Modifier.isStatic(method.getModifiers()))
                     .collect(Collectors.toList());
         }
 
-        private static <N extends Number> Predicate<Method> predicate(Class<N> clazz) {
-            Predicate<Method> predicate1 = m -> Arrays.equals(m.getParameterTypes(), new Class[]{clazz});
-            Predicate<Method> predicate2 = m -> Arrays.equals(m.getParameterTypes(), new Class[]{clazz, clazz});
-            Predicate<Method> predicate3 = m -> Arrays.equals(m.getParameterTypes(), new Class[]{clazz, clazz, clazz});
-            Predicate<Method> predicate4 = m -> Arrays.equals(m.getParameterTypes(), new Class[]{clazz, clazz, clazz, clazz});
-            return predicate1.or(predicate2).or(predicate3).or(predicate4);
+        private static <N extends Number> boolean predicate(Class<N> clazz, Method method, int maxParametersCount) {
+            List<Class<N>> classes = new ArrayList<>();
+            Predicate<Method> predicate = m -> Arrays.equals(m.getParameterTypes(), classes.toArray());
+            classes.add(clazz);
+            for (int i = 0; i < maxParametersCount; i++) {
+                if (predicate.test(method)) return true;
+                classes.add(clazz);
+                predicate = m -> Arrays.equals(m.getParameterTypes(), classes.toArray());
+            }
+            return false;
         }
 
         private static <N extends Number> N invokeMathMethod(Method method, List<N> arguments) {

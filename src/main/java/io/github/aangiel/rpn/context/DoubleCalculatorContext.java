@@ -33,6 +33,6 @@ public final class DoubleCalculatorContext extends AbstractCalculatorContext<Dou
 
     @Override
     protected void populateMathFunctions() {
-        populateDefaultMathFunctions(Math.class, double.class);
+        populateDefaultMathFunctions(Math.class, double.class, 3);
     }
 }

@@ -47,7 +47,7 @@ public final class ApfloatCalculatorContext extends AbstractCalculatorContext<Ap
 
     @Override
     protected void populateMathFunctions() {
-        populateDefaultMathFunctions(ApfloatMath.class, Apfloat.class);
+        populateDefaultMathFunctions(ApfloatMath.class, Apfloat.class, 4);
         addFunctionOrOperator("log", 1, args -> ApfloatMath.log(args.get(0)));
         addFunctionOrOperator("logWithBase", 2, args -> ApfloatMath.log(args.get(0), args.get(1)));
     }
