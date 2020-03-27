@@ -31,10 +31,15 @@ public enum CalculatorSupplier {
         populateCalculators();
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends Number> Calculator<T> getCalculator(Class<T> clazz) {
+
+        // It always works, because <T extends Number> and
+        // value in CALCULATORS map is Calculator<? extends Number>
+        @SuppressWarnings("unchecked")
+        var calculator = (Calculator<T>) CALCULATORS.get(clazz);
+
         return Optional
-                .ofNullable((Calculator<T>) CALCULATORS.get(clazz))
+                .ofNullable(calculator)
                 .orElseThrow(uoe(clazz));
     }
 

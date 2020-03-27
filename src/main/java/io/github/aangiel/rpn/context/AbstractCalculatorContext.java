@@ -110,10 +110,15 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
             return predicate1.or(predicate2).or(predicate3).or(predicate4);
         }
 
-        @SuppressWarnings("unchecked")
         private T invokeMathMethod(Method method, List<T> arguments) {
             try {
-                return (T) method.invoke(null, arguments.toArray());
+                // It always works (when used in getMathFunctions),
+                // because <T extends Number> and methods iterated
+                // are filtered (in getStaticOneParameterMethodsFromMathClass)
+                // to take only those with return type T
+                @SuppressWarnings("unchecked")
+                var result = (T) method.invoke(null, arguments.toArray());
+                return result;
             } catch (IllegalAccessException e) {
                 throw new UnsupportedOperationException(e.getMessage());
             } catch (InvocationTargetException e) {
@@ -124,5 +129,4 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
             }
         }
     }
-
 }
