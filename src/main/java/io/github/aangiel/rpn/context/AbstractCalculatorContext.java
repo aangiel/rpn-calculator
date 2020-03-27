@@ -54,8 +54,7 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
     protected abstract void populateMathFunctions();
 
     protected final void populateDefaultMathFunctions(Class<?> mathClass, Class<T> clazz) {
-        var helper = new MathHelper();
-        var mathFunctions = helper.getMathFunctions(mathClass, clazz);
+        var mathFunctions = MathHelper.getMathFunctions(mathClass, clazz);
         functions.putAll(mathFunctions);
     }
 
@@ -76,25 +75,25 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
         return functions.get(name);
     }
 
-    private final class MathHelper {
+    private static final class MathHelper {
 
-        private HashMap<String, FunctionOrOperator<T>> getMathFunctions(Class<?> mathClass, Class<T> clazz) {
+        private static <N extends Number> HashMap<String, FunctionOrOperator<N>> getMathFunctions(Class<?> mathClass, Class<N> clazz) {
             Objects.requireNonNull(mathClass, "Argument 'mathClass' is null");
             Objects.requireNonNull(clazz, "Argument 'clazz' is null");
 
-            var result = new HashMap<String, FunctionOrOperator<T>>();
+            var result = new HashMap<String, FunctionOrOperator<N>>();
 
             var availableMethods = getStaticOneParameterMethodsFromMathClass(mathClass, clazz);
 
             for (Method method : availableMethods) {
-                Function<List<T>, T> function = a -> (T) invokeMathMethod(method, a);
+                Function<List<N>, N> function = a -> invokeMathMethod(method, a);
                 result.put(method.getName(), new FunctionOrOperator<>(1, function));
             }
 
             return result;
         }
 
-        private List<Method> getStaticOneParameterMethodsFromMathClass(Class<?> mathClass, Class<T> clazz) {
+        private static <N extends Number> List<Method> getStaticOneParameterMethodsFromMathClass(Class<?> mathClass, Class<N> clazz) {
             return Stream.of(mathClass.getMethods())
                     .filter(method -> clazz.equals(method.getReturnType()))
                     .filter(predicate(clazz))
@@ -102,7 +101,7 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
                     .collect(Collectors.toList());
         }
 
-        private Predicate<Method> predicate(Class<T> clazz) {
+        private static <N extends Number> Predicate<Method> predicate(Class<N> clazz) {
             Predicate<Method> predicate1 = m -> Arrays.equals(m.getParameterTypes(), new Class[]{clazz});
             Predicate<Method> predicate2 = m -> Arrays.equals(m.getParameterTypes(), new Class[]{clazz, clazz});
             Predicate<Method> predicate3 = m -> Arrays.equals(m.getParameterTypes(), new Class[]{clazz, clazz, clazz});
@@ -110,14 +109,14 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
             return predicate1.or(predicate2).or(predicate3).or(predicate4);
         }
 
-        private T invokeMathMethod(Method method, List<T> arguments) {
+        private static <N extends Number> N invokeMathMethod(Method method, List<N> arguments) {
             try {
                 // It always works (when used in getMathFunctions),
                 // because <T extends Number> and methods iterated
                 // are filtered (in getStaticOneParameterMethodsFromMathClass)
                 // to take only those with return type T
                 @SuppressWarnings("unchecked")
-                var result = (T) method.invoke(null, arguments.toArray());
+                var result = (N) method.invoke(null, arguments.toArray());
                 return result;
             } catch (IllegalAccessException e) {
                 throw new UnsupportedOperationException(e.getMessage());
