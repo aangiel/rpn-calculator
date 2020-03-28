@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 
 public enum CalculatorSupplier {
 
-    INSTANCE(CalculatorImpl::new); //test
+    INSTANCE(CalculatorImpl::new);
 
     private final Logger LOG = LogManager.getLogger(CalculatorSupplier.class);
 
