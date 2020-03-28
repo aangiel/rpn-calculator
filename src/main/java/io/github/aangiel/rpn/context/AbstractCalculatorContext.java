@@ -12,6 +12,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static io.github.aangiel.rpn.exception.CalculatorException.npe;
+
 /**
  * Base abstract class used by {@link io.github.aangiel.rpn.Calculator Calculator}.
  * This class should be extended if you want to add new type of {@link Number Numbers}
@@ -54,12 +56,18 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
     protected abstract void populateMathFunctions();
 
     protected final void populateDefaultMathFunctions(Class<?> mathClass, Class<T> clazz, int maxParametersCount) {
+        Objects.requireNonNull(mathClass, npe("mathClass"));
+        Objects.requireNonNull(clazz, npe("clazz"));
+
         var mathFunctions = MathHelper.getMathFunctions(mathClass, clazz, maxParametersCount);
         functions.putAll(mathFunctions);
     }
 
     @Override
     public CalculatorContext<T> addFunctionOrOperator(String name, int parameterCount, Function<List<T>, T> function) {
+        Objects.requireNonNull(name, npe("name"));
+        Objects.requireNonNull(function, npe("function"));
+
         functions.put(name, new FunctionOrOperator<>(parameterCount, function));
         return self();
     }
@@ -72,7 +80,10 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
 
     @Override
     public FunctionOrOperator<T> getFunctionOrOperator(String name) {
-        return functions.get(name);
+        Objects.requireNonNull(name, npe("name"));
+        return Optional
+                .ofNullable(functions.get(name))
+                .orElseThrow(NullPointerException::new);
     }
 
     private static final class MathHelper {
@@ -82,8 +93,12 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
         }
 
         private static <N extends Number> HashMap<String, FunctionOrOperator<N>> getMathFunctions(Class<?> mathClass, Class<N> clazz, int maxParametersCount) {
-            Objects.requireNonNull(mathClass, "Argument 'mathClass' is null");
-            Objects.requireNonNull(clazz, "Argument 'clazz' is null");
+            assert mathClass != null;
+            assert clazz != null;
+            assert maxParametersCount > 1;
+
+            Objects.requireNonNull(mathClass, npe("mathClass"));
+            Objects.requireNonNull(clazz, npe("clazz"));
 
             var result = new HashMap<String, FunctionOrOperator<N>>();
 
@@ -98,6 +113,10 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
         }
 
         private static <N extends Number> List<Method> getStaticOneParameterMethodsFromMathClass(Class<?> mathClass, Class<N> clazz, int maxParametersCount) {
+            assert mathClass != null;
+            assert clazz != null;
+            assert maxParametersCount > 1;
+
             return Stream.of(mathClass.getMethods())
                     .filter(method -> clazz.equals(method.getReturnType()))
                     .filter(method -> predicate(clazz, method, maxParametersCount))
@@ -106,6 +125,10 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
         }
 
         private static <N extends Number> boolean predicate(Class<N> clazz, Method method, int maxParametersCount) {
+            assert clazz != null;
+            assert method != null;
+            assert maxParametersCount > 1;
+
             List<Class<N>> classes = new ArrayList<>();
             Predicate<Method> predicate = m -> Arrays.equals(m.getParameterTypes(), classes.toArray());
             classes.add(clazz);
@@ -118,6 +141,9 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
         }
 
         private static <N extends Number> N invokeMathMethod(Method method, List<N> arguments) {
+            assert method != null;
+            assert arguments != null;
+
             try {
                 // It always works (when used in getMathFunctions),
                 // because <T and N extends Number> and methods iterated

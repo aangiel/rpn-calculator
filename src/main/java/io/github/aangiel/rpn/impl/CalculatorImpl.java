@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import static io.github.aangiel.rpn.exception.CalculatorException.npe;
+
 /**
  * Implementation of interface {@link Calculator} for Reverse Polish Notation calculations.
  * This is the only one implementation.
@@ -40,9 +42,11 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
     @Override
     public T calculate(String equation) throws CalculatorException {
 
+        Objects.requireNonNull(equation, npe("equation"));
+
         LOG.info(String.format("Calculating equation: %s", equation));
 
-        if (Objects.isNull(equation) || equation.isBlank()) throw new EmptyEquationException();
+        if (equation.isBlank()) throw new EmptyEquationException();
 
         var tokens = WHITESPACE.splitAsStream(equation).collect(LINKED_LIST_COLLECTOR);
         LOG.debug(String.format("Equation split with whitespace regex: %s", tokens));
@@ -61,6 +65,8 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
     }
 
     private void calculateNextTokenAndPushItToStack(ListIterator<String> iterator, Deque<T> stack) throws CalculatorException {
+        assert iterator != null;
+        assert stack != null;
 
         var token = iterator.next();
         LOG.debug(String.format("Processing item '%s' at position %s", token, iterator.nextIndex()));
@@ -75,6 +81,9 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
     private void calculateOnStack(ListIterator<String> iterator, Deque<T> stack)
             throws CalculatorException {
+
+        assert iterator != null;
+        assert stack != null;
 
         iterator.previous();
         var operator = iterator.next();
@@ -97,6 +106,9 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
     }
 
     private List<T> popArgumentsForFunctionOrOperator(FunctionOrOperator<T> functionOrOperator, Deque<T> stack) {
+        assert functionOrOperator != null;
+        assert stack != null;
+
         var arguments = stack.stream()
                 .limit(functionOrOperator.getParametersCount())
                 .peek(e -> stack.pop())

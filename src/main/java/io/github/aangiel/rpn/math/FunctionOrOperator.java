@@ -1,7 +1,10 @@
 package io.github.aangiel.rpn.math;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
+
+import static io.github.aangiel.rpn.exception.CalculatorException.npe;
 
 /**
  * Used as value class in {@link java.util.HashMap HashMap} in
@@ -16,17 +19,22 @@ import java.util.function.Function;
  * <p>
  * {@link #getParametersCount()} is used by {@link io.github.aangiel.rpn.impl.CalculatorImpl}
  * to know how many arguments take from stack
- *
  * @param <T> extends Number
+ * @author Artur Angiel
  */
 public final class FunctionOrOperator<T extends Number> {
 
     private final int parametersCount;
     private final Function<List<T>, T> function;
 
+    /**
+     * @param parametersCount number of parameters for function from second param
+     * @param function        lambda. See {@link Function} and {@link FunctionalInterface}
+     * @throws NullPointerException when parameter 'function' is null
+     */
     public FunctionOrOperator(int parametersCount, Function<List<T>, T> function) {
         this.parametersCount = parametersCount;
-        this.function = function;
+        this.function = Objects.requireNonNull(function, npe("function"));
     }
 
     /**

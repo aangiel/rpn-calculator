@@ -35,11 +35,16 @@ public class CustomCalculatorTest {
 
     @Test
     public void unsupportedType() {
-        UnsupportedOperationException unsupportedOperationException
-                = assertThrows(UnsupportedOperationException.class
+        IllegalArgumentException unsupportedOperationException
+                = assertThrows(IllegalArgumentException.class
                 , () -> CalculatorSupplier.INSTANCE.getCalculator(Integer.class));
         assertEquals("Unsupported type: class java.lang.Integer", unsupportedOperationException.getMessage());
 
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void nullCalculator() {
+        CalculatorSupplier.INSTANCE.getCalculator(null);
     }
 
     public static class BigIntegerContext extends AbstractCalculatorContext<BigInteger> {

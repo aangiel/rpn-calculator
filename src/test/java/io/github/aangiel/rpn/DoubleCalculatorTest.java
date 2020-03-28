@@ -157,9 +157,9 @@ public class DoubleCalculatorTest {
         EmptyEquationException emptyEquationException = assertThrows(EmptyEquationException.class, () -> calculator.calculate(""));
         assertEquals("Empty equation", emptyEquationException.getMessage());
 
-        EmptyEquationException emptyEquationException1
-                = assertThrows(EmptyEquationException.class, () -> calculator.calculate(null));
-        assertEquals("Empty equation", emptyEquationException1.getMessage());
+        NullPointerException nullPointerException
+                = assertThrows(NullPointerException.class, () -> calculator.calculate(null));
+        assertEquals("Param 'equation' can't be null", nullPointerException.getMessage());
 
         assertEquals(Double.valueOf(2), calculator.calculate("2"));
     }

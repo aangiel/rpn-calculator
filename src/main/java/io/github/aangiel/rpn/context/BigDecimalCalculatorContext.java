@@ -4,7 +4,10 @@ import io.github.aangiel.rpn.interfaces.RoundingModeContext;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Objects;
 import java.util.function.Function;
+
+import static io.github.aangiel.rpn.exception.CalculatorException.npe;
 
 /**
  * @see AbstractCalculatorContext
@@ -18,7 +21,7 @@ public final class BigDecimalCalculatorContext extends AbstractCalculatorContext
     }
 
     public BigDecimalCalculatorContext(RoundingMode roundingMode) {
-        this.roundingMode = roundingMode;
+        this.roundingMode = Objects.requireNonNull(roundingMode, npe("roundingMode"));
     }
 
     @Override
