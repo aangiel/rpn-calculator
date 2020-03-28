@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +22,7 @@ public class BigDecimalCalculatorTest {
         calculator = CalculatorSupplier.INSTANCE.getCalculator(BigDecimal.class);
 
         calculator.getContext().addFunctionOrOperator("**", 2, (a) -> a.get(0).multiply(a.get(1).multiply(a.get(0))));
-        calculator.getContext().addFunctionOrOperator("^", 2, (a) -> a.get(0).divide(a.get(1).multiply(a.get(0))));
+        calculator.getContext().addFunctionOrOperator("^", 2, (a) -> a.get(0).divide(a.get(1).multiply(a.get(0)), 3, RoundingMode.DOWN));
         calculator.getContext().addFunctionOrOperator("fun", 3, (a) -> a.get(0).multiply(a.get(1)).multiply(a.get(2)));
         calculator.getContext().addFunctionOrOperator("fun2", 4, (a) -> a.get(0).multiply(a.get(1)).multiply(a.get(2)).subtract(a.get(3)));
 
@@ -29,7 +30,7 @@ public class BigDecimalCalculatorTest {
          * Operations added from example: https://en.wikipedia.org/wiki/Reverse_Polish_notation
          */
         calculator.getContext().addFunctionOrOperator("−", 2, a -> a.get(0).subtract(a.get(1)));
-        calculator.getContext().addFunctionOrOperator("÷", 2, a -> a.get(0).divide(a.get(1)));
+        calculator.getContext().addFunctionOrOperator("÷", 2, a -> a.get(0).divide(a.get(1), 3, RoundingMode.DOWN));
 //      calculator.getContext().addFunction("+", 2, a -> a.get(0).add(a.get(1)));
         calculator.getContext().addFunctionOrOperator("×", 2, a -> a.get(0).multiply(a.get(1)));
     }
@@ -46,7 +47,7 @@ public class BigDecimalCalculatorTest {
          * Example copied from https://en.wikipedia.org/wiki/Reverse_Polish_notation
          * Operands added in setUp method
          */
-        assertEquals(new BigDecimal(5), calculator.calculate("15 7 1 1 + − ÷ 3 × 2 1 1 + + −"));
+        assertEquals(new BigDecimal("5.000"), calculator.calculate("15 7 1 1 + − ÷ 3 × 2 1 1 + + −"));
     }
 
     @Test

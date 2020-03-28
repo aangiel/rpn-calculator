@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigInteger;
+import java.util.Set;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
@@ -28,7 +29,8 @@ public class CustomCalculatorTest {
 
     @Test
     public void checkFunctions() {
-        assertEquals("[+]", calculator.getContext().getAvailableFunctionsAndOperators().toString());
+        var functions = Set.of("+");
+        assertEquals(functions, calculator.getContext().getAvailableFunctionsAndOperators());
     }
 
     @Test

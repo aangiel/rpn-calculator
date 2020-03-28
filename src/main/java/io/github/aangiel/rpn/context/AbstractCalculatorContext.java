@@ -77,6 +77,10 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
 
     private static final class MathHelper {
 
+        private MathHelper() {
+            throw new AssertionError();
+        }
+
         private static <N extends Number> HashMap<String, FunctionOrOperator<N>> getMathFunctions(Class<?> mathClass, Class<N> clazz, int maxParametersCount) {
             Objects.requireNonNull(mathClass, "Argument 'mathClass' is null");
             Objects.requireNonNull(clazz, "Argument 'clazz' is null");
@@ -116,7 +120,7 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
         private static <N extends Number> N invokeMathMethod(Method method, List<N> arguments) {
             try {
                 // It always works (when used in getMathFunctions),
-                // because <T extends Number> and methods iterated
+                // because <T and N extends Number> and methods iterated
                 // are filtered (in getStaticOneParameterMethodsFromMathClass)
                 // to take only those with return type T
                 @SuppressWarnings("unchecked")
