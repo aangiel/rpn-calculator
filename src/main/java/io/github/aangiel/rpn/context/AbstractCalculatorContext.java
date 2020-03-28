@@ -9,6 +9,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -58,23 +59,27 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
     protected final void populateDefaultMathFunctions(Class<?> mathClass, Class<T> clazz, int maxParametersCount) {
         Objects.requireNonNull(mathClass, npe("mathClass"));
         Objects.requireNonNull(clazz, npe("clazz"));
+        if (maxParametersCount < 0)
+            throw new IllegalArgumentException("Param 'maxParametersCount' must be greater than or equal to zero");
 
         var mathFunctions = MathHelper.getMathFunctions(mathClass, clazz, maxParametersCount);
         functions.putAll(mathFunctions);
     }
 
     @Override
-    public CalculatorContext<T> addFunctionOrOperator(String name, int parameterCount, Function<List<T>, T> function) {
+    public CalculatorContext<T> addFunctionOrOperator(String name, int parametersCount, Function<List<T>, T> function) {
         Objects.requireNonNull(name, npe("name"));
         Objects.requireNonNull(function, npe("function"));
+        if (parametersCount < 0)
+            throw new IllegalArgumentException("Param 'parametersCount' must be greater than or equal to zero");
 
-        functions.put(name, new FunctionOrOperator<>(parameterCount, function));
+        functions.put(name, new FunctionOrOperator<>(parametersCount, function));
         return self();
     }
 
     @Override
     public Set<String> getAvailableFunctionsAndOperators() {
-        return functions.keySet();
+        return Collections.unmodifiableSet(functions.keySet());
     }
 
 
@@ -83,26 +88,30 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
         Objects.requireNonNull(name, npe("name"));
         return Optional
                 .ofNullable(functions.get(name))
-                .orElseThrow(NullPointerException::new);
+                .orElseThrow(npen(name));
+    }
+
+    private Supplier<NullPointerException> npen(String name) {
+        return () -> new NullPointerException(String.format("No operator: %s", name));
     }
 
     private static final class MathHelper {
 
         private MathHelper() {
-            throw new AssertionError();
+            throw new AssertionError("MathHelper class cannot be instantiated");
         }
 
         private static <N extends Number> HashMap<String, FunctionOrOperator<N>> getMathFunctions(Class<?> mathClass, Class<N> clazz, int maxParametersCount) {
             assert mathClass != null;
             assert clazz != null;
-            assert maxParametersCount > 1;
+            assert maxParametersCount >= 0;
 
             Objects.requireNonNull(mathClass, npe("mathClass"));
             Objects.requireNonNull(clazz, npe("clazz"));
 
             var result = new HashMap<String, FunctionOrOperator<N>>();
 
-            var availableMethods = getStaticOneParameterMethodsFromMathClass(mathClass, clazz, maxParametersCount);
+            var availableMethods = getStaticMethodsFromMathClass(mathClass, clazz, maxParametersCount);
 
             for (Method method : availableMethods) {
                 Function<List<N>, N> function = a -> invokeMathMethod(method, a);
@@ -112,10 +121,10 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
             return result;
         }
 
-        private static <N extends Number> List<Method> getStaticOneParameterMethodsFromMathClass(Class<?> mathClass, Class<N> clazz, int maxParametersCount) {
+        private static <N extends Number> List<Method> getStaticMethodsFromMathClass(Class<?> mathClass, Class<N> clazz, int maxParametersCount) {
             assert mathClass != null;
             assert clazz != null;
-            assert maxParametersCount > 1;
+            assert maxParametersCount >= 0;
 
             return Stream.of(mathClass.getMethods())
                     .filter(method -> clazz.equals(method.getReturnType()))
@@ -127,7 +136,7 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
         private static <N extends Number> boolean predicate(Class<N> clazz, Method method, int maxParametersCount) {
             assert clazz != null;
             assert method != null;
-            assert maxParametersCount > 1;
+            assert maxParametersCount >= 0;
 
             List<Class<N>> classes = new ArrayList<>();
             Predicate<Method> predicate = m -> Arrays.equals(m.getParameterTypes(), classes.toArray());
@@ -155,7 +164,7 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
             } catch (IllegalAccessException e) {
                 throw new UnsupportedOperationException(e.getMessage());
             } catch (InvocationTargetException e) {
-                if (ArithmeticException.class.equals(e.getTargetException().getClass()))
+                if (e.getTargetException() instanceof ArithmeticException)
                     throw (ArithmeticException) e.getTargetException();
                 else
                     throw new UnsupportedOperationException(e.getMessage());

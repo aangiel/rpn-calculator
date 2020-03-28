@@ -6,9 +6,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -156,8 +154,8 @@ public class BigDecimalCalculatorTest {
 
     @Test
     public void calculateCompareAvailableFunctions() {
-        List<String> functions = Arrays.asList("**", "fun2", "e", "*", "+", "-", "/", "−", "÷", "×", "pi", "^", "fun");
-        assertEquals(functions, new ArrayList<>(calculator.getContext().getAvailableFunctionsAndOperators()));
+        Set<String> functions = Set.of("**", "fun2", "e", "*", "+", "-", "/", "−", "÷", "×", "pi", "^", "fun");
+        assertEquals(functions, calculator.getContext().getAvailableFunctionsAndOperators());
     }
 
     @Test

@@ -20,7 +20,7 @@ import static io.github.aangiel.rpn.exception.CalculatorException.npe;
  * {@link #getParametersCount()} is used by {@link io.github.aangiel.rpn.impl.CalculatorImpl}
  * to know how many arguments take from stack
  * @param <T> extends Number
- * @author Artur Angiel
+ * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>
  */
 public final class FunctionOrOperator<T extends Number> {
 
@@ -30,9 +30,13 @@ public final class FunctionOrOperator<T extends Number> {
     /**
      * @param parametersCount number of parameters for function from second param
      * @param function        lambda. See {@link Function} and {@link FunctionalInterface}
-     * @throws NullPointerException when parameter 'function' is null
+     * @throws IllegalArgumentException if param parametersCount is less than zero
+     * @throws NullPointerException     when parameter 'function' is null
      */
     public FunctionOrOperator(int parametersCount, Function<List<T>, T> function) {
+        if (parametersCount < 0)
+            throw new IllegalArgumentException("Param 'parametersCount' must be greater than or equal to zero");
+
         this.parametersCount = parametersCount;
         this.function = Objects.requireNonNull(function, npe("function"));
     }
