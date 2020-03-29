@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 /**
- * @param <T>
+ * @param <T> extends {@link Number}
  * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>
  */
 public interface FunctionOrOperatorContext<T extends Number> {
@@ -47,6 +47,7 @@ public interface FunctionOrOperatorContext<T extends Number> {
      * method.
      *
      * @return this
+     * @implSpec {@code return this;}
      */
     CalculatorContext<T> self();
 }

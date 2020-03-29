@@ -1,7 +1,7 @@
 package io.github.aangiel.rpn.interfaces;
 
 /**
- * @param <T>
+ * @param <T> extends {@link Number}
  * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>
  */
 public interface CalculatorContext<T extends Number>
