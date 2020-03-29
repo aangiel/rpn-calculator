@@ -21,6 +21,7 @@ import static io.github.aangiel.rpn.exception.CalculatorException.npe;
  * which you want to use with RPN Calculator
  *
  * @param <T> extends {@link Number Number}.
+ * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>
  */
 public abstract class AbstractCalculatorContext<T extends Number> implements CalculatorContext<T> {
 
@@ -92,7 +93,7 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
     }
 
     private Supplier<NullPointerException> npen(String name) {
-        return () -> new NullPointerException(String.format("No operator: %s", name));
+        return () -> new NullPointerException(String.format("No function or operator: %s", name));
     }
 
     private static final class MathHelper {
@@ -105,9 +106,6 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
             assert mathClass != null;
             assert clazz != null;
             assert maxParametersCount >= 0;
-
-            Objects.requireNonNull(mathClass, npe("mathClass"));
-            Objects.requireNonNull(clazz, npe("clazz"));
 
             var result = new HashMap<String, FunctionOrOperator<N>>();
 

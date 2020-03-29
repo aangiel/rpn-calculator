@@ -10,6 +10,7 @@ import java.util.function.Function;
 import static io.github.aangiel.rpn.exception.CalculatorException.npe;
 
 /**
+ * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>
  * @see AbstractCalculatorContext
  */
 public final class BigDecimalCalculatorContext extends AbstractCalculatorContext<BigDecimal> implements RoundingModeContext {

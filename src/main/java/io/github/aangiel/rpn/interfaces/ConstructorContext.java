@@ -2,6 +2,10 @@ package io.github.aangiel.rpn.interfaces;
 
 import java.util.function.Function;
 
+/**
+ * @param <T>
+ * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>
+ */
 public interface ConstructorContext<T extends Number> {
     /**
      * Lambda for returning new Object of type <pre>&#60;T extends Number&#62;</pre><br><br>

@@ -1,5 +1,8 @@
 package io.github.aangiel.rpn.interfaces;
 
+/**
+ * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>
+ */
 public interface PrecisionContext {
     /**
      * Returns precision used with {@link org.apfloat.Apfloat Apfloat} which is currently implemented.

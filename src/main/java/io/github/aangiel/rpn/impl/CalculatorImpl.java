@@ -18,6 +18,7 @@ import static io.github.aangiel.rpn.exception.CalculatorException.npe;
  * Implementation of interface {@link Calculator} for Reverse Polish Notation calculations.
  * This is the only one implementation.
  *
+ * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>
  * @see Calculator
  */
 public class CalculatorImpl<T extends Number> implements Calculator<T> {

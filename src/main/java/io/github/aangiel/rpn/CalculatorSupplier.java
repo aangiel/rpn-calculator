@@ -19,6 +19,9 @@ import java.util.function.Supplier;
 
 import static io.github.aangiel.rpn.exception.CalculatorException.npe;
 
+/**
+ * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>
+ */
 public enum CalculatorSupplier {
 
     INSTANCE(CalculatorImpl::new);

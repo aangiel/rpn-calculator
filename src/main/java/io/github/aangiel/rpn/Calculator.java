@@ -18,6 +18,7 @@ import io.github.aangiel.rpn.interfaces.CalculatorContext;
  *
  * @param <T> extends Number for using with all subtypes of number.
  * @see CalculatorContext
+ * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>
  */
 public interface Calculator<T extends Number> {
 

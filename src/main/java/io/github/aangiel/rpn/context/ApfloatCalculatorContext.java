@@ -7,6 +7,7 @@ import org.apfloat.ApfloatMath;
 import java.util.function.Function;
 
 /**
+ * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>
  * @see AbstractCalculatorContext
  */
 public final class ApfloatCalculatorContext extends AbstractCalculatorContext<Apfloat> implements PrecisionContext {

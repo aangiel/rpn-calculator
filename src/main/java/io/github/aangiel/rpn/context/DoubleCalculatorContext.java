@@ -3,6 +3,7 @@ package io.github.aangiel.rpn.context;
 import java.util.function.Function;
 
 /**
+ * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>
  * @see AbstractCalculatorContext
  */
 public final class DoubleCalculatorContext extends AbstractCalculatorContext<Double> {

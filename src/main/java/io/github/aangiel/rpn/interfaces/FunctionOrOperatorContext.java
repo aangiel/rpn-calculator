@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
+/**
+ * @param <T>
+ * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>
+ */
 public interface FunctionOrOperatorContext<T extends Number> {
 
     /**
