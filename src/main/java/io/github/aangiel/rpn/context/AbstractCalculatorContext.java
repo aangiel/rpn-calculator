@@ -9,7 +9,6 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -85,15 +84,9 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
 
 
     @Override
-    public FunctionOrOperator<T> getFunctionOrOperator(String name) {
+    public Optional<FunctionOrOperator<T>> getFunctionOrOperator(String name) {
         Objects.requireNonNull(name, npe("name"));
-        return Optional
-                .ofNullable(functions.get(name))
-                .orElseThrow(npen(name));
-    }
-
-    private Supplier<NullPointerException> npen(String name) {
-        return () -> new NullPointerException(String.format("No function or operator: %s", name));
+        return Optional.ofNullable(functions.get(name));
     }
 
     private static final class MathHelper {

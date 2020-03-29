@@ -104,9 +104,9 @@ public class DoubleCalculatorTest {
 
     @Test
     public void calculateConstructingFunctionsException() {
-        BadEquationException exception =
-                assertThrows(BadEquationException.class, () -> calculator.calculate("08 90 sin"));
-        assertEquals("Left on stack: [8.0]", exception.getMessage());
+        BadItemException exception =
+                assertThrows(BadItemException.class, () -> calculator.calculate("08 90 sin"));
+        assertEquals("Bad item: '08' at position: 1", exception.getMessage());
     }
 
     @Test

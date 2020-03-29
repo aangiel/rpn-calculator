@@ -3,6 +3,7 @@ package io.github.aangiel.rpn.interfaces;
 import io.github.aangiel.rpn.math.FunctionOrOperator;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -19,7 +20,7 @@ public interface FunctionOrOperatorContext<T extends Number> {
      * @param name function or operator to be returned
      * @return Lambda which is used to calculate value for specified function or operator and its' arguments
      */
-    FunctionOrOperator<T> getFunctionOrOperator(String name);
+    Optional<FunctionOrOperator<T>> getFunctionOrOperator(String name);
 
     /**
      * Adds function or operator for use in equations passed as String to

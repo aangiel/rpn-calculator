@@ -104,9 +104,9 @@ public class ApfloatCalculatorTest {
 
     @Test
     public void calculateConstructingFunctionsException() {
-        BadEquationException exception =
-                assertThrows(BadEquationException.class, () -> calculator.calculate("08 90 sin"));
-        assertEquals("Left on stack: [8]", exception.getMessage());
+        BadItemException exception =
+                assertThrows(BadItemException.class, () -> calculator.calculate("08 90 sin"));
+        assertEquals("Bad item: '08' at position: 1", exception.getMessage());
     }
 
     @Test
@@ -230,7 +230,7 @@ public class ApfloatCalculatorTest {
 //    @Test
     public void performance() throws CalculatorException {
         long start = System.currentTimeMillis();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 10000; i++) {
             assertEquals(new Apfloat(-1.0137361372e-8),
                     calculator.calculate("-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / -0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / +"));
         }

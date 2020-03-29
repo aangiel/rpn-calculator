@@ -4,6 +4,8 @@ import io.github.aangiel.rpn.Calculator;
 import io.github.aangiel.rpn.exception.*;
 import io.github.aangiel.rpn.interfaces.CalculatorContext;
 import io.github.aangiel.rpn.math.FunctionOrOperator;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -41,7 +43,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
     }
 
     @Override
-    public T calculate(String equation) throws CalculatorException {
+    public T calculate(final String equation) throws CalculatorException {
 
         Objects.requireNonNull(equation, npe("equation"));
 
@@ -53,9 +55,9 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         LOG.debug(String.format("Equation split with whitespace regex: %s", tokens));
 
         var stack = new ArrayDeque<T>(tokens.size());
-        var iterator = tokens.listIterator();
-
-        while (iterator.hasNext()) calculateNextTokenAndPushItToStack(iterator, stack);
+        var counter = 0;
+        for (String token : tokens)
+            calculateNextTokenAndPushItToStack(Pair.of(token, ++counter), stack);
 
         var result = stack.pop();
         if (!stack.isEmpty()) throw new BadEquationException(stack);
@@ -65,45 +67,40 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
     }
 
-    private void calculateNextTokenAndPushItToStack(ListIterator<String> iterator, Deque<T> stack) throws CalculatorException {
-        assert iterator != null;
+    private void calculateNextTokenAndPushItToStack(Pair<String, Integer> token, Deque<T> stack) throws CalculatorException {
+        assert token != null;
         assert stack != null;
 
-        var token = iterator.next();
-        LOG.debug(String.format("Processing item '%s' at position %s", token, iterator.nextIndex()));
-        try {
-            var applied = context.getNumberConstructor().apply(token);
+        LOG.debug(String.format("Processing item '%s' at position %s", token.getLeft(), token.getRight()));
+        if (NumberUtils.isCreatable(token.getLeft())) {
+            var applied = context.getNumberConstructor().apply(token.getLeft());
             stack.push(applied);
-            LOG.debug(String.format("Item '%s' pushed into the stack: %s", token, stack));
-        } catch (NumberFormatException e) {
-            calculateOnStack(iterator, stack);
+            LOG.debug(String.format("Item '%s' pushed into the stack: %s", token.getLeft(), stack));
+        } else {
+            calculateOnStack(token, stack);
         }
     }
 
-    private void calculateOnStack(ListIterator<String> iterator, Deque<T> stack)
+    private void calculateOnStack(Pair<String, Integer> token, Deque<T> stack)
             throws CalculatorException {
 
-        assert iterator != null;
+        assert token != null;
         assert stack != null;
 
-        iterator.previous();
-        var operator = iterator.next();
-        LOG.debug(String.format("Processing operator/function '%s' at position %s", operator, iterator.nextIndex()));
+        LOG.debug(String.format("Processing operator/function '%s' at position %s", token.getLeft(), token.getRight()));
 
-        try {
-            var functionOrOperator = context.getFunctionOrOperator(operator);
-            var arguments = popArgumentsForFunctionOrOperator(functionOrOperator, stack);
-            LOG.debug(String.format("Took %s arguments (%s) from stack: %s", arguments.size(), arguments, stack));
-            var value = functionOrOperator.get().apply(arguments);
-            stack.push(value);
-            LOG.debug(String.format("Pushed value %s into the stack: %s", value, stack));
-        } catch (NullPointerException e) {
-            LOG.error(String.format("Operator/function '%s' at position %s unsupported", operator, iterator.nextIndex()));
-            throw new BadItemException(operator, iterator.nextIndex());
-        } catch (IndexOutOfBoundsException e) {
-            LOG.error(String.format("Unexpected end of stack for operator '%s' at position %s", operator, iterator.nextIndex()));
-            throw new LackOfArgumentsException(operator, iterator.nextIndex());
-        }
+        var functionOrOperator = context.getFunctionOrOperator(token.getLeft())
+                .orElseThrow(() -> new BadItemException(token.getLeft(), token.getRight()));
+
+        if (stack.size() < functionOrOperator.getParametersCount())
+            throw new LackOfArgumentsException(token.getLeft(), token.getRight());
+
+        var arguments = popArgumentsForFunctionOrOperator(functionOrOperator, stack);
+        LOG.debug(String.format("Took %s arguments (%s) from stack: %s", arguments.size(), arguments, stack));
+
+        var value = functionOrOperator.get().apply(arguments);
+        stack.push(value);
+        LOG.debug(String.format("Pushed value %s into the stack: %s", value, stack));
     }
 
     private List<T> popArgumentsForFunctionOrOperator(FunctionOrOperator<T> functionOrOperator, Deque<T> stack) {
