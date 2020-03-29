@@ -1,8 +1,5 @@
 package io.github.aangiel.rpn;
 
-import io.github.aangiel.rpn.exception.BadEquationException;
-import io.github.aangiel.rpn.exception.BadItemException;
-import io.github.aangiel.rpn.exception.LackOfArgumentsException;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 import org.junit.Before;
@@ -10,7 +7,8 @@ import org.junit.Test;
 
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 public class ApfloatCalculatorTest {
 
@@ -50,23 +48,23 @@ public class ApfloatCalculatorTest {
     }
 
     @Test
-    public void calculateBadEquationException() {
-        BadEquationException exception = assertThrows(BadEquationException.class, () -> calculator.calculate("12 2 3 4 * 10 5 / + * + 3"));
+    public void calculateBadEquation() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> calculator.calculate("12 2 3 4 * 10 5 / + * + 3"));
         assertEquals("Left on stack: [4e1]", exception.getMessage());
     }
 
     @Test
-    public void calculateBadItemException() {
-        BadItemException exception = assertThrows(BadItemException.class, () -> calculator.calculate("12 2 3 4 * 10 5 / + * ++"));
+    public void calculateIllegalArgumentException() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> calculator.calculate("12 2 3 4 * 10 5 / + * ++"));
         assertEquals("Bad item: '++' at position: 11", exception.getMessage());
-        BadItemException exception1 = assertThrows(BadItemException.class, () -> calculator.calculate("12 2 3 sinx 4 * 10 5 / + * +"));
+        IllegalArgumentException exception1 = assertThrows(IllegalArgumentException.class, () -> calculator.calculate("12 2 3 sinx 4 * 10 5 / + * +"));
         assertEquals("Bad item: 'sinx' at position: 4", exception1.getMessage());
 
     }
 
     @Test
     public void calculateLackOfArgumentsException() {
-        LackOfArgumentsException exception = assertThrows(LackOfArgumentsException.class, () -> calculator.calculate("12 * 2 3 4 * 10 5 / + * +"));
+        ArithmeticException exception = assertThrows(ArithmeticException.class, () -> calculator.calculate("12 * 2 3 4 * 10 5 / + * +"));
         assertEquals("Lack of arguments for: * at position: 2", exception.getMessage());
     }
 
@@ -86,27 +84,27 @@ public class ApfloatCalculatorTest {
     }
 
     @Test
-    public void calculateWithCustomFunctionBadItemException() {
-        BadItemException exception =
+    public void calculateWithCustomFunctionIllegalArgumentException() {
+        IllegalArgumentException exception =
                 assertThrows(
-                        BadItemException.class,
+                        IllegalArgumentException.class,
                         () -> calculator.calculate("5 1 4 d 2 fun * 4 * + 3 -"));
         assertEquals("Bad item: 'd' at position: 4", exception.getMessage());
     }
 
     @Test
     public void calculateWithCustomFunctionNotEnoughArgumentsInFunctionException() {
-        LackOfArgumentsException exception =
+        ArithmeticException exception =
                 assertThrows(
-                        LackOfArgumentsException.class,
+                        ArithmeticException.class,
                         () -> calculator.calculate("5 1 3 2 fun * 4 * + 3 -"));
         assertEquals("Lack of arguments for: + at position: 9", exception.getMessage());
     }
 
     @Test
     public void calculateConstructingFunctionsException() {
-        BadItemException exception =
-                assertThrows(BadItemException.class, () -> calculator.calculate("08 90 sin"));
+        IllegalArgumentException exception =
+                assertThrows(IllegalArgumentException.class, () -> calculator.calculate("08 90 sin"));
         assertEquals("Bad item: '08' at position: 1", exception.getMessage());
     }
 
@@ -125,34 +123,34 @@ public class ApfloatCalculatorTest {
         assertEquals(new Apfloat(-5.068680686e-9),
                 calculator.calculate("-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 /"));
 
-        BadItemException badItemException = assertThrows(BadItemException.class,
+        IllegalArgumentException badItemException = assertThrows(IllegalArgumentException.class,
                 () -> calculator.calculate("-0.5 23 24.234 tan h 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 /"));
         assertEquals("Bad item: 'h' at position: 5", badItemException.getMessage());
-        assertEquals("h", badItemException.getItem());
-        assertEquals(5, badItemException.getPosition());
+//        assertEquals("h", badItemException.getItem());
+//        assertEquals(5, badItemException.getPosition());
 
-        BadEquationException badEquationException = assertThrows(BadEquationException.class,
+        IllegalArgumentException badEquationException = assertThrows(IllegalArgumentException.class,
                 () -> calculator.calculate("-0.5 23 24.234 tanh 234.4 23 4 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 /"));
         assertEquals("Left on stack: [-5e-1]", badEquationException.getMessage());
-        assertTrue(Set.of(new Apfloat("-5e-1")).containsAll(badEquationException.getStack()));
+//        assertTrue(Set.of(new Apfloat("-5e-1")).containsAll(badEquationException.getStack()));
 
-        BadItemException badItemException1 = assertThrows(BadItemException.class,
+        IllegalArgumentException badItemException1 = assertThrows(IllegalArgumentException.class,
                 () -> calculator.calculate("-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384 e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 /"));
         assertEquals("Bad item: 'e8' at position: 12", badItemException1.getMessage());
 
-        LackOfArgumentsException notEnoughArgumentsInFunctionException
-                = assertThrows(LackOfArgumentsException.class,
+        ArithmeticException notEnoughArgumentsInFunctionException
+                = assertThrows(ArithmeticException.class,
                 () -> calculator.calculate("-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 0 3.5e-8 23.33 fun2 /"));
         assertEquals("Lack of arguments for: / at position: 19", notEnoughArgumentsInFunctionException.getMessage());
-        assertEquals("/", notEnoughArgumentsInFunctionException.getItem());
-        assertEquals(19, notEnoughArgumentsInFunctionException.getPosition());
+//        assertEquals("/", notEnoughArgumentsInFunctionException.getItem());
+//        assertEquals(19, notEnoughArgumentsInFunctionException.getPosition());
 
-        LackOfArgumentsException lackOfArgumentsException = assertThrows(LackOfArgumentsException.class,
+        ArithmeticException lackOfArgumentsException = assertThrows(ArithmeticException.class,
                 () -> calculator.calculate("-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / +"));
         assertEquals("Lack of arguments for: + at position: 21", lackOfArgumentsException.getMessage());
 
-        BadEquationException constructingFunctionsException
-                = assertThrows(BadEquationException.class,
+        IllegalArgumentException constructingFunctionsException
+                = assertThrows(IllegalArgumentException.class,
                 () -> calculator.calculate("-0.5 23 4 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 /"));
         assertEquals("Left on stack: [-5e-1]", constructingFunctionsException.getMessage());
 

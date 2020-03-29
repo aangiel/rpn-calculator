@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.github.aangiel.rpn.exception.CalculatorException.npe;
+import static io.github.aangiel.rpn.ExceptionsUtil.npe;
 
 /**
  * Base abstract class used by {@link io.github.aangiel.rpn.Calculator Calculator}.

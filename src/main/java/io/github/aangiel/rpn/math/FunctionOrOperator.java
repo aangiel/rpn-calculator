@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import static io.github.aangiel.rpn.exception.CalculatorException.npe;
+import static io.github.aangiel.rpn.ExceptionsUtil.npe;
 
 /**
  * Used as value class in {@link java.util.HashMap HashMap} in

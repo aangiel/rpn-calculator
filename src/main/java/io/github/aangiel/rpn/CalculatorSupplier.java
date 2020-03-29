@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static io.github.aangiel.rpn.exception.CalculatorException.npe;
+import static io.github.aangiel.rpn.ExceptionsUtil.npe;
 
 /**
  * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>

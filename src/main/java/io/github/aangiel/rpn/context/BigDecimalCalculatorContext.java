@@ -7,7 +7,7 @@ import java.math.RoundingMode;
 import java.util.Objects;
 import java.util.function.Function;
 
-import static io.github.aangiel.rpn.exception.CalculatorException.npe;
+import static io.github.aangiel.rpn.ExceptionsUtil.npe;
 
 /**
  * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>

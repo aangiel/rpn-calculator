@@ -1,9 +1,6 @@
 package io.github.aangiel.rpn.impl;
 
 import io.github.aangiel.rpn.Calculator;
-import io.github.aangiel.rpn.exception.BadEquationException;
-import io.github.aangiel.rpn.exception.BadItemException;
-import io.github.aangiel.rpn.exception.LackOfArgumentsException;
 import io.github.aangiel.rpn.interfaces.CalculatorContext;
 import io.github.aangiel.rpn.math.FunctionOrOperator;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -15,7 +12,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import static io.github.aangiel.rpn.exception.CalculatorException.npe;
+import static io.github.aangiel.rpn.ExceptionsUtil.npe;
 
 /**
  * Implementation of interface {@link Calculator} for Reverse Polish Notation calculations.
@@ -62,7 +59,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
         var result = stack.pop();
         if (!stack.isEmpty())
-            throw new BadEquationException(stack);
+            throw new IllegalArgumentException(String.format("Left on stack: %s", stack));
 
         LOG.info(String.format("Result = %s", result));
         return result;
@@ -93,10 +90,10 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         LOG.debug(String.format("Processing operator/function '%s' at position %s", token, position));
 
         var functionOrOperator = context.getFunctionOrOperator(token)
-                .orElseThrow(() -> new BadItemException(token, position));
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Bad item: '%s' at position: %d", token, position)));
 
         if (stack.size() < functionOrOperator.getParametersCount())
-            throw new LackOfArgumentsException(token, position);
+            throw new ArithmeticException(String.format("Lack of arguments for: %s at position: %d", token, position));
 
         var arguments = popArgumentsForFunctionOrOperator(functionOrOperator, stack);
         LOG.debug(String.format("Took %s arguments (%s) from stack: %s", arguments.size(), arguments, stack));

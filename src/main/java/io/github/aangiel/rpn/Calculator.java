@@ -1,8 +1,5 @@
 package io.github.aangiel.rpn;
 
-import io.github.aangiel.rpn.exception.BadEquationException;
-import io.github.aangiel.rpn.exception.BadItemException;
-import io.github.aangiel.rpn.exception.LackOfArgumentsException;
 import io.github.aangiel.rpn.interfaces.CalculatorContext;
 
 /**
@@ -30,11 +27,9 @@ public interface Calculator<T extends Number> {
      * @param equation String with equation to calculate
      * @return result of calculation of Class given in
      * {@link io.github.aangiel.rpn.CalculatorSupplier#getCalculator(Class) CalculatorSupplier.getCalculator(Class&#60;T extends Number&#62;)}
-     * @throws BadEquationException     if equation has bad form and after whole calculation some items left on stack
-     * @throws BadItemException         if equation contains unsupported items
-     * @throws LackOfArgumentsException if during calculation won't be enough elements on stack for actual function or operator
+     * @throws ArithmeticException      if during calculation won't be enough elements on stack for actual function or operator
      * @throws NullPointerException     if equation is null
-     * @throws IllegalArgumentException if equation is empty
+     * @throws IllegalArgumentException if equation is empty, contains unsupported items or has bad form and after whole calculation some items left on stack
      * @see <a href="https://en.wikipedia.org/wiki/Reverse_Polish_notation">Wikipedia</a>
      */
     T calculate(String equation);
