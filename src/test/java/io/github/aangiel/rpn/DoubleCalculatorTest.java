@@ -1,6 +1,8 @@
 package io.github.aangiel.rpn;
 
-import io.github.aangiel.rpn.exception.*;
+import io.github.aangiel.rpn.exception.BadEquationException;
+import io.github.aangiel.rpn.exception.BadItemException;
+import io.github.aangiel.rpn.exception.LackOfArgumentsException;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 import org.junit.Before;
@@ -34,7 +36,7 @@ public class DoubleCalculatorTest {
     }
 
     @Test
-    public void calculateCorrectEquations() throws CalculatorException {
+    public void calculateCorrectEquations() {
         assertEquals(Double.valueOf(14.0), calculator.calculate("5 1 2 + 4 * + 3 -"));
         assertEquals(Double.valueOf(40), calculator.calculate("12 2 3 4 * 10 5 / + * +"));
         assertEquals(Double.valueOf(4), calculator.calculate("2 2 +"));
@@ -70,14 +72,14 @@ public class DoubleCalculatorTest {
     }
 
     @Test
-    public void calculateWithCustomOperation() throws CalculatorException {
+    public void calculateWithCustomOperation() {
         assertEquals(Double.valueOf(10), calculator.calculate("5 1 2 ** 4 * + 3 -"));
         assertEquals(Double.valueOf(-2.875), calculator.calculate("5 1 2 ** 4 * ^ 3 -"));
 
     }
 
     @Test
-    public void calculateWithCustomFunction() throws CalculatorException {
+    public void calculateWithCustomFunction() {
         assertEquals(Double.valueOf(98), calculator.calculate("5 1 4 3 2 fun * 4 * + 3 -"));
         assertEquals(Double.valueOf(98), calculator.calculate("5 1  4  3  2 fun * 4 * + 3 -"));
         assertEquals(Double.valueOf(102), calculator.calculate("5 1 2 3 4 fun * 4 * + 3.5 0 0 1 fun2 -"));
@@ -110,17 +112,17 @@ public class DoubleCalculatorTest {
     }
 
     @Test
-    public void calculateFloatingPoint() throws CalculatorException {
+    public void calculateFloatingPoint() {
         assertEquals(Double.valueOf(17.54733345318171), calculator.calculate("12 23.234134 0.34234 12.2344534 * / +"));
     }
 
     @Test
-    public void calculateWithMathFunctions() throws CalculatorException {
+    public void calculateWithMathFunctions() {
         assertEquals(Double.valueOf(5.343237290762231E12), calculator.calculate("23 tanh 30 cosh *"));
     }
 
     @Test
-    public void calculateHardOne() throws CalculatorException {
+    public void calculateHardOne() {
         assertEquals(Double.valueOf(-5.068680686506064E-9),
                 calculator.calculate("-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 /"));
 
@@ -153,9 +155,10 @@ public class DoubleCalculatorTest {
     }
 
     @Test
-    public void calculateEmpty() throws CalculatorException {
-        EmptyEquationException emptyEquationException = assertThrows(EmptyEquationException.class, () -> calculator.calculate(""));
-        assertEquals("Empty equation", emptyEquationException.getMessage());
+    public void calculateEmpty() {
+        IllegalArgumentException illegalArgumentException =
+                assertThrows(IllegalArgumentException.class, () -> calculator.calculate(""));
+        assertEquals("Empty equation", illegalArgumentException.getMessage());
 
         NullPointerException nullPointerException
                 = assertThrows(NullPointerException.class, () -> calculator.calculate(null));
@@ -165,7 +168,7 @@ public class DoubleCalculatorTest {
     }
 
     @Test
-    public void calculateInnerFunctions() throws CalculatorException {
+    public void calculateInnerFunctions() {
         Apfloat radians = ApfloatMath.toRadians(new Apfloat(90, 10));
         assertEquals(Double.valueOf(1), calculator.calculate(radians + " sin"));
         assertEquals(Double.valueOf(1.5707963267948966), calculator.calculate("90 toRadians"));
@@ -173,7 +176,7 @@ public class DoubleCalculatorTest {
     }
 
     @Test
-    public void calculateAllStaticMethods() throws CalculatorException {
+    public void calculateAllStaticMethods() {
         assertEquals(Double.valueOf(4.499809670330265), calculator.calculate("90 log"));
 
 //        CalculatorArithmeticException calculatorArithmeticException1
@@ -216,7 +219,7 @@ public class DoubleCalculatorTest {
     }
 
     @Test
-    public void calculateConstants() throws CalculatorException {
+    public void calculateConstants() {
         assertEquals(Double.valueOf(2 * Math.PI), calculator.calculate("pi 2 *"));
         assertEquals(Double.valueOf(Math.PI), calculator.calculate("pi"));
         assertEquals(Double.valueOf(Math.E), calculator.calculate("e"));

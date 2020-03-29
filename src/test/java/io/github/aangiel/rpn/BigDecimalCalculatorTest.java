@@ -1,6 +1,8 @@
 package io.github.aangiel.rpn;
 
-import io.github.aangiel.rpn.exception.*;
+import io.github.aangiel.rpn.exception.BadEquationException;
+import io.github.aangiel.rpn.exception.BadItemException;
+import io.github.aangiel.rpn.exception.LackOfArgumentsException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,7 +36,7 @@ public class BigDecimalCalculatorTest {
     }
 
     @Test
-    public void calculateCorrectEquations() throws CalculatorException {
+    public void calculateCorrectEquations() {
         assertEquals(new BigDecimal(14), calculator.calculate("5 1 2 + 4 * + 3 -"));
         assertEquals(new BigDecimal(40), calculator.calculate("12 2 3 4 * 10 5 / + * +"));
         assertEquals(new BigDecimal(4), calculator.calculate("2 2 +"));
@@ -70,14 +72,14 @@ public class BigDecimalCalculatorTest {
     }
 
     @Test
-    public void calculateWithCustomOperation() throws CalculatorException {
+    public void calculateWithCustomOperation() {
         assertEquals(new BigDecimal(10), calculator.calculate("5 1 2 ** 4 * + 3 -"));
         assertEquals(BigDecimal.valueOf(-2.875), calculator.calculate("5 1 2 ** 4 * ^ 3 -"));
 
     }
 
     @Test
-    public void calculateWithCustomFunction() throws CalculatorException {
+    public void calculateWithCustomFunction() {
         assertEquals(new BigDecimal(98), calculator.calculate("5 1 4 3 2 fun * 4 * + 3 -"));
         assertEquals(new BigDecimal(98), calculator.calculate("5 1  4  3  2 fun * 4 * + 3 -"));
         assertEquals(new BigDecimal("102.0"), calculator.calculate("5 1 2 3 4 fun * 4 * + 3.5 0 0 1 fun2 -"));
@@ -103,12 +105,12 @@ public class BigDecimalCalculatorTest {
     }
 
     @Test
-    public void calculateFloatingPoint() throws CalculatorException {
+    public void calculateFloatingPoint() {
         assertEquals(new BigDecimal("17.547334"), calculator.calculate("12 23.234134 0.34234 12.2344534 * / +"));
     }
 
     @Test
-    public void calculateHardOne() throws CalculatorException {
+    public void calculateHardOne() {
         assertEquals(BigDecimal.valueOf(-0.00042863),
                 calculator.calculate("-0.5  234.4 3 234 + / - 9 ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 /"));
 
@@ -141,9 +143,10 @@ public class BigDecimalCalculatorTest {
     }
 
     @Test
-    public void calculateEmpty() throws CalculatorException {
-        EmptyEquationException emptyEquationException = assertThrows(EmptyEquationException.class, () -> calculator.calculate(""));
-        assertEquals("Empty equation", emptyEquationException.getMessage());
+    public void calculateEmpty() {
+        IllegalArgumentException illegalArgumentException =
+                assertThrows(IllegalArgumentException.class, () -> calculator.calculate(""));
+        assertEquals("Empty equation", illegalArgumentException.getMessage());
 
         NullPointerException nullPointerException
                 = assertThrows(NullPointerException.class, () -> calculator.calculate(null));
@@ -159,7 +162,7 @@ public class BigDecimalCalculatorTest {
     }
 
     @Test
-    public void calculateConstants() throws CalculatorException {
+    public void calculateConstants() {
         assertEquals(new BigDecimal(String.valueOf(2 * Math.PI)), calculator.calculate("pi 2 *"));
         assertEquals(new BigDecimal(String.valueOf(Math.PI)), calculator.calculate("pi"));
         assertEquals(new BigDecimal(String.valueOf(Math.E)), calculator.calculate("e"));

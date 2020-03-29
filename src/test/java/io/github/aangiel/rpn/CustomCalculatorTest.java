@@ -1,7 +1,6 @@
 package io.github.aangiel.rpn;
 
 import io.github.aangiel.rpn.context.AbstractCalculatorContext;
-import io.github.aangiel.rpn.exception.CalculatorException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +22,7 @@ public class CustomCalculatorTest {
     }
 
     @Test
-    public void calculate() throws CalculatorException {
+    public void calculate() {
         assertEquals(new BigInteger("5"), calculator.calculate("2 3 +"));
     }
 

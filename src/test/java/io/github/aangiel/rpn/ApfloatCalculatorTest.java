@@ -1,6 +1,8 @@
 package io.github.aangiel.rpn;
 
-import io.github.aangiel.rpn.exception.*;
+import io.github.aangiel.rpn.exception.BadEquationException;
+import io.github.aangiel.rpn.exception.BadItemException;
+import io.github.aangiel.rpn.exception.LackOfArgumentsException;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 import org.junit.Before;
@@ -8,8 +10,7 @@ import org.junit.Test;
 
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.*;
 
 public class ApfloatCalculatorTest {
 
@@ -34,7 +35,7 @@ public class ApfloatCalculatorTest {
     }
 
     @Test
-    public void calculateCorrectEquations() throws CalculatorException {
+    public void calculateCorrectEquations() {
         assertEquals(new Apfloat(14), calculator.calculate("5 1 2 + 4 * + 3 -"));
         assertEquals(new Apfloat(40), calculator.calculate("12 2 3 4 * 10 5 / + * +"));
         assertEquals(new Apfloat(4), calculator.calculate("2 2 +"));
@@ -70,14 +71,14 @@ public class ApfloatCalculatorTest {
     }
 
     @Test
-    public void calculateWithCustomOperation() throws CalculatorException {
+    public void calculateWithCustomOperation() {
         assertEquals(new Apfloat(10), calculator.calculate("5 1 2 ** 4 * + 3 -"));
         assertEquals(new Apfloat(-2.875), calculator.calculate("5 1 2 ** 4 * ^ 3 -"));
 
     }
 
     @Test
-    public void calculateWithCustomFunction() throws CalculatorException {
+    public void calculateWithCustomFunction() {
         assertEquals(new Apfloat(98), calculator.calculate("5 1 4 3 2 fun * 4 * + 3 -"));
         assertEquals(new Apfloat(98), calculator.calculate("5 1  4  3  2 fun * 4 * + 3 -"));
         assertEquals(new Apfloat(102), calculator.calculate("5 1 2 3 4 fun * 4 * + 3.5 0 0 1 fun2 -"));
@@ -110,27 +111,30 @@ public class ApfloatCalculatorTest {
     }
 
     @Test
-    public void calculateFloatingPoint() throws CalculatorException {
+    public void calculateFloatingPoint() {
         assertEquals(new Apfloat(17.54733345), calculator.calculate("12 23.234134 0.34234 12.2344534 * / +"));
     }
 
     @Test
-    public void calculateWithMathFunctions() throws CalculatorException {
+    public void calculateWithMathFunctions() {
         assertEquals(new Apfloat(5.34323729e12), calculator.calculate("23 tanh 30 cosh *"));
     }
 
     @Test
-    public void calculateHardOne() throws CalculatorException {
+    public void calculateHardOne() {
         assertEquals(new Apfloat(-5.068680686e-9),
                 calculator.calculate("-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 /"));
 
         BadItemException badItemException = assertThrows(BadItemException.class,
                 () -> calculator.calculate("-0.5 23 24.234 tan h 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 /"));
         assertEquals("Bad item: 'h' at position: 5", badItemException.getMessage());
+        assertEquals("h", badItemException.getItem());
+        assertEquals(5, badItemException.getPosition());
 
         BadEquationException badEquationException = assertThrows(BadEquationException.class,
                 () -> calculator.calculate("-0.5 23 24.234 tanh 234.4 23 4 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 /"));
         assertEquals("Left on stack: [-5e-1]", badEquationException.getMessage());
+        assertTrue(Set.of(new Apfloat("-5e-1")).containsAll(badEquationException.getStack()));
 
         BadItemException badItemException1 = assertThrows(BadItemException.class,
                 () -> calculator.calculate("-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384 e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 /"));
@@ -140,6 +144,8 @@ public class ApfloatCalculatorTest {
                 = assertThrows(LackOfArgumentsException.class,
                 () -> calculator.calculate("-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 0 3.5e-8 23.33 fun2 /"));
         assertEquals("Lack of arguments for: / at position: 19", notEnoughArgumentsInFunctionException.getMessage());
+        assertEquals("/", notEnoughArgumentsInFunctionException.getItem());
+        assertEquals(19, notEnoughArgumentsInFunctionException.getPosition());
 
         LackOfArgumentsException lackOfArgumentsException = assertThrows(LackOfArgumentsException.class,
                 () -> calculator.calculate("-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / +"));
@@ -153,10 +159,10 @@ public class ApfloatCalculatorTest {
     }
 
     @Test
-    public void calculateEmpty() throws CalculatorException {
-        EmptyEquationException emptyEquationException
-                = assertThrows(EmptyEquationException.class, () -> calculator.calculate("   "));
-        assertEquals("Empty equation", emptyEquationException.getMessage());
+    public void calculateEmpty() {
+        IllegalArgumentException illegalArgumentException
+                = assertThrows(IllegalArgumentException.class, () -> calculator.calculate("   "));
+        assertEquals("Empty equation", illegalArgumentException.getMessage());
 
         NullPointerException nullPointerException
                 = assertThrows(NullPointerException.class, () -> calculator.calculate(null));
@@ -166,7 +172,7 @@ public class ApfloatCalculatorTest {
     }
 
     @Test
-    public void calculateInnerFunctions() throws CalculatorException {
+    public void calculateInnerFunctions() {
         Apfloat radians = ApfloatMath.toRadians(new Apfloat(90, 10));
         assertEquals(new Apfloat(1), calculator.calculate(radians + " sin"));
         assertEquals(new Apfloat(1.570796326), calculator.calculate("90 toRadians"));
@@ -174,7 +180,7 @@ public class ApfloatCalculatorTest {
     }
 
     @Test
-    public void calculateAllStaticMethods() throws CalculatorException {
+    public void calculateAllStaticMethods() {
         assertEquals(new Apfloat(4.49980967), calculator.calculate("90 log"));
 
         ArithmeticException arithmeticException1
@@ -220,15 +226,15 @@ public class ApfloatCalculatorTest {
     }
 
     @Test
-    public void calculateConstants() throws CalculatorException {
+    public void calculateConstants() {
         assertEquals(new Apfloat(6.283185307), calculator.calculate("pi 2 *"));
         assertEquals(new Apfloat(3.141592653), calculator.calculate("pi"));
         assertEquals(new Apfloat(Math.E), calculator.calculate("e"));
         assertEquals(new Apfloat("1.359140914"), calculator.calculate("e 2 /"));
     }
 
-//    @Test
-    public void performance() throws CalculatorException {
+    //    @Test
+    public void performance() {
         long start = System.currentTimeMillis();
         for (int i = 0; i < 10000; i++) {
             assertEquals(new Apfloat(-1.0137361372e-8),

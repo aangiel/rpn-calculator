@@ -1,11 +1,12 @@
 package io.github.aangiel.rpn.impl;
 
 import io.github.aangiel.rpn.Calculator;
-import io.github.aangiel.rpn.exception.*;
+import io.github.aangiel.rpn.exception.BadEquationException;
+import io.github.aangiel.rpn.exception.BadItemException;
+import io.github.aangiel.rpn.exception.LackOfArgumentsException;
 import io.github.aangiel.rpn.interfaces.CalculatorContext;
 import io.github.aangiel.rpn.math.FunctionOrOperator;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -43,57 +44,59 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
     }
 
     @Override
-    public T calculate(final String equation) throws CalculatorException {
+    public T calculate(final String equation) {
 
         Objects.requireNonNull(equation, npe("equation"));
 
         LOG.info(String.format("Calculating equation: %s", equation));
 
-        if (equation.isBlank()) throw new EmptyEquationException();
+        if (equation.isBlank()) throw new IllegalArgumentException("Empty equation");
 
         var tokens = WHITESPACE.splitAsStream(equation).collect(LINKED_LIST_COLLECTOR);
         LOG.debug(String.format("Equation split with whitespace regex: %s", tokens));
 
         var stack = new ArrayDeque<T>(tokens.size());
-        var counter = 0;
+        var position = 0;
         for (String token : tokens)
-            calculateNextTokenAndPushItToStack(Pair.of(token, ++counter), stack);
+            calculateNextTokenAndPushItToStack(token, stack, ++position);
 
         var result = stack.pop();
-        if (!stack.isEmpty()) throw new BadEquationException(stack);
+        if (!stack.isEmpty())
+            throw new BadEquationException(stack);
 
         LOG.info(String.format("Result = %s", result));
         return result;
 
     }
 
-    private void calculateNextTokenAndPushItToStack(Pair<String, Integer> token, Deque<T> stack) throws CalculatorException {
+    private void calculateNextTokenAndPushItToStack(String token, Deque<T> stack, int position) {
         assert token != null;
         assert stack != null;
+        assert position > 0;
 
-        LOG.debug(String.format("Processing item '%s' at position %s", token.getLeft(), token.getRight()));
-        if (NumberUtils.isCreatable(token.getLeft())) {
-            var applied = context.getNumberConstructor().apply(token.getLeft());
+        LOG.debug(String.format("Processing item '%s' at position %s", token, position));
+        if (NumberUtils.isCreatable(token)) {
+            var applied = context.getNumberConstructor().apply(token);
             stack.push(applied);
-            LOG.debug(String.format("Item '%s' pushed into the stack: %s", token.getLeft(), stack));
+            LOG.debug(String.format("Item '%s' pushed into the stack: %s", token, stack));
         } else {
-            calculateOnStack(token, stack);
+            calculateOnStack(token, stack, position);
         }
     }
 
-    private void calculateOnStack(Pair<String, Integer> token, Deque<T> stack)
-            throws CalculatorException {
+    private void calculateOnStack(String token, Deque<T> stack, int position) {
 
         assert token != null;
         assert stack != null;
+        assert position > 0;
 
-        LOG.debug(String.format("Processing operator/function '%s' at position %s", token.getLeft(), token.getRight()));
+        LOG.debug(String.format("Processing operator/function '%s' at position %s", token, position));
 
-        var functionOrOperator = context.getFunctionOrOperator(token.getLeft())
-                .orElseThrow(() -> new BadItemException(token.getLeft(), token.getRight()));
+        var functionOrOperator = context.getFunctionOrOperator(token)
+                .orElseThrow(() -> new BadItemException(token, position));
 
         if (stack.size() < functionOrOperator.getParametersCount())
-            throw new LackOfArgumentsException(token.getLeft(), token.getRight());
+            throw new LackOfArgumentsException(token, position);
 
         var arguments = popArgumentsForFunctionOrOperator(functionOrOperator, stack);
         LOG.debug(String.format("Took %s arguments (%s) from stack: %s", arguments.size(), arguments, stack));
