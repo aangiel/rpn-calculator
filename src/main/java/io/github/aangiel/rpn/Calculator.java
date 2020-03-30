@@ -29,7 +29,7 @@ public interface Calculator<T extends Number> {
      * {@link io.github.aangiel.rpn.CalculatorSupplier#getCalculator(Class) CalculatorSupplier.getCalculator(Class&#60;T extends Number&#62;)}
      * @throws ArithmeticException      if during calculation won't be enough elements on stack for actual function or operator
      * @throws NullPointerException     if equation is null
-     * @throws IllegalArgumentException if equation is empty, contains unsupported items or has bad form and after whole calculation some items left on stack
+     * @throws IllegalArgumentException if equation is empty, contains unsupported items or has bad form and after whole calculation any items left on stack
      * @see <a href="https://en.wikipedia.org/wiki/Reverse_Polish_notation">Wikipedia</a>
      */
     T calculate(String equation);

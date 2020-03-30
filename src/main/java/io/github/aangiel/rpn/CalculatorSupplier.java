@@ -13,9 +13,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static io.github.aangiel.rpn.ExceptionsUtil.npe;
 
@@ -38,6 +36,13 @@ public enum CalculatorSupplier {
         populateCalculators();
     }
 
+    /**
+     * @param clazz type for which calculator should be returned
+     * @param <T>   extends Number
+     * @return {@link Calculator} of type given in 'clazz' parame
+     * @throws NullPointerException     if param 'clazz' is null
+     * @throws IllegalArgumentException if there are no calculator for type given in 'clazz' param
+     */
     public <T extends Number> Calculator<T> getCalculator(Class<T> clazz) {
         Objects.requireNonNull(clazz, npe("clazz"));
 
@@ -46,11 +51,18 @@ public enum CalculatorSupplier {
         @SuppressWarnings("unchecked")
         var calculator = (Calculator<T>) CALCULATORS.get(clazz);
 
-        return Optional
-                .ofNullable(calculator)
-                .orElseThrow(iae(clazz));
+        if (calculator == null)
+            throw new IllegalArgumentException(String.format("Unsupported type: %s", clazz));
+
+        return calculator;
     }
 
+    /**
+     * @param clazz                 type of calculator being added
+     * @param contextImplementation instance of {@link CalculatorContext} of type corresponding to 'clazz' parameter
+     * @param <T>                   extends Number
+     * @throws NullPointerException if at least one parameter is null
+     */
     public <T extends Number> void addCalculator(Class<T> clazz, CalculatorContext<T> contextImplementation) {
         Objects.requireNonNull(clazz, npe("clazz"));
         Objects.requireNonNull(contextImplementation, npe("contextImplementation"));
@@ -63,10 +75,5 @@ public enum CalculatorSupplier {
         addCalculator(Apfloat.class, new ApfloatCalculatorContext());
         addCalculator(BigDecimal.class, new BigDecimalCalculatorContext());
         addCalculator(Double.class, new DoubleCalculatorContext());
-    }
-
-    private <T extends Number> Supplier<IllegalArgumentException> iae(Class<T> clazz) {
-        assert clazz != null;
-        return () -> new IllegalArgumentException(String.format("Unsupported type: %s", clazz));
     }
 }
