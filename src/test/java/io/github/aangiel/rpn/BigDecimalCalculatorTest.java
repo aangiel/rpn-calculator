@@ -5,7 +5,14 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -164,5 +171,56 @@ public class BigDecimalCalculatorTest {
         assertEquals(new BigDecimal(String.valueOf(Math.PI)), calculator.calculate("pi"));
         assertEquals(new BigDecimal(String.valueOf(Math.E)), calculator.calculate("e"));
         assertEquals(new BigDecimal("1.359140914229523"), calculator.calculate("e 2 /"));
+    }
+
+    @Test
+    public void performance() {
+//        multiThread();
+        IntStream.range(0, 4).forEach(e -> {
+            oneThread();
+            multiThread();
+        });
+        IntStream.range(0, 4).forEach(e -> oneThread());
+        IntStream.range(0, 8).forEach(e -> multiThread());
+    }
+
+    public void oneThread() {
+        long start = System.nanoTime();
+        BigDecimal expected = new BigDecimal("-8.6E-7");
+        String equation = "-0.5 23 24.234 8 * 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / -0.5 23 24.234 9 * 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / +";
+        for (int i = 0; i < 10000; i++) {
+            assertEquals(expected, calculator.calculate(equation));
+        }
+        long end = System.nanoTime();
+        System.out.println(String.format("One thread performance: %s ms", (end - start) / 1_000_000));
+    }
+
+    public void multiThread() {
+        long start = System.nanoTime();
+
+        int processors = Runtime.getRuntime().availableProcessors();
+        ExecutorService executor = Executors.newFixedThreadPool(processors);
+
+        List<Future<BigDecimal>> results = new ArrayList<>(10000);
+        String equation = "-0.5 23 24.234 8 * 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / -0.5 23 24.234 9 * 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / +";
+        for (int i = 0; i < 10000; i++) {
+            Future<BigDecimal> submit = executor.submit(CalculatorCallable.of(BigDecimal.class, equation));
+            results.add(submit);
+        }
+        long middle = System.nanoTime();
+        System.out.println(String.format("Multi-thread performance (start to middle): %s ms", (middle - start) / 1_000_000));
+        BigDecimal expected = new BigDecimal("-8.6E-7");
+
+        for (int i = 0; i < 10000; i++) {
+            try {
+                assertEquals(expected, results.get(i).get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        executor.shutdown();
+        long end = System.nanoTime();
+        System.out.println(String.format("Multi-thread performance (start to end): %s ms", (end - start) / 1_000_000));
+        System.out.println(results.size());
     }
 }

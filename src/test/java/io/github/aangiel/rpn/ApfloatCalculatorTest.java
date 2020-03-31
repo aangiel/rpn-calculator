@@ -237,7 +237,7 @@ public class ApfloatCalculatorTest {
         assertEquals(new Apfloat("1.359140914"), calculator.calculate("e 2 /"));
     }
 
-    //        @Test
+            @Test
     public void performance() {
 //        multiThread();
         IntStream.range(0, 4).forEach(e -> {
@@ -250,8 +250,8 @@ public class ApfloatCalculatorTest {
 
     public void oneThread() {
         long start = System.nanoTime();
-        Apfloat expected = new Apfloat(-1.0137361372e-8);
-        String equation = "-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / -0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / +";
+        Apfloat expected = new Apfloat("-1.0026019421e-8");
+        String equation = "-0.5 23 24.234 8 * 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / -0.5 23 24.234 9 * 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / +";
         for (int i = 0; i < 10000; i++) {
             assertEquals(expected, calculator.calculate(equation));
         }
@@ -266,14 +266,14 @@ public class ApfloatCalculatorTest {
         ExecutorService executor = Executors.newFixedThreadPool(processors);
 
         List<Future<Apfloat>> results = new ArrayList<>(10000);
-        String equation = "-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / -0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / +";
+        String equation = "-0.5 23 24.234 8 * 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / -0.5 23 24.234 9 * 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / +";
         for (int i = 0; i < 10000; i++) {
             Future<Apfloat> submit = executor.submit(CalculatorCallable.of(Apfloat.class, equation));
             results.add(submit);
         }
         long middle = System.nanoTime();
         System.out.println(String.format("Multi-thread performance (start to middle): %s ms", (middle - start) / 1_000_000));
-        Apfloat expected = new Apfloat(-1.0137361372e-8);
+        Apfloat expected = new Apfloat("-1.0026019421e-8");
 
         for (int i = 0; i < 10000; i++) {
             try {
