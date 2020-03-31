@@ -25,18 +25,18 @@ public class BigDecimalCalculatorTest {
     public void setUp() {
         calculator = CalculatorSupplier.INSTANCE.getCalculator(BigDecimal.class);
 
-        calculator.getContext().addFunctionOrOperator("**", 2, (a) -> a.get(0).multiply(a.get(1).multiply(a.get(0))));
-        calculator.getContext().addFunctionOrOperator("^", 2, (a) -> a.get(0).divide(a.get(1).multiply(a.get(0)), 3, RoundingMode.DOWN));
-        calculator.getContext().addFunctionOrOperator("fun", 3, (a) -> a.get(0).multiply(a.get(1)).multiply(a.get(2)));
-        calculator.getContext().addFunctionOrOperator("fun2", 4, (a) -> a.get(0).multiply(a.get(1)).multiply(a.get(2)).subtract(a.get(3)));
+        calculator.getContext().addFunctionOrOperator("**", (a) -> a.get(1).multiply(a.remove(1).multiply(a.pop())))
+                .addFunctionOrOperator("^", (a) -> a.get(1).divide(a.remove(1).multiply(a.pop()), 3, RoundingMode.DOWN))
+                .addFunctionOrOperator("fun", (a) -> a.remove(2).multiply(a.remove(1)).multiply(a.pop()))
+                .addFunctionOrOperator("fun2", (a) -> a.remove(3).multiply(a.remove(2)).multiply(a.remove(1)).subtract(a.pop()));
 
         /*
          * Operations added from example: https://en.wikipedia.org/wiki/Reverse_Polish_notation
          */
-        calculator.getContext().addFunctionOrOperator("−", 2, a -> a.get(0).subtract(a.get(1)));
-        calculator.getContext().addFunctionOrOperator("÷", 2, a -> a.get(0).divide(a.get(1), 3, RoundingMode.DOWN));
-//      calculator.getContext().addFunction("+", 2, a -> a.get(0).add(a.get(1)));
-        calculator.getContext().addFunctionOrOperator("×", 2, a -> a.get(0).multiply(a.get(1)));
+        calculator.getContext().addFunctionOrOperator("−", a -> a.remove(1).subtract(a.pop()));
+        calculator.getContext().addFunctionOrOperator("÷", a -> a.remove(1).divide(a.pop(), 3, RoundingMode.DOWN));
+//      calculator.getContext().addFunction("+", a -> a.get(0).add(a.get(1)));
+        calculator.getContext().addFunctionOrOperator("×", a -> a.remove(1).multiply(a.pop()));
     }
 
     @Test
@@ -152,9 +152,7 @@ public class BigDecimalCalculatorTest {
                 assertThrows(IllegalArgumentException.class, () -> calculator.calculate(""));
         assertEquals("Empty equation", illegalArgumentException.getMessage());
 
-        NullPointerException nullPointerException
-                = assertThrows(NullPointerException.class, () -> calculator.calculate(null));
-        assertEquals("Param 'equation' can't be null", nullPointerException.getMessage());
+        assertThrows(NullPointerException.class, () -> calculator.calculate(null));
 
         assertEquals(new BigDecimal(2), calculator.calculate("2"));
     }
@@ -173,7 +171,7 @@ public class BigDecimalCalculatorTest {
         assertEquals(new BigDecimal("1.359140914229523"), calculator.calculate("e 2 /"));
     }
 
-    @Test
+    //    @Test
     public void performance() {
 //        multiThread();
         IntStream.range(0, 4).forEach(e -> {

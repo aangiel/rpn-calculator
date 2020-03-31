@@ -7,8 +7,6 @@ import java.math.RoundingMode;
 import java.util.Objects;
 import java.util.function.Function;
 
-import static io.github.aangiel.rpn.ExceptionsUtil.npe;
-
 /**
  * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>
  * @see AbstractCalculatorContext
@@ -22,21 +20,21 @@ public final class BigDecimalCalculatorContext extends AbstractCalculatorContext
     }
 
     public BigDecimalCalculatorContext(RoundingMode roundingMode) {
-        this.roundingMode = Objects.requireNonNull(roundingMode, npe("roundingMode"));
+        this.roundingMode = Objects.requireNonNull(roundingMode);
     }
 
     @Override
     protected void populateDefaultOperations() {
-        addFunctionOrOperator("+", 2, args -> args.get(0).add(args.get(1)));
-        addFunctionOrOperator("-", 2, args -> args.get(0).subtract(args.get(1)));
-        addFunctionOrOperator("*", 2, args -> args.get(0).multiply(args.get(1)));
-        addFunctionOrOperator("/", 2, args -> args.get(0).divide(args.get(1), getRoundingMode()));
+        addFunctionOrOperator("+", args -> args.remove(1).add(args.pop()));
+        addFunctionOrOperator("-", args -> args.remove(1).subtract(args.pop()));
+        addFunctionOrOperator("*", args -> args.remove(1).multiply(args.pop()));
+        addFunctionOrOperator("/", args -> args.remove(1).divide(args.pop(), getRoundingMode()));
     }
 
     @Override
     protected void populateConstants() {
-        addFunctionOrOperator("pi", 0, args -> BigDecimal.valueOf(Math.PI));
-        addFunctionOrOperator("e", 0, args -> BigDecimal.valueOf(Math.E));
+        addFunctionOrOperator("pi", args -> BigDecimal.valueOf(Math.PI));
+        addFunctionOrOperator("e", args -> BigDecimal.valueOf(Math.E));
     }
 
     @Override

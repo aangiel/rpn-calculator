@@ -25,18 +25,18 @@ public class DoubleCalculatorTest {
     public void setUp() {
         calculator = CalculatorSupplier.INSTANCE.getCalculator(Double.class);
 
-        calculator.getContext().addFunctionOrOperator("**", 2, (a) -> a.get(0) * (a.get(1) * (a.get(0))));
-        calculator.getContext().addFunctionOrOperator("^", 2, (a) -> a.get(0) / (a.get(1) * (a.get(0))));
-        calculator.getContext().addFunctionOrOperator("fun", 3, (a) -> a.get(0) * (a.get(1)) * (a.get(2)));
-        calculator.getContext().addFunctionOrOperator("fun2", 4, (a) -> a.get(0) * (a.get(1)) * (a.get(2)) - (a.get(3)));
+        calculator.getContext().addFunctionOrOperator("**", (a) -> a.get(1) * (a.remove(1) * (a.pop())));
+        calculator.getContext().addFunctionOrOperator("^", (a) -> a.get(1) / (a.remove(1) * (a.pop())));
+        calculator.getContext().addFunctionOrOperator("fun", (a) -> a.remove(2) * (a.remove(1)) * (a.pop()));
+        calculator.getContext().addFunctionOrOperator("fun2", (a) -> a.remove(3) * (a.remove(2)) * (a.remove(1)) - (a.pop()));
 
         /*
          * Operations added from example: https://en.wikipedia.org/wiki/Reverse_Polish_notation
          */
-        calculator.getContext().addFunctionOrOperator("−", 2, a -> a.get(0) - (a.get(1)));
-        calculator.getContext().addFunctionOrOperator("÷", 2, a -> a.get(0) / (a.get(1)));
-//      calculator.getContext().addFunction("+", 2, a -> a.get(0).add(a.get(1)));
-        calculator.getContext().addFunctionOrOperator("×", 2, a -> a.get(0) * (a.get(1)));
+        calculator.getContext().addFunctionOrOperator("−", a -> a.remove(1) - (a.pop()));
+        calculator.getContext().addFunctionOrOperator("÷", a -> a.remove(1) / (a.pop()));
+//      calculator.getContext().addFunction("+", a -> a.get(0).add(a.get(1)));
+        calculator.getContext().addFunctionOrOperator("×", a -> a.remove(1) * (a.pop()));
     }
 
     @Test
@@ -164,9 +164,7 @@ public class DoubleCalculatorTest {
                 assertThrows(IllegalArgumentException.class, () -> calculator.calculate(""));
         assertEquals("Empty equation", illegalArgumentException.getMessage());
 
-        NullPointerException nullPointerException
-                = assertThrows(NullPointerException.class, () -> calculator.calculate(null));
-        assertEquals("Param 'equation' can't be null", nullPointerException.getMessage());
+        assertThrows(NullPointerException.class, () -> calculator.calculate(null));
 
         assertEquals(Double.valueOf(2), calculator.calculate("2"));
     }
@@ -230,7 +228,7 @@ public class DoubleCalculatorTest {
         assertEquals(Double.valueOf(Math.E / 2.0), calculator.calculate("e 2 /"));
     }
 
-    @Test
+    //    @Test
     public void performance() {
 //        multiThread();
         IntStream.range(0, 4).forEach(e -> {

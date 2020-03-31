@@ -1,8 +1,6 @@
 package io.github.aangiel.rpn.interfaces;
 
-import io.github.aangiel.rpn.math.FunctionOrOperator;
-
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -20,20 +18,19 @@ public interface FunctionOrOperatorContext<T extends Number> {
      * @param name function or operator to be returned
      * @return Lambda which is used to calculate value for specified function or operator and its' arguments
      */
-    Optional<FunctionOrOperator<T>> getFunctionOrOperator(String name);
+    Optional<Function<LinkedList<T>, T>> getFunctionOrOperator(String name);
 
     /**
      * Adds function or operator for use in equations passed as String to
      * {@link io.github.aangiel.rpn.Calculator#calculate(String) Calculator.calculate(String)}
      * method.
      *
-     * @param name           Name of the function or operator (e.g. "*" for multiplying or "sin" for sinus)
-     * @param parameterCount Number of parameters passed to function (e.g. 2 for "*" or 1 for "sin")
-     * @param function       Lambda which will be used during parsing equation (e.g. args -&#62; args.get(0) + args.get(1)<br>
-     *                       args is defined as {@link Function &#60;T extends Number&#62; T apply(List&#60;T&#62; args)}
+     * @param name     Name of the function or operator (e.g. "*" for multiplying or "sin" for sinus)
+     * @param function Lambda which will be used during parsing equation (e.g. args -&#62; args.get(0) + args.get(1)<br>
+     *                 args is defined as {@link Function &#60;T extends Number&#62; T apply(List&#60;T&#62; args)}
      * @return this for chaining of adding functions or operators
      */
-    CalculatorContext<T> addFunctionOrOperator(String name, int parameterCount, Function<List<T>, T> function);
+    CalculatorContext<T> addFunctionOrOperator(String name, Function<LinkedList<T>, T> function);
 
     /**
      * Returns set of available functions and operators just for check what operations are available with this library.
@@ -44,7 +41,7 @@ public interface FunctionOrOperatorContext<T extends Number> {
 
     /**
      * Should be always implemented as {@code return this;}, because it's used in chaining of
-     * {@link #addFunctionOrOperator(String, int, Function) addFunctionOrOperator(String, int, IMathFunction)}
+     * {@link #addFunctionOrOperator(String, Function) addFunctionOrOperator(String, int, IMathFunction)}
      * method.
      *
      * @return this

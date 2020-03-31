@@ -50,7 +50,7 @@ public class CustomCalculatorTest {
 
         @Override
         protected void populateDefaultOperations() {
-            addFunctionOrOperator("+", 2, args -> args.get(0).add(args.get(1)));
+            addFunctionOrOperator("+", args -> args.remove(1).add(args.pop()));
         }
 
         @Override

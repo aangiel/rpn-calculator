@@ -34,53 +34,53 @@ public final class ApfloatCalculatorContext extends AbstractCalculatorContext<Ap
 
     @Override
     protected void populateDefaultOperations() {
-        addFunctionOrOperator("+", 2, args -> args.get(0).add(args.get(1)));
-        addFunctionOrOperator("-", 2, args -> args.get(0).subtract(args.get(1)));
-        addFunctionOrOperator("*", 2, args -> args.get(0).multiply(args.get(1)));
-        addFunctionOrOperator("/", 2, args -> args.get(0).divide(args.get(1)));
+        addFunctionOrOperator("+", args -> args.remove(1).add(args.pop()));
+        addFunctionOrOperator("-", args -> args.remove(1).subtract(args.pop()));
+        addFunctionOrOperator("*", args -> args.remove(1).multiply(args.pop()));
+        addFunctionOrOperator("/", args -> args.remove(1).divide(args.pop()));
     }
 
     @Override
     protected void populateConstants() {
-        addFunctionOrOperator("pi", 0, args -> ApfloatMath.pi(getPrecision()));
-        addFunctionOrOperator("e", 0, args -> new Apfloat(Math.E));
+        addFunctionOrOperator("pi", args -> ApfloatMath.pi(getPrecision()));
+        addFunctionOrOperator("e", args -> new Apfloat(Math.E));
     }
 
     @Override
     protected void populateMathFunctions() {
-        addFunctionOrOperator("abs", 1, args -> ApfloatMath.abs(args.get(0)));
-        addFunctionOrOperator("acos", 1, args -> ApfloatMath.acos(args.get(0)));
-        addFunctionOrOperator("acosh", 1, args -> ApfloatMath.acosh(args.get(0)));
-        addFunctionOrOperator("agm", 2, args -> ApfloatMath.agm(args.get(0), args.get(1)));
-        addFunctionOrOperator("asin", 1, args -> ApfloatMath.asin(args.get(0)));
-        addFunctionOrOperator("asinh", 1, args -> ApfloatMath.asinh(args.get(0)));
-        addFunctionOrOperator("atan", 1, args -> ApfloatMath.atan(args.get(0)));
-        addFunctionOrOperator("atan2", 2, args -> ApfloatMath.atan2(args.get(0), args.get(1)));
-        addFunctionOrOperator("atanh", 1, args -> ApfloatMath.atanh(args.get(0)));
-        addFunctionOrOperator("cbrt", 1, args -> ApfloatMath.cbrt(args.get(0)));
-        addFunctionOrOperator("copySign", 2, args -> ApfloatMath.copySign(args.get(0), args.get(1)));
-        addFunctionOrOperator("cos", 1, args -> ApfloatMath.cos(args.get(0)));
-        addFunctionOrOperator("cosh", 1, args -> ApfloatMath.cosh(args.get(0)));
-        addFunctionOrOperator("exp", 1, args -> ApfloatMath.exp(args.get(0)));
-        addFunctionOrOperator("fmod", 2, args -> ApfloatMath.fmod(args.get(0), args.get(1)));
-        addFunctionOrOperator("frac", 1, args -> ApfloatMath.frac(args.get(0)));
-        addFunctionOrOperator("gamma", 1, args -> ApfloatMath.gamma(args.get(0)));
-        addFunctionOrOperator("log", 1, args -> ApfloatMath.log(args.get(0)));
-        addFunctionOrOperator("logWithBase", 1, args -> ApfloatMath.log(args.get(0), args.get(1)));
-        addFunctionOrOperator("max", 2, args -> ApfloatMath.max(args.get(0), args.get(1)));
-        addFunctionOrOperator("min", 2, args -> ApfloatMath.min(args.get(0), args.get(1)));
-        addFunctionOrOperator("multiplyAdd", 4, args -> ApfloatMath.multiplyAdd(args.get(0), args.get(1), args.get(2), args.get(3)));
-        addFunctionOrOperator("multiplySubtract", 4, args -> ApfloatMath.multiplySubtract(args.get(0), args.get(1), args.get(2), args.get(3)));
-        addFunctionOrOperator("negate", 1, args -> ApfloatMath.negate(args.get(0)));
-        addFunctionOrOperator("pow", 2, args -> ApfloatMath.pow(args.get(0), args.get(1)));
-        addFunctionOrOperator("sin", 1, args -> ApfloatMath.sin(args.get(0)));
-        addFunctionOrOperator("sinh", 1, args -> ApfloatMath.sinh(args.get(0)));
-        addFunctionOrOperator("sqrt", 1, args -> ApfloatMath.sqrt(args.get(0)));
-        addFunctionOrOperator("tan", 1, args -> ApfloatMath.tan(args.get(0)));
-        addFunctionOrOperator("tanh", 1, args -> ApfloatMath.tanh(args.get(0)));
-        addFunctionOrOperator("toDegrees", 1, args -> ApfloatMath.toDegrees(args.get(0)));
-        addFunctionOrOperator("toRadians", 1, args -> ApfloatMath.toRadians(args.get(0)));
-        addFunctionOrOperator("w", 1, args -> ApfloatMath.w(args.get(0)));
+        addFunctionOrOperator("abs", args -> ApfloatMath.abs(args.pop()));
+        addFunctionOrOperator("acos", args -> ApfloatMath.acos(args.pop()));
+        addFunctionOrOperator("acosh", args -> ApfloatMath.acosh(args.pop()));
+        addFunctionOrOperator("agm", args -> ApfloatMath.agm(args.remove(1), args.pop()));
+        addFunctionOrOperator("asin", args -> ApfloatMath.asin(args.pop()));
+        addFunctionOrOperator("asinh", args -> ApfloatMath.asinh(args.pop()));
+        addFunctionOrOperator("atan", args -> ApfloatMath.atan(args.pop()));
+        addFunctionOrOperator("atan2", args -> ApfloatMath.atan2(args.remove(1), args.pop()));
+        addFunctionOrOperator("atanh", args -> ApfloatMath.atanh(args.pop()));
+        addFunctionOrOperator("cbrt", args -> ApfloatMath.cbrt(args.pop()));
+        addFunctionOrOperator("copySign", args -> ApfloatMath.copySign(args.remove(1), args.pop()));
+        addFunctionOrOperator("cos", args -> ApfloatMath.cos(args.pop()));
+        addFunctionOrOperator("cosh", args -> ApfloatMath.cosh(args.pop()));
+        addFunctionOrOperator("exp", args -> ApfloatMath.exp(args.pop()));
+        addFunctionOrOperator("fmod", args -> ApfloatMath.fmod(args.remove(1), args.pop()));
+        addFunctionOrOperator("frac", args -> ApfloatMath.frac(args.pop()));
+        addFunctionOrOperator("gamma", args -> ApfloatMath.gamma(args.pop()));
+        addFunctionOrOperator("log", args -> ApfloatMath.log(args.pop()));
+        addFunctionOrOperator("logWithBase", args -> ApfloatMath.log(args.remove(1), args.pop()));
+        addFunctionOrOperator("max", args -> ApfloatMath.max(args.remove(1), args.pop()));
+        addFunctionOrOperator("min", args -> ApfloatMath.min(args.remove(1), args.pop()));
+        addFunctionOrOperator("multiplyAdd", args -> ApfloatMath.multiplyAdd(args.remove(3), args.remove(2), args.remove(1), args.pop()));
+        addFunctionOrOperator("multiplySubtract", args -> ApfloatMath.multiplySubtract(args.remove(3), args.remove(2), args.remove(1), args.pop()));
+        addFunctionOrOperator("negate", args -> ApfloatMath.negate(args.pop()));
+        addFunctionOrOperator("pow", args -> ApfloatMath.pow(args.remove(1), args.pop()));
+        addFunctionOrOperator("sin", args -> ApfloatMath.sin(args.pop()));
+        addFunctionOrOperator("sinh", args -> ApfloatMath.sinh(args.pop()));
+        addFunctionOrOperator("sqrt", args -> ApfloatMath.sqrt(args.pop()));
+        addFunctionOrOperator("tan", args -> ApfloatMath.tan(args.pop()));
+        addFunctionOrOperator("tanh", args -> ApfloatMath.tanh(args.pop()));
+        addFunctionOrOperator("toDegrees", args -> ApfloatMath.toDegrees(args.pop()));
+        addFunctionOrOperator("toRadians", args -> ApfloatMath.toRadians(args.pop()));
+        addFunctionOrOperator("w", args -> ApfloatMath.w(args.pop()));
     }
 
     @Override

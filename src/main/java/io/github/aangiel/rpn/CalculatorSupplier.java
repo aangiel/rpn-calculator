@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
-import static io.github.aangiel.rpn.ExceptionsUtil.npe;
-
 /**
  * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>
  */
@@ -31,7 +29,7 @@ public enum CalculatorSupplier {
     private final Function<CalculatorContext<? extends Number>, Calculator<? extends Number>> implementation;
 
     CalculatorSupplier(Function<CalculatorContext<? extends Number>, Calculator<? extends Number>> implementation) {
-        this.implementation = Objects.requireNonNull(implementation, npe("implementation"));
+        this.implementation = Objects.requireNonNull(implementation);
         CALCULATORS = new HashMap<>();
         populateCalculators();
     }
@@ -44,7 +42,7 @@ public enum CalculatorSupplier {
      * @throws IllegalArgumentException if there are no calculator for type given in 'clazz' param
      */
     public <T extends Number> Calculator<T> getCalculator(Class<T> clazz) {
-        Objects.requireNonNull(clazz, npe("clazz"));
+        Objects.requireNonNull(clazz);
 
         // It always works, because <T extends Number> and
         // value in CALCULATORS map is Calculator<? extends Number>
@@ -64,8 +62,8 @@ public enum CalculatorSupplier {
      * @throws NullPointerException if at least one parameter is null
      */
     public <T extends Number> void addCalculator(Class<T> clazz, CalculatorContext<T> contextImplementation) {
-        Objects.requireNonNull(clazz, npe("clazz"));
-        Objects.requireNonNull(contextImplementation, npe("contextImplementation"));
+        Objects.requireNonNull(clazz);
+        Objects.requireNonNull(contextImplementation);
 
         CALCULATORS.put(clazz, implementation.apply(contextImplementation));
         LOG.debug(String.format("Calculator of type: %s added", clazz));
