@@ -67,11 +67,9 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         assert stack != null;
         assert position > 0;
 
-        LOG.debug(String.format("Processing item '%s' at position %s", token, position));
         if (NumberUtils.isCreatable(token)) {
             var applied = context.getNumberConstructor().apply(token);
             stack.push(applied);
-            LOG.debug(String.format("Item '%s' pushed into the stack: %s", token, stack));
         } else {
             calculateOnStack(token, stack, position);
         }
@@ -83,8 +81,6 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         assert stack != null;
         assert position > 0;
 
-        LOG.debug(String.format("Processing operator/function '%s' at position %s", token, position));
-
         var functionOrOperator = context.getFunctionOrOperator(token)
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Bad item: '%s' at position: %d", token, position)));
 
@@ -92,11 +88,9 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
             throw new ArithmeticException(String.format("Lack of arguments for: %s at position: %d", token, position));
 
         var arguments = popArgumentsForFunctionOrOperator(functionOrOperator, stack);
-        LOG.debug(String.format("Took %s arguments (%s) from stack: %s", arguments.size(), arguments, stack));
 
         var value = functionOrOperator.get().apply(arguments);
         stack.push(value);
-        LOG.debug(String.format("Pushed value %s into the stack: %s", value, stack));
     }
 
     private List<T> popArgumentsForFunctionOrOperator(FunctionOrOperator<T> functionOrOperator, Deque<T> stack) {

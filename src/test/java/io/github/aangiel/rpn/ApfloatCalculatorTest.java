@@ -214,7 +214,7 @@ public class ApfloatCalculatorTest {
         assertEquals(new Apfloat(8.726646259e-2), calculator.calculate("5 toRadians"));
         assertEquals(new Apfloat(1), calculator.calculate("0 cosh"));
         assertEquals(new Apfloat(10), calculator.calculate("-10 abs"));
-//        assertEquals(new Apfloat(-5), calculator.calculate("5 negate"));
+        assertEquals(new Apfloat(-5), calculator.calculate("5 negate"));
         assertEquals(new Apfloat(0), calculator.calculate("0 w"));
         assertEquals(new Apfloat(0), calculator.calculate("0 asin"));
         assertEquals(new Apfloat(0), calculator.calculate("0 asinh"));
@@ -225,7 +225,6 @@ public class ApfloatCalculatorTest {
 
     @Test
     public void calculateCompareAvailableFunctions() {
-
         var functions = Set.of("logWithBase", "**", "log", "atanh", "copySign", "cos", "agm", "multiplySubtract", "atan", "cbrt", "tanh", "−", "min", "multiplyAdd", "sqrt", "×", "sin", "pow", "exp", "frac", "^", "atan2", "tan", "fun2", "sinh", "max", "e", "acosh", "*", "toDegrees", "+", "acos", "toRadians", "fmod", "-", "/", "cosh", "abs", "negate", "w", "÷", "pi", "asin", "asinh", "gamma", "fun");
         assertEquals(functions, calculator.getContext().getAvailableFunctionsAndOperators());
     }
@@ -238,7 +237,7 @@ public class ApfloatCalculatorTest {
         assertEquals(new Apfloat("1.359140914"), calculator.calculate("e 2 /"));
     }
 
-    //    @Test
+    //        @Test
     public void performance() {
 //        multiThread();
         IntStream.range(0, 4).forEach(e -> {
@@ -254,8 +253,7 @@ public class ApfloatCalculatorTest {
         Apfloat expected = new Apfloat(-1.0137361372e-8);
         String equation = "-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / -0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / +";
         for (int i = 0; i < 10000; i++) {
-            assertEquals(expected,
-                    calculator.calculate(equation));
+            assertEquals(expected, calculator.calculate(equation));
         }
         long end = System.nanoTime();
         System.out.println(String.format("One thread performance: %s ms", (end - start) / 1_000_000));
