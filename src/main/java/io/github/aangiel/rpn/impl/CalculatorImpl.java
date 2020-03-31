@@ -44,17 +44,13 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
     public T calculate(final String equation) {
 
         Objects.requireNonNull(equation, npe("equation"));
+        if (equation.isBlank()) throw new IllegalArgumentException("Empty equation");
 
         LOG.info(String.format("Calculating equation: %s", equation));
 
-        if (equation.isBlank()) throw new IllegalArgumentException("Empty equation");
-
-        var tokens = WHITESPACE.splitAsStream(equation).collect(LINKED_LIST_COLLECTOR);
-        LOG.debug(String.format("Equation split with whitespace regex: %s", tokens));
-
-        var stack = new ArrayDeque<T>(tokens.size());
+        var stack = new ArrayDeque<T>();
         var position = 0;
-        for (String token : tokens)
+        for (String token : WHITESPACE.splitAsStream(equation).collect(LINKED_LIST_COLLECTOR))
             calculateNextTokenAndPushItToStack(token, stack, ++position);
 
         var result = stack.pop();

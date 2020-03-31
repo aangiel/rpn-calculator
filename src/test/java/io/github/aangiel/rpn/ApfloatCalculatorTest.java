@@ -5,7 +5,14 @@ import org.apfloat.ApfloatMath;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -233,12 +240,53 @@ public class ApfloatCalculatorTest {
 
     //    @Test
     public void performance() {
-        long start = System.currentTimeMillis();
+//        multiThread();
+        IntStream.range(0, 4).forEach(e -> {
+            oneThread();
+            multiThread();
+        });
+        IntStream.range(0, 4).forEach(e -> oneThread());
+        IntStream.range(0, 8).forEach(e -> multiThread());
+    }
+
+    public void oneThread() {
+        long start = System.nanoTime();
+        Apfloat expected = new Apfloat(-1.0137361372e-8);
+        String equation = "-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / -0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / +";
         for (int i = 0; i < 10000; i++) {
-            assertEquals(new Apfloat(-1.0137361372e-8),
-                    calculator.calculate("-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / -0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / +"));
+            assertEquals(expected,
+                    calculator.calculate(equation));
         }
-        long end = System.currentTimeMillis();
-        System.out.println(String.format("Performance: %s ms", end - start));
+        long end = System.nanoTime();
+        System.out.println(String.format("One thread performance: %s ms", (end - start) / 1_000_000));
+    }
+
+    public void multiThread() {
+        long start = System.nanoTime();
+
+        int processors = Runtime.getRuntime().availableProcessors();
+        ExecutorService executor = Executors.newFixedThreadPool(processors);
+
+        List<Future<Apfloat>> results = new ArrayList<>(10000);
+        String equation = "-0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / -0.5 23 24.234 tanh 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / +";
+        for (int i = 0; i < 10000; i++) {
+            Future<Apfloat> submit = executor.submit(CalculatorCallable.of(Apfloat.class, equation));
+            results.add(submit);
+        }
+        long middle = System.nanoTime();
+        System.out.println(String.format("Multi-thread performance (start to middle): %s ms", (middle - start) / 1_000_000));
+        Apfloat expected = new Apfloat(-1.0137361372e-8);
+
+        for (int i = 0; i < 10000; i++) {
+            try {
+                assertEquals(expected, results.get(i).get());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        executor.shutdown();
+        long end = System.nanoTime();
+        System.out.println(String.format("Multi-thread performance (start to end): %s ms", (end - start) / 1_000_000));
+        System.out.println(results.size());
     }
 }
