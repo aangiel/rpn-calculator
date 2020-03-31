@@ -1,4 +1,7 @@
-package io.github.aangiel.rpn;
+package io.github.aangiel.rpn.concurrent;
+
+import io.github.aangiel.rpn.Calculator;
+import io.github.aangiel.rpn.CalculatorSupplier;
 
 import java.util.concurrent.Callable;
 

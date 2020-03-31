@@ -1,6 +1,6 @@
-package io.github.aangiel.rpn.context;
+package io.github.aangiel.rpn.context.impl;
 
-import io.github.aangiel.rpn.interfaces.PrecisionContext;
+import io.github.aangiel.rpn.context.interfaces.PrecisionContext;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 

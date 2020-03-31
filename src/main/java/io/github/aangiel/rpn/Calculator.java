@@ -1,6 +1,6 @@
 package io.github.aangiel.rpn;
 
-import io.github.aangiel.rpn.interfaces.CalculatorContext;
+import io.github.aangiel.rpn.context.interfaces.CalculatorContext;
 
 /**
  * Main interface which you should use.<br>

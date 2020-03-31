@@ -1,6 +1,6 @@
-package io.github.aangiel.rpn.context;
+package io.github.aangiel.rpn.context.impl;
 
-import io.github.aangiel.rpn.interfaces.RoundingModeContext;
+import io.github.aangiel.rpn.context.interfaces.RoundingModeContext;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

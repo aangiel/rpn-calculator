@@ -1,7 +1,7 @@
 package io.github.aangiel.rpn.impl;
 
 import io.github.aangiel.rpn.Calculator;
-import io.github.aangiel.rpn.interfaces.CalculatorContext;
+import io.github.aangiel.rpn.context.interfaces.CalculatorContext;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;

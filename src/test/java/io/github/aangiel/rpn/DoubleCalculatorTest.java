@@ -1,5 +1,6 @@
 package io.github.aangiel.rpn;
 
+import io.github.aangiel.rpn.concurrent.CalculatorCallable;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 import org.junit.Before;

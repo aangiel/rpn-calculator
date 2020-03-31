@@ -1,4 +1,4 @@
-package io.github.aangiel.rpn.interfaces;
+package io.github.aangiel.rpn.context.interfaces;
 
 /**
  * @author <a href="mailto:aangiel@tuta.io">Artur Angiel</a>

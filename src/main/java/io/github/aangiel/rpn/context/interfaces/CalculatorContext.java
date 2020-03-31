@@ -1,4 +1,4 @@
-package io.github.aangiel.rpn.interfaces;
+package io.github.aangiel.rpn.context.interfaces;
 
 /**
  * @param <T> extends {@link Number}

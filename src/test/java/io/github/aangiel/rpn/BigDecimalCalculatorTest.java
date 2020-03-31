@@ -1,5 +1,6 @@
 package io.github.aangiel.rpn;
 
+import io.github.aangiel.rpn.concurrent.CalculatorCallable;
 import org.junit.Before;
 import org.junit.Test;
 

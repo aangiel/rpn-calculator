@@ -1,6 +1,6 @@
 package io.github.aangiel.rpn;
 
-import io.github.aangiel.rpn.context.AbstractCalculatorContext;
+import io.github.aangiel.rpn.context.impl.AbstractCalculatorContext;
 import org.junit.Before;
 import org.junit.Test;
 

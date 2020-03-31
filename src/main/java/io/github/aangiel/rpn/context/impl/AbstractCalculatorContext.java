@@ -1,6 +1,6 @@
-package io.github.aangiel.rpn.context;
+package io.github.aangiel.rpn.context.impl;
 
-import io.github.aangiel.rpn.interfaces.CalculatorContext;
+import io.github.aangiel.rpn.context.interfaces.CalculatorContext;
 
 import java.util.*;
 import java.util.function.Function;
