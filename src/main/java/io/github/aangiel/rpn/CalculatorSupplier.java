@@ -5,8 +5,6 @@ import io.github.aangiel.rpn.context.impl.BigDecimalCalculatorContext;
 import io.github.aangiel.rpn.context.impl.DoubleCalculatorContext;
 import io.github.aangiel.rpn.context.interfaces.CalculatorContext;
 import io.github.aangiel.rpn.impl.CalculatorImpl;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.apfloat.Apfloat;
 
 import java.math.BigDecimal;
@@ -21,8 +19,6 @@ import java.util.function.Function;
 public enum CalculatorSupplier {
 
     INSTANCE(CalculatorImpl::new);
-
-    private final Logger LOG = LogManager.getLogger(CalculatorSupplier.class);
 
     private final Map<Class<? extends Number>, Calculator<? extends Number>> CALCULATORS;
 
@@ -66,7 +62,6 @@ public enum CalculatorSupplier {
         Objects.requireNonNull(contextImplementation);
 
         CALCULATORS.put(clazz, implementation.apply(contextImplementation));
-        LOG.debug(String.format("Calculator of type: %s added", clazz));
     }
 
     private void populateCalculators() {

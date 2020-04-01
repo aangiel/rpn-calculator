@@ -3,8 +3,8 @@ package io.github.aangiel.rpn.impl;
 import io.github.aangiel.rpn.Calculator;
 import io.github.aangiel.rpn.context.interfaces.CalculatorContext;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.Objects;
@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
  * @see Calculator
  */
 public class CalculatorImpl<T extends Number> implements Calculator<T> {
-
-    private static final Logger LOG = LogManager.getLogger(CalculatorImpl.class);
 
     private final CalculatorContext<T> context;
 
@@ -41,84 +39,84 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
     @Override
     public T calculate(final String equation) {
-
-        Objects.requireNonNull(equation);
-        if (equation.isBlank()) throw new IllegalArgumentException("Empty equation");
-
-        LOG.info(String.format("Calculating equation: %s", equation));
-
-        var stack = new LinkedList<T>();
-        var position = 0;
-        for (String token : WHITESPACE.splitAsStream(equation).collect(LINKED_LIST_COLLECTOR))
-            calculateNextTokenAndPushItToStack(Token.of(token, stack, ++position));
-
-        var result = stack.pop();
-        if (!stack.isEmpty()) throw new IllegalArgumentException(String.format("Left on stack: %s", stack));
-
-        LOG.info(String.format("Result = %s", result));
-        return result;
-
+        return new Calculator<>(context, equation).calculate();
     }
 
-    private void calculateNextTokenAndPushItToStack(Token<T> token) {
-        assert token != null;
+    private static class Calculator<T extends Number> {
 
-        if (NumberUtils.isCreatable(token.getToken()))
-            token.getStack().push(createNumber(token));
-        else
-            token.getStack().push(calculateValue(token));
-    }
-
-    private T createNumber(Token<T> token) {
-        assert token != null;
-        return context.getNumberConstructor().apply(token.getToken());
-    }
-
-    private T calculateValue(Token<T> token) {
-        assert token != null;
-        try {
-            return getFunctionOrOperator(token).apply(token.getStack());
-        } catch (IndexOutOfBoundsException e) {
-            throw new ArithmeticException(String.format("Lack of arguments for: %s at position: %d", token, token.getPosition()));
-        }
-    }
-
-    private Function<LinkedList<T>, T> getFunctionOrOperator(Token<T> token) {
-        assert token != null;
-        return context.getFunctionOrOperator(token.getToken())
-                .orElseThrow(() -> new IllegalArgumentException(String.format("Bad item: '%s' at position: %d", token, token.getPosition())));
-    }
-
-    private static class Token<T extends Number> {
-        private final String token;
+        private final CalculatorContext<T> context;
+        private final String equation;
         private final LinkedList<T> stack;
-        private final int position;
+        private int currentPosition;
 
-        private Token(String token, LinkedList<T> stack, int position) {
-            this.token = Objects.requireNonNull(token);
-            this.stack = Objects.requireNonNull(stack);
-            this.position = position;
+        public Calculator(CalculatorContext<T> context, String equation) {
+            this.context = Objects.requireNonNull(context);
+            this.equation = Objects.requireNonNull(equation);
+            this.stack = new LinkedList<>();
+            this.currentPosition = 1;
         }
 
-        public static <T extends Number> Token<T> of(String token, LinkedList<T> stack, int position) {
-            return new Token<>(token, stack, position);
+        private T calculate() {
+            checkEquation();
+            processEquation();
+            return getResult();
         }
 
-        public String getToken() {
-            return token;
+        private void checkEquation() {
+            if (equation.isBlank())
+                throw new IllegalArgumentException("Empty equation");
         }
 
-        public LinkedList<T> getStack() {
-            return stack;
+        private void processEquation() {
+            for (String token : getTokens()) {
+                calculateNextTokenAndPushItToStack(token);
+                currentPosition++;
+            }
         }
 
-        public int getPosition() {
-            return position;
+        private T getResult() {
+            var result = stack.pop();
+            if (stack.isEmpty())
+                return result;
+            else
+                throw new IllegalArgumentException(String.format("Left on stack: %s", stack));
         }
 
-        @Override
-        public String toString() {
-            return token;
+        private void calculateNextTokenAndPushItToStack(String token) {
+            assert token != null;
+            if (NumberUtils.isCreatable(token))
+                stack.push(createNumber(token));
+            else
+                stack.push(calculateValue(token));
+        }
+
+        private LinkedList<String> getTokens() {
+            return WHITESPACE.splitAsStream(equation).collect(LINKED_LIST_COLLECTOR);
+        }
+
+        private T createNumber(String token) {
+            assert token != null;
+            return context.getNumberConstructor().apply(token);
+        }
+
+        private T calculateValue(String token) {
+            assert token != null;
+            try {
+                return getFunctionOrOperator(token).apply(stack);
+            } catch (IndexOutOfBoundsException e) {
+                throw new ArithmeticException(String.format("Lack of arguments for: %s at position: %d", token, currentPosition));
+            }
+        }
+
+        @NotNull
+        @Contract("null -> fail")
+        private Function<LinkedList<T>, T> getFunctionOrOperator(String token) {
+            assert token != null;
+            var result = context.getFunctionOrOperator(token);
+            if (result.isPresent())
+                return result.get();
+            else
+                throw new IllegalArgumentException(String.format("Bad item: '%s' at position: %d", token, currentPosition));
         }
     }
 }
