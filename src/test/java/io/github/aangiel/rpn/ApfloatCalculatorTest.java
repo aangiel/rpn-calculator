@@ -6,13 +6,10 @@ import org.apfloat.ApfloatMath;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
@@ -236,7 +233,7 @@ public class ApfloatCalculatorTest {
         assertEquals(new Apfloat("1.359140914"), calculator.calculate("e 2 /"));
     }
 
-    //            @Test
+    //                @Test
     public void performance() {
 //        multiThread();
         IntStream.range(0, 4).forEach(e -> {
@@ -264,19 +261,27 @@ public class ApfloatCalculatorTest {
         int processors = Runtime.getRuntime().availableProcessors();
         ExecutorService executor = Executors.newFixedThreadPool(processors);
 
-        List<Future<Apfloat>> results = new ArrayList<>(10000);
         String equation = "-0.5 23 24.234 8 * 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / -0.5 23 24.234 9 * 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / +";
-        for (int i = 0; i < 10000; i++) {
-            Future<Apfloat> submit = executor.submit(CalculatorCallable.of(Apfloat.class, equation));
-            results.add(submit);
+        List<Callable<Apfloat>> tasks = IntStream.range(0, 10000).mapToObj(i -> CalculatorCallable.of(Apfloat.class, equation)).collect(Collectors.toList());
+        List<Future<Apfloat>> results = null;
+        try {
+            results = executor.invokeAll(tasks);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+
+//        for (int i = 0; i < 10000; i++) {
+//            Future<Apfloat> submit = executor.submit(CalculatorCallable.of(Apfloat.class, equation));
+//            results.add(submit);
+//        }
         long middle = System.nanoTime();
         System.out.println(String.format("Multi-thread performance (start to middle): %s ms", (middle - start) / 1_000_000));
         Apfloat expected = new Apfloat("-1.0026019421e-8");
 
-        for (int i = 0; i < 10000; i++) {
+        assert results != null;
+        for (Future<Apfloat> result : results) {
             try {
-                assertEquals(expected, results.get(i).get());
+                assertEquals(expected, result.get());
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }

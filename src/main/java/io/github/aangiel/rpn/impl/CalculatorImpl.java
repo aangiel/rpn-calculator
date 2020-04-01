@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -49,7 +50,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         var stack = new LinkedList<T>();
         var position = 0;
         for (String token : WHITESPACE.splitAsStream(equation).collect(LINKED_LIST_COLLECTOR))
-            calculateNextTokenAndPushItToStack(token, stack, ++position);
+            calculateNextTokenAndPushItToStack(Token.of(token, stack, ++position));
 
         var result = stack.pop();
         if (!stack.isEmpty()) throw new IllegalArgumentException(String.format("Left on stack: %s", stack));
@@ -59,33 +60,65 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
     }
 
-    private void calculateNextTokenAndPushItToStack(String token, LinkedList<T> stack, int position) {
+    private void calculateNextTokenAndPushItToStack(Token<T> token) {
         assert token != null;
-        assert stack != null;
-        assert position > 0;
 
-        if (NumberUtils.isCreatable(token)) {
-            var applied = context.getNumberConstructor().apply(token);
-            stack.push(applied);
-        } else {
-            calculateOnStack(token, stack, position);
+        if (NumberUtils.isCreatable(token.getToken()))
+            token.getStack().push(createNumber(token));
+        else
+            token.getStack().push(calculateValue(token));
+    }
+
+    private T createNumber(Token<T> token) {
+        assert token != null;
+        return context.getNumberConstructor().apply(token.getToken());
+    }
+
+    private T calculateValue(Token<T> token) {
+        assert token != null;
+        try {
+            return getFunctionOrOperator(token).apply(token.getStack());
+        } catch (IndexOutOfBoundsException e) {
+            throw new ArithmeticException(String.format("Lack of arguments for: %s at position: %d", token, token.getPosition()));
         }
     }
 
-    private void calculateOnStack(String token, LinkedList<T> stack, int position) {
-
+    private Function<LinkedList<T>, T> getFunctionOrOperator(Token<T> token) {
         assert token != null;
-        assert stack != null;
-        assert position > 0;
+        return context.getFunctionOrOperator(token.getToken())
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Bad item: '%s' at position: %d", token, token.getPosition())));
+    }
 
-        var functionOrOperator = context.getFunctionOrOperator(token)
-                .orElseThrow(() -> new IllegalArgumentException(String.format("Bad item: '%s' at position: %d", token, position)));
+    private static class Token<T extends Number> {
+        private final String token;
+        private final LinkedList<T> stack;
+        private final int position;
 
-        try {
-            var value = functionOrOperator.apply(stack);
-            stack.push(value);
-        } catch (IndexOutOfBoundsException e) {
-            throw new ArithmeticException(String.format("Lack of arguments for: %s at position: %d", token, position));
+        private Token(String token, LinkedList<T> stack, int position) {
+            this.token = Objects.requireNonNull(token);
+            this.stack = Objects.requireNonNull(stack);
+            this.position = position;
+        }
+
+        public static <T extends Number> Token<T> of(String token, LinkedList<T> stack, int position) {
+            return new Token<>(token, stack, position);
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public LinkedList<T> getStack() {
+            return stack;
+        }
+
+        public int getPosition() {
+            return position;
+        }
+
+        @Override
+        public String toString() {
+            return token;
         }
     }
 }
