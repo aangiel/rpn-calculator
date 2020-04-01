@@ -10,8 +10,6 @@ import java.util.LinkedList;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.regex.Pattern;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of interface {@link Calculator} for Reverse Polish Notation calculations.
@@ -25,8 +23,6 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
     private final CalculatorContext<T> context;
 
     private static final Pattern WHITESPACE = Pattern.compile("\\s+");
-    private static final Collector<String, ?, LinkedList<String>>
-            LINKED_LIST_COLLECTOR = Collectors.toCollection(LinkedList::new);
 
     public CalculatorImpl(CalculatorContext<T> context) {
         this.context = context;
@@ -39,7 +35,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
     @Override
     public T calculate(final String equation) {
-        return new Calculator<>(context, equation).calculate();
+        return new Calculator<>(context, equation).calculateEquation();
     }
 
     private static class Calculator<T extends Number> {
@@ -56,7 +52,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
             this.currentPosition = 1;
         }
 
-        private T calculate() {
+        private T calculateEquation() {
             checkEquation();
             processEquation();
             return getResult();
@@ -68,8 +64,8 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
         }
 
         private void processEquation() {
-            for (String token : getTokens()) {
-                calculateNextTokenAndPushItToStack(token);
+            for (String token : WHITESPACE.split(equation)) {
+                processNext(token);
                 currentPosition++;
             }
         }
@@ -82,16 +78,12 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
                 throw new IllegalArgumentException(String.format("Left on stack: %s", stack));
         }
 
-        private void calculateNextTokenAndPushItToStack(String token) {
+        private void processNext(String token) {
             assert token != null;
             if (NumberUtils.isCreatable(token))
                 stack.push(createNumber(token));
             else
                 stack.push(calculateValue(token));
-        }
-
-        private LinkedList<String> getTokens() {
-            return WHITESPACE.splitAsStream(equation).collect(LINKED_LIST_COLLECTOR);
         }
 
         private T createNumber(String token) {

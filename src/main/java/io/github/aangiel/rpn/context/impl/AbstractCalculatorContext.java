@@ -52,8 +52,9 @@ public abstract class AbstractCalculatorContext<T extends Number> implements Cal
      * @param function Lambda which will be used during parsing equation (e.g. args -&#62; args.get(0) + args.get(1)<br>
      *                 args is defined as {@link Function &#60;T extends Number&#62; T apply(List&#60;T&#62; args)}
      * @return this
-     * @throws NullPointerException if one of parameters is null
-     * @throws RuntimeException     like {@link Map#put(Object, Object)}
+     * @throws NullPointerException     if one of parameters is null
+     * @throws RuntimeException         like {@link Map#put(Object, Object)}
+     * @throws IllegalArgumentException if function/operator already exists
      */
     @Override
     public CalculatorContext<T> addFunctionOrOperator(String name, Function<LinkedList<T>, T> function) {

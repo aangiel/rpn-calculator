@@ -233,7 +233,7 @@ public class ApfloatCalculatorTest {
         assertEquals(new Apfloat("1.359140914"), calculator.calculate("e 2 /"));
     }
 
-    //                @Test
+//    @Test
     public void performance() {
 //        multiThread();
         IntStream.range(0, 4).forEach(e -> {
