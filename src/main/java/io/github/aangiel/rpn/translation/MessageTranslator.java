@@ -23,11 +23,13 @@ public enum MessageTranslator {
         loadMessages();
     }
 
-    private static Language getFileLanguage(Path path) {
-        assert path != null;
-        assert path.getFileName().toString().matches(FILE_NAME_PATTERN);
-
-        return Language.valueOf(path.getFileName().toString().split("[.]")[0].toUpperCase());
+    private void loadMessages() {
+        if (properties == null) loadProperties();
+        for (Map.Entry<Language, Properties> entry : properties.entrySet()) {
+            var lang = entry.getKey();
+            var message = entry.getValue().getProperty(name());
+            messages.put(lang, message);
+        }
     }
 
     private static void loadProperties() {
@@ -47,18 +49,11 @@ public enum MessageTranslator {
         }
     }
 
-    public static String getMessage(String key) {
-        Objects.requireNonNull(key);
+    private static Language getFileLanguage(Path path) {
+        assert path != null;
+        assert path.getFileName().toString().matches(FILE_NAME_PATTERN);
 
-        var properties = MessageTranslator.properties.get(getLanguage());
-        if (properties == null)
-            throw new IllegalArgumentException("No translation file for given language");
-
-        var result = properties.getProperty(key);
-        if (result == null)
-            throw new IllegalArgumentException("No message for key");
-
-        return result;
+        return Language.valueOf(path.getFileName().toString().split("[.]")[0].toUpperCase());
     }
 
     @NotNull
@@ -82,13 +77,18 @@ public enum MessageTranslator {
         }
     }
 
-    private void loadMessages() {
-        if (properties == null) loadProperties();
-        for (Map.Entry<Language, Properties> entry : properties.entrySet()) {
-            var lang = entry.getKey();
-            var message = entry.getValue().getProperty(name());
-            messages.put(lang, message);
-        }
+    public static String getMessage(String key) {
+        Objects.requireNonNull(key);
+
+        var properties = MessageTranslator.properties.get(getLanguage());
+        if (properties == null)
+            throw new IllegalArgumentException("No translation file for given language");
+
+        var result = properties.getProperty(key);
+        if (result == null)
+            throw new IllegalArgumentException("No message for key");
+
+        return result;
     }
 
     private static Language getLanguage() {
