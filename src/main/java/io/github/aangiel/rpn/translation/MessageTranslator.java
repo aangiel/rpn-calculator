@@ -23,15 +23,18 @@ public enum MessageTranslator {
         loadMessages();
     }
 
+    private static Language getFileLanguage(Path path) {
+        assert path != null;
+        assert path.getFileName().toString().matches(FILE_NAME_PATTERN);
+
+        return Language.valueOf(path.getFileName().toString().split("[.]")[0].toUpperCase());
+    }
+
     private static void loadProperties() {
         properties = new EnumMap<>(Language.class);
         for (Path path : getFileResources()) {
             properties.put(getFileLanguage(path), getProperties(path));
         }
-    }
-
-    private static Language getFileLanguage(Path path) {
-        return Language.valueOf(path.getFileName().toString().split("[.]")[0].toUpperCase());
     }
 
     private static List<Path> getFileResources() {
@@ -44,8 +47,23 @@ public enum MessageTranslator {
         }
     }
 
+    public static String getMessage(String key) {
+        Objects.requireNonNull(key);
+
+        var properties = MessageTranslator.properties.get(getLanguage());
+        if (properties == null)
+            throw new IllegalArgumentException("No translation file for given language");
+
+        var result = properties.getProperty(key);
+        if (result == null)
+            throw new IllegalArgumentException("No message for key");
+
+        return result;
+    }
+
     @NotNull
     private static Properties getProperties(Path path) {
+        assert path != null;
         var properties = new Properties();
         try {
             properties.load(getReader(path));
@@ -56,26 +74,12 @@ public enum MessageTranslator {
     }
 
     private static BufferedReader getReader(Path path) {
+        assert path != null;
         try {
             return new BufferedReader(new InputStreamReader(new FileInputStream(path.toFile()), StandardCharsets.UTF_8));
         } catch (FileNotFoundException e) {
             return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(new byte[]{})));
         }
-    }
-
-    public static String getMessage(String key) {
-        return properties.get(CalculatorSupplier.INSTANCE.getLanguage()).getProperty(key);
-    }
-
-    public String get() {
-        var result = messages.get(CalculatorSupplier.INSTANCE.getLanguage());
-        if (result == null)
-            throw new IllegalArgumentException("No translation file for given language");
-        return result;
-    }
-
-    public String get(Object... args) {
-        return String.format(get(), args);
     }
 
     private void loadMessages() {
@@ -85,6 +89,20 @@ public enum MessageTranslator {
             var message = entry.getValue().getProperty(name());
             messages.put(lang, message);
         }
+    }
 
+    private static Language getLanguage() {
+        return CalculatorSupplier.INSTANCE.getLanguage();
+    }
+
+    public String get(Object... args) {
+        return String.format(get(), args);
+    }
+
+    public String get() {
+        var result = messages.get(getLanguage());
+        if (result == null)
+            throw new IllegalArgumentException("No translation file for given language");
+        return result;
     }
 }
