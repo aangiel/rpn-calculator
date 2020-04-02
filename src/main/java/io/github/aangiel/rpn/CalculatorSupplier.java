@@ -5,8 +5,9 @@ import io.github.aangiel.rpn.context.impl.BigDecimalCalculatorContext;
 import io.github.aangiel.rpn.context.impl.DoubleCalculatorContext;
 import io.github.aangiel.rpn.context.interfaces.CalculatorContext;
 import io.github.aangiel.rpn.impl.CalculatorImpl;
-import io.github.aangiel.rpn.translation.Language;
-import io.github.aangiel.rpn.translation.MessageTranslator;
+import io.github.aangiel.rpn.translation.Languages;
+import io.github.aangiel.rpn.translation.Messages;
+import io.github.aangiel.rpn.translation.interfaces.Language;
 import org.apfloat.Apfloat;
 
 import java.math.BigDecimal;
@@ -31,7 +32,7 @@ public enum CalculatorSupplier {
     CalculatorSupplier(Function<CalculatorContext<? extends Number>, Calculator<? extends Number>> implementation) {
         this.implementation = Objects.requireNonNull(implementation);
         calculators = new HashMap<>();
-        language = Language.EN;
+        language = Languages.EN;
         populateCalculators();
     }
 
@@ -51,7 +52,7 @@ public enum CalculatorSupplier {
         var calculator = (Calculator<T>) calculators.get(clazz);
 
         if (calculator == null)
-            throw new IllegalArgumentException(MessageTranslator.UNSUPPORTED_TYPE.get(clazz));
+            throw new IllegalArgumentException(Messages.UNSUPPORTED_TYPE.get(clazz));
 
         return calculator;
     }

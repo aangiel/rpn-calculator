@@ -1,20 +1,21 @@
 package io.github.aangiel.rpn.translation;
 
-import io.github.aangiel.rpn.CalculatorSupplier;
+import io.github.aangiel.rpn.translation.interfaces.Language;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public enum MessageTranslator {
-    EMPTY_EQUATION, LEFT_ON_STACK, LACK_OF_ARGUMENTS, BAD_ITEM, UNSUPPORTED_TYPE;
-
+public final class MessagesSupplier {
     private static Path resourcesPath;
     private static Pattern fileNamePattern;
     private static Pattern propertyPattern;
@@ -24,11 +25,15 @@ public enum MessageTranslator {
         init();
     }
 
+    public static Map<Language, Map<String, String>> getMessages() {
+        return messages;
+    }
+
     private static void init() {
         resourcesPath = FileSystems.getDefault().getPath("src", "main", "resources", "messages");
         fileNamePattern = Pattern.compile("^(?<language>[a-zA-Z]{2})\\.properties$");
         propertyPattern = Pattern.compile("^\\s*(?<key>.*?)\\s*(?<delimiter>=)\\s*(?<value>.*?)\\s*$");
-        messages = new EnumMap<>(Language.class);
+        messages = new HashMap<>();
         loadProperties();
     }
 
@@ -47,12 +52,12 @@ public enum MessageTranslator {
         }
     }
 
-    private static Language getFileLanguage(Path path) {
+    private static Languages getFileLanguage(Path path) {
         assert path != null;
         assert fileNamePattern.matcher(path.getFileName().toString()).matches();
 
         Matcher matcher = fileNamePattern.matcher(path.getFileName().toString());
-        return matcher.find() ? Language.valueOf(matcher.group("language").toUpperCase()) : Language.EN;
+        return matcher.find() ? Languages.valueOf(matcher.group("language").toUpperCase()) : Languages.EN;
     }
 
     @NotNull
@@ -69,47 +74,5 @@ public enum MessageTranslator {
             e.printStackTrace();
         }
         return Collections.emptyMap();
-    }
-
-    public String get() {
-        return getMessage(name());
-    }
-
-    public String get(Object... args) {
-        return String.format(get(), args);
-    }
-
-    public static String createMessage(String key, Object... args) {
-        return String.format(getMessage(key), args);
-    }
-
-    public static String createMessage(Language language, String key, Object... args) {
-        return String.format(getMessage(language, key), args);
-    }
-
-    public static String getMessage(String key) {
-        return getMessage(getLanguage(), key);
-    }
-
-    public static String getMessage(String language, String key) {
-        return getMessage(Language.valueOf(language.toUpperCase()), key);
-    }
-
-    public static String getMessage(Language language, String key) {
-        Objects.requireNonNull(key);
-
-        var properties = messages.get(language);
-        if (properties == null)
-            throw new IllegalArgumentException("No translation file for given language");
-
-        var result = properties.get(key);
-        if (result == null)
-            throw new IllegalArgumentException("No message for key");
-
-        return result;
-    }
-
-    private static Language getLanguage() {
-        return CalculatorSupplier.INSTANCE.getLanguage();
     }
 }
