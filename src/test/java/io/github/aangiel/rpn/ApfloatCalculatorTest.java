@@ -262,7 +262,9 @@ public class ApfloatCalculatorTest {
         ExecutorService executor = Executors.newFixedThreadPool(processors);
 
         String equation = "-0.5 23 24.234 8 * 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / -0.5 23 24.234 9 * 234.4 234 + / - ** 0.842384e8 / 5e-8 + 5 0 3.5e-8 23.33 fun2 / +";
-        List<Callable<Apfloat>> tasks = IntStream.range(0, 10000).mapToObj(i -> CalculatorCallable.of(Apfloat.class, equation)).collect(Collectors.toList());
+        List<Callable<Apfloat>> tasks = IntStream.range(0, 10000)
+                .mapToObj(i -> CalculatorCallable.of(Apfloat.class, equation))
+                .collect(Collectors.toList());
         List<Future<Apfloat>> results = null;
         try {
             results = executor.invokeAll(tasks);
@@ -270,12 +272,6 @@ public class ApfloatCalculatorTest {
             e.printStackTrace();
         }
 
-//        for (int i = 0; i < 10000; i++) {
-//            Future<Apfloat> submit = executor.submit(CalculatorCallable.of(Apfloat.class, equation));
-//            results.add(submit);
-//        }
-        long middle = System.nanoTime();
-        System.out.println(String.format("Multi-thread performance (start to middle): %s ms", (middle - start) / 1_000_000));
         Apfloat expected = new Apfloat("-1.0026019421e-8");
 
         assert results != null;
@@ -288,7 +284,6 @@ public class ApfloatCalculatorTest {
         }
         executor.shutdown();
         long end = System.nanoTime();
-        System.out.println(String.format("Multi-thread performance (start to end): %s ms", (end - start) / 1_000_000));
-        System.out.println(results.size());
+        System.out.println(String.format("Multi-thread performance: %s ms", (end - start) / 1_000_000));
     }
 }

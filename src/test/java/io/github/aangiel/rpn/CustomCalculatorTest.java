@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
 
 public class CustomCalculatorTest {
 
@@ -32,13 +31,9 @@ public class CustomCalculatorTest {
         assertEquals(functions, calculator.getContext().getAvailableFunctionsAndOperators());
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void unsupportedType() {
-        IllegalArgumentException unsupportedOperationException
-                = assertThrows(IllegalArgumentException.class
-                , () -> CalculatorSupplier.INSTANCE.getCalculator(Integer.class));
-        assertEquals("Unsupported type: class java.lang.Integer", unsupportedOperationException.getMessage());
-
+        CalculatorSupplier.INSTANCE.getCalculator(Integer.class);
     }
 
     @Test(expected = NullPointerException.class)
