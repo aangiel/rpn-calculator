@@ -22,7 +22,7 @@ public enum CalculatorSupplier {
 
     INSTANCE(CalculatorImpl::new);
 
-    private final Map<Class<? extends Number>, Calculator<? extends Number>> CALCULATORS;
+    private final Map<Class<? extends Number>, Calculator<? extends Number>> calculators;
 
     private final Function<CalculatorContext<? extends Number>, Calculator<? extends Number>> implementation;
 
@@ -30,7 +30,7 @@ public enum CalculatorSupplier {
 
     CalculatorSupplier(Function<CalculatorContext<? extends Number>, Calculator<? extends Number>> implementation) {
         this.implementation = Objects.requireNonNull(implementation);
-        CALCULATORS = new HashMap<>();
+        calculators = new HashMap<>();
         language = Language.EN;
         populateCalculators();
     }
@@ -48,7 +48,7 @@ public enum CalculatorSupplier {
         // It always works, because <T extends Number> and
         // value in CALCULATORS map is Calculator<? extends Number>
         @SuppressWarnings("unchecked")
-        var calculator = (Calculator<T>) CALCULATORS.get(clazz);
+        var calculator = (Calculator<T>) calculators.get(clazz);
 
         if (calculator == null)
             throw new IllegalArgumentException(MessageTranslator.UNSUPPORTED_TYPE.get(clazz));
@@ -66,7 +66,7 @@ public enum CalculatorSupplier {
         Objects.requireNonNull(clazz);
         Objects.requireNonNull(contextImplementation);
 
-        CALCULATORS.put(clazz, implementation.apply(contextImplementation));
+        calculators.put(clazz, implementation.apply(contextImplementation));
     }
 
     private void populateCalculators() {

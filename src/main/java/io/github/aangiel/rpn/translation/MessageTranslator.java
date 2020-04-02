@@ -3,46 +3,44 @@ package io.github.aangiel.rpn.translation;
 import io.github.aangiel.rpn.CalculatorSupplier;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public enum MessageTranslator {
     EMPTY_EQUATION, LEFT_ON_STACK, LACK_OF_ARGUMENTS, BAD_ITEM, UNSUPPORTED_TYPE;
 
-    private final static String FILE_NAME_PATTERN = "[a-z]{2}\\.properties";
-    private final static String RESOURCES_PATH = "src/main/resources/messages";
-    private static Map<Language, Properties> properties;
-    private final Map<Language, String> messages;
+    private static Path resourcesPath;
+    private static Pattern fileNamePattern;
+    private static Pattern propertyPattern;
+    private static Map<Language, Map<String, String>> messages;
 
-    MessageTranslator() {
-        messages = new EnumMap<>(Language.class);
-        loadMessages();
+    static {
+        init();
     }
 
-    private void loadMessages() {
-        if (properties == null) loadProperties();
-        for (Map.Entry<Language, Properties> entry : properties.entrySet()) {
-            var lang = entry.getKey();
-            var message = entry.getValue().getProperty(name());
-            messages.put(lang, message);
-        }
+    private static void init() {
+        resourcesPath = FileSystems.getDefault().getPath("src", "main", "resources", "messages");
+        fileNamePattern = Pattern.compile("^(?<language>[a-zA-Z]{2})\\.properties$");
+        propertyPattern = Pattern.compile("^\\s*(?<key>.*?)\\s*(?<delimiter>=)\\s*(?<value>.*?)\\s*$");
+        messages = new EnumMap<>(Language.class);
+        loadProperties();
     }
 
     private static void loadProperties() {
-        properties = new EnumMap<>(Language.class);
-        for (Path path : getFileResources()) {
-            properties.put(getFileLanguage(path), getProperties(path));
-        }
+        for (Path path : getFileResources())
+            messages.put(getFileLanguage(path), getProperties(path));
     }
 
     private static List<Path> getFileResources() {
         try {
-            return Files.list(Path.of(RESOURCES_PATH))
-                    .filter(path -> path.getFileName().toString().matches(FILE_NAME_PATTERN))
+            return Files.list(resourcesPath)
+                    .filter(path -> fileNamePattern.matcher(path.getFileName().toString()).matches())
                     .collect(Collectors.toList());
         } catch (IOException e) {
             return Collections.emptyList();
@@ -51,40 +49,60 @@ public enum MessageTranslator {
 
     private static Language getFileLanguage(Path path) {
         assert path != null;
-        assert path.getFileName().toString().matches(FILE_NAME_PATTERN);
+        assert fileNamePattern.matcher(path.getFileName().toString()).matches();
 
-        return Language.valueOf(path.getFileName().toString().split("[.]")[0].toUpperCase());
+        Matcher matcher = fileNamePattern.matcher(path.getFileName().toString());
+        return matcher.find() ? Language.valueOf(matcher.group("language").toUpperCase()) : Language.EN;
     }
 
     @NotNull
-    private static Properties getProperties(Path path) {
+    private static Map<String, String> getProperties(Path path) {
         assert path != null;
-        var properties = new Properties();
         try {
-            properties.load(getReader(path));
+            return Files.lines(path)
+                    .map(propertyPattern::matcher)
+                    .filter(Matcher::find)
+                    .collect(Collectors.toMap(
+                            k -> k.group("key"),
+                            v -> v.group("value")));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return properties;
+        return Collections.emptyMap();
     }
 
-    private static BufferedReader getReader(Path path) {
-        assert path != null;
-        try {
-            return new BufferedReader(new InputStreamReader(new FileInputStream(path.toFile()), StandardCharsets.UTF_8));
-        } catch (FileNotFoundException e) {
-            return new BufferedReader(new InputStreamReader(new ByteArrayInputStream(new byte[]{})));
-        }
+    public String get() {
+        return getMessage(name());
+    }
+
+    public String get(Object... args) {
+        return String.format(get(), args);
+    }
+
+    public static String createMessage(String key, Object... args) {
+        return String.format(getMessage(key), args);
+    }
+
+    public static String createMessage(Language language, String key, Object... args) {
+        return String.format(getMessage(language, key), args);
     }
 
     public static String getMessage(String key) {
+        return getMessage(getLanguage(), key);
+    }
+
+    public static String getMessage(String language, String key) {
+        return getMessage(Language.valueOf(language.toUpperCase()), key);
+    }
+
+    public static String getMessage(Language language, String key) {
         Objects.requireNonNull(key);
 
-        var properties = MessageTranslator.properties.get(getLanguage());
+        var properties = messages.get(language);
         if (properties == null)
             throw new IllegalArgumentException("No translation file for given language");
 
-        var result = properties.getProperty(key);
+        var result = properties.get(key);
         if (result == null)
             throw new IllegalArgumentException("No message for key");
 
@@ -93,16 +111,5 @@ public enum MessageTranslator {
 
     private static Language getLanguage() {
         return CalculatorSupplier.INSTANCE.getLanguage();
-    }
-
-    public String get(Object... args) {
-        return String.format(get(), args);
-    }
-
-    public String get() {
-        var result = messages.get(getLanguage());
-        if (result == null)
-            throw new IllegalArgumentException("No translation file for given language");
-        return result;
     }
 }
