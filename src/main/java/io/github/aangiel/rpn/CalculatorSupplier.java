@@ -5,6 +5,8 @@ import io.github.aangiel.rpn.context.impl.BigDecimalCalculatorContext;
 import io.github.aangiel.rpn.context.impl.DoubleCalculatorContext;
 import io.github.aangiel.rpn.context.interfaces.CalculatorContext;
 import io.github.aangiel.rpn.impl.CalculatorImpl;
+import io.github.aangiel.rpn.translation.Language;
+import io.github.aangiel.rpn.translation.MessageTranslator;
 import org.apfloat.Apfloat;
 
 import java.math.BigDecimal;
@@ -24,9 +26,12 @@ public enum CalculatorSupplier {
 
     private final Function<CalculatorContext<? extends Number>, Calculator<? extends Number>> implementation;
 
+    private Language language;
+
     CalculatorSupplier(Function<CalculatorContext<? extends Number>, Calculator<? extends Number>> implementation) {
         this.implementation = Objects.requireNonNull(implementation);
         CALCULATORS = new HashMap<>();
+        language = Language.EN;
         populateCalculators();
     }
 
@@ -46,7 +51,7 @@ public enum CalculatorSupplier {
         var calculator = (Calculator<T>) CALCULATORS.get(clazz);
 
         if (calculator == null)
-            throw new IllegalArgumentException(String.format("Unsupported type: %s", clazz));
+            throw new IllegalArgumentException(MessageTranslator.UNSUPPORTED_TYPE.get(clazz));
 
         return calculator;
     }
@@ -68,5 +73,13 @@ public enum CalculatorSupplier {
         addCalculator(Apfloat.class, new ApfloatCalculatorContext());
         addCalculator(BigDecimal.class, new BigDecimalCalculatorContext());
         addCalculator(Double.class, new DoubleCalculatorContext());
+    }
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = Objects.requireNonNull(language);
     }
 }

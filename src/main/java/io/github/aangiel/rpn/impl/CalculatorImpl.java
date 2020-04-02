@@ -2,6 +2,7 @@ package io.github.aangiel.rpn.impl;
 
 import io.github.aangiel.rpn.Calculator;
 import io.github.aangiel.rpn.context.interfaces.CalculatorContext;
+import io.github.aangiel.rpn.translation.MessageTranslator;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +61,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
 
         private void checkEquation() {
             if (equation.isBlank())
-                throw new IllegalArgumentException("Empty equation");
+                throw new IllegalArgumentException(MessageTranslator.EMPTY_EQUATION.get());
         }
 
         private void processEquation() {
@@ -75,7 +76,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
             if (stack.isEmpty())
                 return result;
             else
-                throw new IllegalArgumentException(String.format("Left on stack: %s", stack));
+                throw new IllegalArgumentException(MessageTranslator.LEFT_ON_STACK.get(stack));
         }
 
         private void processNext(String token) {
@@ -96,7 +97,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
             try {
                 return getFunctionOrOperator(token).apply(stack);
             } catch (IndexOutOfBoundsException e) {
-                throw new ArithmeticException(String.format("Lack of arguments for: %s at position: %d", token, currentPosition));
+                throw new ArithmeticException(MessageTranslator.LACK_OF_ARGUMENTS.get(token, currentPosition));
             }
         }
 
@@ -108,7 +109,7 @@ public class CalculatorImpl<T extends Number> implements Calculator<T> {
             if (result.isPresent())
                 return result.get();
             else
-                throw new IllegalArgumentException(String.format("Bad item: '%s' at position: %d", token, currentPosition));
+                throw new IllegalArgumentException(MessageTranslator.BAD_ITEM.get(token, currentPosition));
         }
     }
 }
