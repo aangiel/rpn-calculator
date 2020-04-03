@@ -1,6 +1,4 @@
-package io.github.aangiel.rpn.translation.interfaces;
-
-import io.github.aangiel.rpn.translation.MessagesSupplier;
+package io.github.aangiel.rpn.translator;
 
 import java.util.Map;
 import java.util.Objects;

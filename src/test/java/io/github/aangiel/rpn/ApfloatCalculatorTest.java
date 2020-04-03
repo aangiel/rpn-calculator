@@ -3,7 +3,7 @@ package io.github.aangiel.rpn;
 import io.github.aangiel.rpn.concurrent.CalculatorCallable;
 import io.github.aangiel.rpn.translation.Languages;
 import io.github.aangiel.rpn.translation.Messages;
-import io.github.aangiel.rpn.translation.interfaces.MessageTranslator;
+import io.github.aangiel.rpn.translator.MessageTranslator;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 import org.junit.Before;

@@ -1,7 +1,5 @@
-package io.github.aangiel.rpn.translation;
+package io.github.aangiel.rpn.translator;
 
-import io.github.aangiel.rpn.translation.interfaces.Language;
-import io.github.aangiel.rpn.translation.interfaces.MessageTranslator;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -17,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public final class MessagesSupplier {
+final class MessagesSupplier {
     private static Path resourcesPath;
     private static Pattern fileNamePattern;
     private static Pattern propertyPattern;

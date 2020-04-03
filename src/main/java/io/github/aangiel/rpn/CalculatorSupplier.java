@@ -7,7 +7,7 @@ import io.github.aangiel.rpn.context.interfaces.CalculatorContext;
 import io.github.aangiel.rpn.impl.CalculatorImpl;
 import io.github.aangiel.rpn.translation.Languages;
 import io.github.aangiel.rpn.translation.Messages;
-import io.github.aangiel.rpn.translation.interfaces.Language;
+import io.github.aangiel.rpn.translator.Language;
 import org.apfloat.Apfloat;
 
 import java.math.BigDecimal;
