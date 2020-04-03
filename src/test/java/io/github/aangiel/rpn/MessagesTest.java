@@ -2,7 +2,7 @@ package io.github.aangiel.rpn;
 
 import io.github.aangiel.rpn.translation.Languages;
 import io.github.aangiel.rpn.translation.Messages;
-import io.github.aangiel.rpn.translator.MessageTranslator;
+import io.github.aangiel.translator.MessageTranslator;
 import org.junit.Before;
 import org.junit.Test;
 

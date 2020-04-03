@@ -5,9 +5,7 @@ import io.github.aangiel.rpn.context.impl.BigDecimalCalculatorContext;
 import io.github.aangiel.rpn.context.impl.DoubleCalculatorContext;
 import io.github.aangiel.rpn.context.interfaces.CalculatorContext;
 import io.github.aangiel.rpn.impl.CalculatorImpl;
-import io.github.aangiel.rpn.translation.Languages;
 import io.github.aangiel.rpn.translation.Messages;
-import io.github.aangiel.rpn.translator.Language;
 import org.apfloat.Apfloat;
 
 import java.math.BigDecimal;
@@ -27,12 +25,9 @@ public enum CalculatorSupplier {
 
     private final Function<CalculatorContext<? extends Number>, Calculator<? extends Number>> implementation;
 
-    private Language language;
-
     CalculatorSupplier(Function<CalculatorContext<? extends Number>, Calculator<? extends Number>> implementation) {
         this.implementation = Objects.requireNonNull(implementation);
         calculators = new HashMap<>();
-        language = Languages.EN;
         populateCalculators();
     }
 
@@ -74,13 +69,5 @@ public enum CalculatorSupplier {
         addCalculator(Apfloat.class, new ApfloatCalculatorContext());
         addCalculator(BigDecimal.class, new BigDecimalCalculatorContext());
         addCalculator(Double.class, new DoubleCalculatorContext());
-    }
-
-    public Language getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(Language language) {
-        this.language = Objects.requireNonNull(language);
     }
 }
