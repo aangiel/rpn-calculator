@@ -1,9 +1,11 @@
 package io.github.aangiel.rpn.translation;
 
 import io.github.aangiel.rpn.translation.interfaces.Language;
+import io.github.aangiel.rpn.translation.interfaces.MessageTranslator;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,13 +21,13 @@ public final class MessagesSupplier {
     private static Path resourcesPath;
     private static Pattern fileNamePattern;
     private static Pattern propertyPattern;
-    private static Map<Language, Map<String, String>> messages;
+    private static Map<Enum<? extends Language>, Map<Enum<? extends MessageTranslator>, String>> messages;
 
     static {
         init();
     }
 
-    public static Map<Language, Map<String, String>> getMessages() {
+    public static Map<Enum<? extends Language>, Map<Enum<? extends MessageTranslator>, String>> getMessages() {
         return messages;
     }
 
@@ -52,23 +54,57 @@ public final class MessagesSupplier {
         }
     }
 
-    private static Languages getFileLanguage(Path path) {
+    private static Enum<? extends Language> getFileLanguage(Path path) {
         assert path != null;
         assert fileNamePattern.matcher(path.getFileName().toString()).matches();
 
         Matcher matcher = fileNamePattern.matcher(path.getFileName().toString());
-        return matcher.find() ? Languages.valueOf(matcher.group("language").toUpperCase()) : Languages.EN;
+
+        if (!matcher.find()) return MessageTranslator.getLanguage();
+
+        return valueOfLanguage(matcher.group("language"));
+    }
+
+    public static Enum<? extends Language> valueOfLanguage(String name) {
+        // It always works, because MessageTranslator.getLanguage()
+        // returns Enum<? extends Language>
+        @SuppressWarnings("unchecked")
+        var result = (Enum<? extends Language>) valueOf(name, MessageTranslator.getLanguage().getDeclaringClass());
+        return result;
+    }
+
+    public static Enum<? extends MessageTranslator> valueOfMessage(String name) {
+        // It always works, because MessageTranslator.getAnyMessage()
+        // returns Enum<? extends MessageTranslator>
+        @SuppressWarnings("unchecked")
+        var result = (Enum<? extends MessageTranslator>) valueOf(name, MessageTranslator.getAnyMessage().getDeclaringClass());
+        return result;
+    }
+
+    private static Enum<?> valueOf(String name, Class<?> clazz) {
+        Enum<?> result = null;
+        try {
+            var valueOf = clazz.getMethod("valueOf", String.class);
+            result = (Enum<?>) valueOf.invoke(null, name.toUpperCase());
+        } catch (InvocationTargetException e) {
+            if (e.getTargetException() instanceof IllegalArgumentException)
+                throw (IllegalArgumentException) e.getTargetException();
+            e.printStackTrace();
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     @NotNull
-    private static Map<String, String> getProperties(Path path) {
+    private static Map<Enum<? extends MessageTranslator>, String> getProperties(Path path) {
         assert path != null;
         try {
             return Files.lines(path)
                     .map(propertyPattern::matcher)
                     .filter(Matcher::find)
                     .collect(Collectors.toMap(
-                            k -> k.group("key"),
+                            k -> valueOfMessage(k.group("key")),
                             v -> v.group("value")));
         } catch (IOException e) {
             e.printStackTrace();

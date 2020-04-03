@@ -1,6 +1,9 @@
 package io.github.aangiel.rpn;
 
 import io.github.aangiel.rpn.concurrent.CalculatorCallable;
+import io.github.aangiel.rpn.translation.Languages;
+import io.github.aangiel.rpn.translation.Messages;
+import io.github.aangiel.rpn.translation.interfaces.MessageTranslator;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
 import org.junit.Before;
@@ -21,6 +24,8 @@ public class ApfloatCalculatorTest {
 
     @Before
     public void setUp() {
+        MessageTranslator.setLanguage(Languages.EN);
+        MessageTranslator.setAnyMessage(Messages.DIFFERENT);
         calculator = CalculatorSupplier.INSTANCE.getCalculator(Apfloat.class);
 
         calculator.getContext().addFunctionOrOperator("**", (a) -> a.get(1).multiply(a.remove(1).multiply(a.pop())))
