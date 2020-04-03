@@ -25,7 +25,7 @@ public class ApfloatCalculatorTest {
     @Before
     public void setUp() {
         MessageTranslator.setLanguage(Languages.EN);
-        MessageTranslator.setAnyMessage(Messages.DIFFERENT);
+        MessageTranslator.setAnyMessage(Messages.EMPTY_EQUATION);
         calculator = CalculatorSupplier.INSTANCE.getCalculator(Apfloat.class);
 
         calculator.getContext().addFunctionOrOperator("**", (a) -> a.get(1).multiply(a.remove(1).multiply(a.pop())))
