@@ -6,7 +6,7 @@ import io.github.aangiel.rpn.translation.Messages;
 import io.github.aangiel.translator.MessageTranslator;
 import org.apfloat.Apfloat;
 import org.apfloat.ApfloatMath;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -23,10 +23,10 @@ import static org.junit.Assert.assertThrows;
 
 public class DoubleCalculatorTest {
 
-    Calculator<Double> calculator;
+    static Calculator<Double> calculator;
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void beforeClass() {
         MessageTranslator.setLanguage(Languages.EN);
         MessageTranslator.setAnyMessage(Messages.EMPTY_EQUATION);
         calculator = CalculatorSupplier.INSTANCE.getCalculator(Double.class);

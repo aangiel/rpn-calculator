@@ -4,7 +4,7 @@ import io.github.aangiel.rpn.context.impl.AbstractCalculatorContext;
 import io.github.aangiel.rpn.translation.Languages;
 import io.github.aangiel.rpn.translation.Messages;
 import io.github.aangiel.translator.MessageTranslator;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.math.BigInteger;
@@ -15,10 +15,10 @@ import static org.junit.Assert.assertEquals;
 
 public class CustomCalculatorTest {
 
-    Calculator<BigInteger> calculator;
+    static Calculator<BigInteger> calculator;
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void beforeClass() {
         MessageTranslator.setLanguage(Languages.EN);
         MessageTranslator.setAnyMessage(Messages.EMPTY_EQUATION);
         CalculatorSupplier.INSTANCE.addCalculator(BigInteger.class, new BigIntegerContext());

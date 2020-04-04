@@ -4,7 +4,7 @@ import io.github.aangiel.rpn.concurrent.CalculatorCallable;
 import io.github.aangiel.rpn.translation.Languages;
 import io.github.aangiel.rpn.translation.Messages;
 import io.github.aangiel.translator.MessageTranslator;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -23,10 +23,10 @@ import static org.junit.Assert.assertThrows;
 
 public class BigDecimalCalculatorTest {
 
-    Calculator<BigDecimal> calculator;
+    static Calculator<BigDecimal> calculator;
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void beforeClass() {
         MessageTranslator.setLanguage(Languages.EN);
         MessageTranslator.setAnyMessage(Messages.EMPTY_EQUATION);
         calculator = CalculatorSupplier.INSTANCE.getCalculator(BigDecimal.class);
