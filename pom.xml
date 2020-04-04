@@ -154,12 +154,12 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
+            <version>19.0.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.github.aangiel</groupId>
-            <artifactId>messages-translator</artifactId>
+            <artifactId>message-translator</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

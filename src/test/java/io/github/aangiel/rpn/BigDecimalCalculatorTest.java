@@ -1,6 +1,9 @@
 package io.github.aangiel.rpn;
 
 import io.github.aangiel.rpn.concurrent.CalculatorCallable;
+import io.github.aangiel.rpn.translation.Languages;
+import io.github.aangiel.rpn.translation.Messages;
+import io.github.aangiel.translator.MessageTranslator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,6 +27,8 @@ public class BigDecimalCalculatorTest {
 
     @Before
     public void setUp() {
+        MessageTranslator.setLanguage(Languages.EN);
+        MessageTranslator.setAnyMessage(Messages.EMPTY_EQUATION);
         calculator = CalculatorSupplier.INSTANCE.getCalculator(BigDecimal.class);
 
         calculator.getContext().addFunctionOrOperator("**", (a) -> a.get(1).multiply(a.remove(1).multiply(a.pop())))

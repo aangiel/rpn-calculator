@@ -1,6 +1,9 @@
 package io.github.aangiel.rpn;
 
 import io.github.aangiel.rpn.context.impl.AbstractCalculatorContext;
+import io.github.aangiel.rpn.translation.Languages;
+import io.github.aangiel.rpn.translation.Messages;
+import io.github.aangiel.translator.MessageTranslator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,6 +19,8 @@ public class CustomCalculatorTest {
 
     @Before
     public void setUp() {
+        MessageTranslator.setLanguage(Languages.EN);
+        MessageTranslator.setAnyMessage(Messages.EMPTY_EQUATION);
         CalculatorSupplier.INSTANCE.addCalculator(BigInteger.class, new BigIntegerContext());
         calculator = CalculatorSupplier.INSTANCE.getCalculator(BigInteger.class);
     }
