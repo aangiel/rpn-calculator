@@ -24,10 +24,10 @@ public final class CalculatorCallable<T extends Number> implements Callable<T> {
     }
 
     /**
-     * @param clazz
-     * @param equation
-     * @param <T>
-     * @return
+     * @param clazz    Class extending Number for use with Calculator
+     * @param equation equation to calculate
+     * @param <T>      extends Number
+     * @return new CalculatorCallable
      * @throws NullPointerException     if equation is null
      * @throws IllegalArgumentException if there are no calculator for type given in 'clazz' param
      */
@@ -38,7 +38,7 @@ public final class CalculatorCallable<T extends Number> implements Callable<T> {
     /**
      * {@inheritDoc }
      *
-     * @return
+     * @return calculation result
      */
     @Override
     public T call() {
